@@ -22,7 +22,11 @@ import { useSnackbar } from 'notistack';
 import { useRouter } from 'src/routes/hook';
 
 import axiosInstance from 'src/utils/axios';
-import FormProvider, { RHFCustomFileUploadBox, RHFTextField } from 'src/components/hook-form';
+import FormProvider, {
+  RHFCustomFileUploadBox,
+  RHFTextField,
+  RHFUploadBox,
+} from 'src/components/hook-form';
 import Label from 'src/components/label';
 import { MultiFilePreview } from 'src/components/upload';
 import RejectReasonDialog from 'src/components/reject dialog box/reject-dialog-box';
@@ -35,7 +39,8 @@ const STATUS_DISPLAY = {
   3: { label: 'Rejected', color: 'error' },
 };
 
-export default function CompanyProfileDetails({ data }) {
+export default function InvestorProfileDetails({ data }) {
+  console.log('investor basic info', data.data?.aadharFrontImage);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
@@ -45,33 +50,9 @@ export default function CompanyProfileDetails({ data }) {
   const fields = [
     { name: 'email', label: 'Email', value: data?.data?.users?.email },
     { name: 'phone', label: 'Contact No', value: data?.data?.users?.phone },
-    { name: 'CIN', label: 'CIN', value: data?.data?.CIN },
-    { name: 'GSTIN', label: 'GSTIN', value: data?.data?.GSTIN },
-    {
-      name: 'dateOfIncorporation',
-      label: 'Date Of Incorporation',
-      value: data?.data?.dateOfIncorporation,
-    },
-    {
-      name: 'cityOfIncorporation',
-      label: 'City Of Incorporation',
-      value: data?.data?.cityOfIncorporation,
-    },
-    {
-      name: 'stateOfIncorporation',
-      label: 'State Of Incorporation',
-      value: data?.data?.stateOfIncorporation,
-    },
-    {
-      name: 'countryOfIncorporation',
-      label: 'Country Of Incorporation',
-      value: data?.data?.countryOfIncorporation,
-    },
-    {
-      name: 'udyamRegistrationNumber',
-      label: 'Udyam Registration Number',
-      value: data?.data?.udyamRegistrationNumber,
-    },
+    { name: 'name', label: 'Name', value: data?.data?.fullName },
+    { name: 'gender', label: 'Gender', value: data?.data?.gender },
+    { name: 'kycMode', label: 'KYC Mode', value: data?.data?.kycMode },
     {
       name: 'createdAt',
       label: 'Created At',
@@ -86,12 +67,25 @@ export default function CompanyProfileDetails({ data }) {
   const { reset } = methods;
 
   useEffect(() => {
-    if (data)
-      reset({
-        ...defaultValues,
-        panCardImage: data?.data?.companyPanCards?.panCardDocument || null,
-      });
-  }, [data, reset, defaultValues]);
+    if (!data?.data) return;
+
+    const v = data?.data;
+
+    reset({
+      email: v?.users?.email || '',
+      phone: v?.users?.phone || '',
+      name: v?.fullName || '',
+      gender: v?.gender || '',
+      kycMode: v?.kycMode || '',
+      createdAt: v?.createdAt ? new Date(v.createdAt).toLocaleDateString() : '—',
+
+      // 🔽 UPLOADS (FIXED)
+      panCardFrontImage: v?.investorPanCards?.panCardDocument || null,
+      adharcardFrontImage: v?.aadharFrontImage || null,
+      adharcardBackImage: v?.aadharBackImage || null,
+      selfieImage: v?.selfie || null,
+    });
+  }, [data, reset]);
 
   const handleStatusUpdate = async (type, reason = null) => {
     try {
@@ -105,7 +99,7 @@ export default function CompanyProfileDetails({ data }) {
 
       await axiosInstance.patch('/kyc/handle-kyc-application', payload);
 
-      enqueueSnackbar(`Company KYC ${String(type) === '2' ? 'Approved' : 'Rejected'}`, {
+      enqueueSnackbar(`Investor KYC ${String(type) === '2' ? 'Approved' : 'Rejected'}`, {
         variant: String(type) === '2' ? 'success' : 'error',
       });
 
@@ -121,8 +115,8 @@ export default function CompanyProfileDetails({ data }) {
 
   const [openPreview, setOpenPreview] = useState(false);
 
-  const panFile = data?.data?.companyPanCards?.panCardDocument?.fileUrl;
-  const fileType = data?.data?.companyPanCards?.panCardDocument?.fileType;
+  const panFile = data?.data?.investorPanCards?.panCardDocument?.fileUrl;
+  const fileType = data?.data?.investorPanCards?.panCardDocument?.fileType;
 
   const handleViewFile = () => {
     if (!panFile) return;
@@ -148,19 +142,23 @@ export default function CompanyProfileDetails({ data }) {
   const panComparisonData = [
     {
       parameter: 'PAN Number',
-      extracted: data?.data?.companyPanCards?.extractedPanNumber || '—',
-      submitted: data?.data?.companyPanCards?.submittedPanNumber || '—',
+      extracted: data?.data?.investorPanCards?.extractedPanNumber || '—',
+      submitted: data?.data?.investorPanCards?.submittedPanNumber || '—',
     },
     {
-      parameter: 'Company Name',
-      extracted: data?.data?.companyPanCards?.extractedCompanyName || '—',
-      submitted: data?.data?.companyPanCards?.submittedCompanyName || '—',
+      parameter: 'Investor Name',
+      extracted: data?.data?.investorPanCards?.extractedInvestorName || '—',
+      submitted: data?.data?.investorPanCards?.submittedInvestorName || '—',
     },
-    // {
-    //   parameter: "Date of Birth / Incorporation",
-    //   extracted: data?.data?.companyPanCards?.extractedDateOfBirth ? new Date(data?.data?.companyPanCards?.extractedDateOfBirth).toLocaleDateString() : "—",
-    //   submitted: data?.data?.companyPanCards?.submittedDateOfBirth ? new Date(data?.data?.companyPanCards?.submittedDateOfBirth).toLocaleDateString() : "—",
-    // },
+    {
+      parameter: 'Date of Birth / Incorporation',
+      extracted: data?.data?.investorPanCards?.extractedDateOfBirth
+        ? new Date(data?.data?.investorPanCards?.extractedDateOfBirth).toLocaleDateString()
+        : '—',
+      submitted: data?.data?.investorPanCards?.submittedDateOfBirth
+        ? new Date(data?.data?.investorPanCards?.submittedDateOfBirth).toLocaleDateString()
+        : '—',
+    },
   ];
 
   return (
@@ -170,11 +168,11 @@ export default function CompanyProfileDetails({ data }) {
         <Stack direction="row" alignItems="center" justifyContent="space-between">
           {/* Avatar + Name */}
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Avatar alt={data?.data?.companyName} />
+            <Avatar alt={data?.data?.investorName} />
 
             <Stack spacing={0.8}>
               <Typography variant="h5" fontWeight={600}>
-                {data?.data?.companyName}
+                {data?.data?.investorName}
               </Typography>
             </Stack>
           </Stack>
@@ -199,17 +197,91 @@ export default function CompanyProfileDetails({ data }) {
           ))}
         </Grid>
         <Grid container spacing={2} sx={{ mt: 2 }}>
-          <Grid item xs={12}>
-            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+          <Grid item xs={12} md={12}>
+            <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
+              Pancard front image
+            </Typography>
+            <RHFCustomFileUploadBox
+              name="panCardFrontImage"
+              label="Upload template"
+              icon="mdi:file-document-outline"
+              accept={{
+                'application/pdf': ['.pdf'],
+                'image/png': ['.png'],
+                'image/jpeg': ['.jpg', '.jpeg'],
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={12}>
+            <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
+              Adharcard front image
+            </Typography>
+            <RHFCustomFileUploadBox
+              name="adharcardFrontImage"
+              label="Upload template"
+              icon="mdi:file-document-outline"
+              accept={{
+                'application/pdf': ['.pdf'],
+                'image/png': ['.png'],
+                'image/jpeg': ['.jpg', '.jpeg'],
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={12}>
+            <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
+              Adharcard back image
+            </Typography>
+            <RHFCustomFileUploadBox
+              name="adharcardBackImage"
+              label="Upload template"
+              icon="mdi:file-document-outline"
+              accept={{
+                'application/pdf': ['.pdf'],
+                'image/png': ['.png'],
+                'image/jpeg': ['.jpg', '.jpeg'],
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={12}>
+            <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
+              Selfie image
+            </Typography>
+            <RHFCustomFileUploadBox
+              name="selfieImage"
+              label="Upload template"
+              icon="mdi:file-document-outline"
+              accept={{
+                'application/pdf': ['.pdf'],
+                'image/png': ['.png'],
+                'image/jpeg': ['.jpg', '.jpeg'],
+              }}
+            />
+          </Grid>
+        </Grid>
+        {/* <Grid item xs={12}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              gap: 2,
+              mt: 3,
+              mb: 1,
+            }}
+          >
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
               PAN Card Details
             </Typography>
 
-            {/* {data?.data?.companyPanCards?.panCardDocument?.fileUrl ? (
+            {data?.data?.investorPanCards?.panCardDocument?.fileUrl ? (
               <Button
                 variant="outlined"
                 color="primary"
                 onClick={() => {
-                  const url = data?.data?.companyPanCards?.panCardDocument?.fileUrl;
+                  const url = data?.data?.investorPanCards?.panCardDocument?.fileUrl;
                   if (url) {
                     window.open(url, '_blank');
                   } else {
@@ -230,20 +302,14 @@ export default function CompanyProfileDetails({ data }) {
               </Button>
             ) : (
               <Typography color="text.secondary">No PAN file uploaded.</Typography>
-            )} */}
-            <RHFCustomFileUploadBox
-              name="panCardImage"
-              label="Upload template"
-              icon="mdi:file-document-outline"
-              accept={{
-                'application/pdf': ['.pdf'],
-                'image/png': ['.png'],
-                'image/jpeg': ['.jpg', '.jpeg'],
-              }}
-            />
-          </Grid>
+            )}
+          </Box>
+        </Grid> */}
+        <Grid item xs={12}>
+          <Typography variant="h6" sx={{ fontWeight: 600, mt: 3 }}>
+            PAN Card Details
+          </Typography>
         </Grid>
-
         <TableContainer
           component={Paper}
           sx={{
@@ -340,7 +406,7 @@ export default function CompanyProfileDetails({ data }) {
         </Stack>
       </FormProvider>
       <RejectReasonDialog
-        title="Decline Company Profile"
+        title="Decline Investor Profile"
         open={rejectOpen}
         onClose={() => setRejectOpen(false)}
         reason={rejectReason}
@@ -351,6 +417,6 @@ export default function CompanyProfileDetails({ data }) {
   );
 }
 
-CompanyProfileDetails.propTypes = {
+InvestorProfileDetails.propTypes = {
   data: PropTypes.object,
 };

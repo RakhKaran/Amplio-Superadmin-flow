@@ -18,10 +18,12 @@ export default function FileThumbnail({ file, tooltip, imageView, onDownload, sx
       <Box
         component="img"
         src={preview}
+        onClick={() => window.open(preview, '_blank')}
         sx={{
           width: 1,
           height: 1,
           flexShrink: 0,
+          cursor: 'pointer',
           objectFit: 'cover',
           ...imgSx,
         }}
@@ -30,10 +32,12 @@ export default function FileThumbnail({ file, tooltip, imageView, onDownload, sx
       <Box
         component="img"
         src={fileThumb(format)}
+        onClick={() => window.open(preview, '_blank')}
         sx={{
           width: 32,
           height: 32,
           flexShrink: 0,
+          cursor: 'pointer',
           ...sx,
         }}
       />

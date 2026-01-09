@@ -22,6 +22,7 @@ const ICONS = {
   job: icon('ic_job'),
   blog: icon('ic_blog'),
   company: icon('ic_company'),
+  investor: icon('ic_investor'),
   chat: icon('ic_chat'),
   mail: icon('ic_mail'),
   user: icon('ic_user'),
@@ -96,6 +97,11 @@ export function useNavData() {
             title: t('trustee profiles'),
             path: paths.dashboard.trusteeProfiles.root,
             icon: ICONS.user,
+          },
+          {
+            title: t('investor profiles'),
+            path: paths.dashboard.investorProfiles.root,
+            icon: ICONS.investor,
           },
           // {
           //   title: t('Document Drafting'),

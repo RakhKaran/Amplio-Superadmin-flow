@@ -86,12 +86,26 @@ export const endpoints = {
     filterStatusList: (filter, status) => `/company-profiles?filter=${filter}&status=${status}`,
     details: (id) => `/company-profiles/${id}`,
   },
+  investorProfiles: {
+    list: '/investor-profiles',
+    filterList: (filter) => `/investor-profiles?filter=${filter}`,
+    statusList: (status) => `/investor-profiles?status=${status}`,
+    filterStatusList: (filter, status) => `/investor-profiles?filter=${filter}&status=${status}`,
+    details: (id) => `/investor-profiles/${id}`,
+  },
   CompanyKyc: {
     getDocuments: (companyId) => `/company-profiles/${companyId}/documents`,
     getBankDetails: (companyId) => `/company-profiles/${companyId}/bank-details`,
     // getFilteredBankDetails: (companyId) => `/company-profiles/${companyId}/bank-details?filter=${filter}`,
     getCompanySignatories: (companyId) => `/company-profiles/${companyId}/authorize-signatory`,
     getCompanySignatoriesWithFilter: (companyId, queryString) => `/company-profiles/${companyId}/authorize-signatory?filter=${queryString}`,
+  },
+  InvestorKyc: {
+    getDocuments: (investorId) => `/investor-profiles/${investorId}/documents`,
+    getBankDetails: (investorId) => `/investor-profiles/${investorId}/bank-details`,
+    // getFilteredBankDetails: (investorId) => `/investor-profiles/${investorId}/bank-details?filter=${filter}`,
+    getinvestorSignatories: (investorId) => `/investor-profiles/${investorId}/authorize-signatory`,
+    getinvestorSignatoriesWithFilter: (investorId, queryString) => `/investor-profiles/${investorId}/authorize-signatory?filter=${queryString}`,
   },
 
   trusteeProfiles: {

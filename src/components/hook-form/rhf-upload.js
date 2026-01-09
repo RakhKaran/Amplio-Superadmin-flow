@@ -5,6 +5,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 //
 import { UploadAvatar, Upload, UploadBox } from '../upload';
 import { Icon } from '@iconify/react';
+import axiosInstance from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
@@ -36,15 +37,88 @@ RHFUploadAvatar.propTypes = {
 
 // ----------------------------------------------------------------------
 
-export function RHFUploadBox({ name, ...other }) {
-  const { control } = useFormContext();
+export function RHFUploadBox({ name, multiple = false, autoUpload = true, ...other }) {
+  const { control, setValue } = useFormContext();
+
+  // const handleFileDrop = async (fieldName, acceptedFiles) => {
+  //   if (!acceptedFiles || acceptedFiles.length === 0) return;
+  //   try {
+  //     const formData = new FormData();
+  //     if (multiple) {
+  //       formData.append('files', acceptedFiles);
+  //     } else {
+  //       formData.append('file', acceptedFiles[0]);
+  //     }
+
+  //     const res = await axiosInstance.post('/files', formData);
+
+  //     if (multiple) {
+  //       setValue(fieldName, res?.data?.files, {
+  //         shouldValidate: true,
+  //       });
+  //     } else {
+  //       setValue(fieldName, res?.data?.files?.[0], {
+  //         shouldValidate: true,
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error('File upload failed', error);
+  //   }
+  // };
+
+  const uploadFiles = async (fieldName, files) => {
+    const formData = new FormData();
+
+    if (multiple) {
+      files.forEach((file) => formData.append('files', file));
+    } else {
+      formData.append('file', files[0]);
+    }
+
+    const res = await axiosInstance.post('/files', formData);
+
+    if (multiple) {
+      setValue(fieldName, res?.data?.files, { shouldValidate: true });
+    } else {
+      setValue(fieldName, res?.data?.files?.[0], { shouldValidate: true });
+    }
+  };
+  
+  const handleRemoveFile = (fieldName) => {
+    setValue(fieldName, null, { shouldValidate: true });
+  };
+
+  const handleRemoveAllFiles = (fieldName) => {
+    setValue(fieldName, [], { shouldValidate: true });
+  };
 
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <UploadBox files={field.value} error={!!error} {...other} />
+        <UploadBox
+          files={field.value}
+          error={!!error}
+          {...other}
+          onRemove={() => handleRemoveFile(name)}
+          onRemoveAll={() => handleRemoveAllFiles(name)}
+          // onDrop={(acceptedFiles) => {
+          //   handleFileDrop(name, acceptedFiles);
+          // }}
+          onDrop={async (acceptedFiles) => {
+            if (!acceptedFiles?.length) return;
+
+            // ✅ Device upload: just set file, don't upload
+            if (!autoUpload) {
+              setValue(name, acceptedFiles[0], { shouldValidate: true });
+              return;
+            }
+
+            // ✅ Default behavior: upload immediately
+            await uploadFiles(name, acceptedFiles);
+          }}
+        />
       )}
     />
   );
@@ -52,6 +126,8 @@ export function RHFUploadBox({ name, ...other }) {
 
 RHFUploadBox.propTypes = {
   name: PropTypes.string,
+  multiple: PropTypes.bool,
+  autoUpload: PropTypes.bool,
 };
 
 // ----------------------------------------------------------------------
@@ -105,9 +181,8 @@ RHFUpload.propTypes = {
   name: PropTypes.string,
 };
 
-
 // ----------------------------------------------------------------------
-export function RHFUploadRectangle({ name, label = "Upload File", ...other }) {
+export function RHFUploadRectangle({ name, label = 'Upload File', ...other }) {
   const { control } = useFormContext();
 
   return (
@@ -117,14 +192,14 @@ export function RHFUploadRectangle({ name, label = "Upload File", ...other }) {
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         // Extract file name (works for File object or preview string)
         const fileName =
-          value instanceof File ? value.name : value?.name || value?.fileUrl?.split("/")?.pop();
+          value instanceof File ? value.name : value?.name || value?.fileUrl?.split('/')?.pop();
 
         return (
           <>
             {/* Hidden input */}
             <input
               type="file"
-              style={{ display: "none" }}
+              style={{ display: 'none' }}
               id={name}
               onChange={(e) => {
                 const file = e.target.files?.[0] || null;
@@ -137,27 +212,25 @@ export function RHFUploadRectangle({ name, label = "Upload File", ...other }) {
             <label
               htmlFor={name}
               style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "6px",
-                width: "100%",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                width: '100%',
                 height: 50,
-                backgroundColor: "#2E6CF6",
-                color: "#fff",
-                borderRadius: "10px",
-                padding: "0 8px",
-                fontSize: "12px",
-                cursor: "pointer",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
+                backgroundColor: '#2E6CF6',
+                color: '#fff',
+                borderRadius: '10px',
+                padding: '0 8px',
+                fontSize: '12px',
+                cursor: 'pointer',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
               }}
             >
-              <Icon icon={fileName ? "mdi:file" : "mdi:upload"} width={14} height={14} />
-              <span style={{ lineHeight: "15px" }}>
-                {fileName ? fileName : label}
-              </span>
+              <Icon icon={fileName ? 'mdi:file' : 'mdi:upload'} width={14} height={14} />
+              <span style={{ lineHeight: '15px' }}>{fileName ? fileName : label}</span>
             </label>
 
             {/* Error */}

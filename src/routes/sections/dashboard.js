@@ -42,6 +42,10 @@ const UserEditPage = lazy(() => import('src/pages/dashboard/user/edit'));
 const CompanyProfileListPage = lazy(() => import('src/pages/dashboard/company-profiles/list'));
 const CompanyProfliesDetailsPage = lazy(() => import('src/pages/dashboard/company-profiles/details'))
 const CompanyProfileNewPage = lazy(() => import('src/pages/dashboard/company-profiles/new'))
+// INVESTOR PROFILES FOR KYC
+const InvestorProfileListPage = lazy(() => import('src/pages/dashboard/investor-profiles/list'));
+const InvestorProfileDetailsPage = lazy(() => import('src/pages/dashboard/investor-profiles/details'));
+const InvestorProfileNewPage = lazy(() => import('src/pages/dashboard/investor-profiles/new'));
 
 // TRUSTEE PROFILE FOR KYC
 const TrusteeProfileListPage = lazy(() => import('src/pages/dashboard/trustee-profiles/list'));
@@ -153,6 +157,15 @@ export const dashboardRoutes = [
           { path: 'list', element: <CompanyProfileListPage /> },
           { path: ':id', element: <CompanyProfliesDetailsPage /> },
           { path: 'new', element: <CompanyProfileNewPage /> },
+        ],
+      },
+      {
+        path: 'investorProfiles',
+        children: [
+          { element: <InvestorProfileListPage />, index: true },
+          { path: 'list', element: <InvestorProfileListPage /> },
+          { path: ':id', element: <InvestorProfileDetailsPage /> },
+          { path: 'new', element: <InvestorProfileNewPage /> },
         ],
       },
       {
