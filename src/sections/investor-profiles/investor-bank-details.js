@@ -29,17 +29,13 @@ import RejectReasonDialog from 'src/components/reject dialog box/reject-dialog-b
 
 // ----------------------------------------------------------------------
 
-export default function InvestorBankDetails({ investorProfile }) {
-  const userId = investorProfile?.data?.id;
-  const stepperId = investorProfile?.kycApplications?.currentProgress?.[2];
-  const { state } = useLocation();
-  const bankDetails = state?.bankData || null;
-  console.log('📌 Received bankData:', bankDetails);
+export default function InvestorBank({ bank }) {
+  const userId = bank?.data?.id;
 
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
 
-  console.log('KYCBankDetails userId', userId);
+  console.log('KYCBank userId', userId);
   const router = useRouter();
 
   // ---------------- VALIDATION ----------------
@@ -83,18 +79,12 @@ export default function InvestorBankDetails({ investorProfile }) {
   const values = watch();
   const documentType = useWatch({ control, name: 'documentType' });
 
-  const handleDrop = (acceptedFiles) => {
-    const file = acceptedFiles[0];
-    if (file) {
-      setValue('addressProof', file, { shouldValidate: true });
-    }
-  };
 
   const handleApprove = async () => {
     try {
       await axiosInstance.patch('/investor-profiles/bank-account-verification', {
         status: 1,
-        accountId: bankDetails?.id,
+        accountId: bank?.id,
         reason: '',
       });
 
@@ -114,7 +104,7 @@ export default function InvestorBankDetails({ investorProfile }) {
     try {
       await axiosInstance.patch('/investor-profiles/bank-account-verification', {
         status: 2,
-        accountId: bankDetails?.id,
+        accountId: bank?.id,
         reason: rejectReason,
       });
 
@@ -128,12 +118,12 @@ export default function InvestorBankDetails({ investorProfile }) {
     }
   };
 
-  const existingProof = bankDetails?.bankAccountProof
+  const existingProof = bank?.bankAccountProof
     ? {
-        id: bankDetails.bankAccountProof.id,
-        name: bankDetails.bankAccountProof.fileOriginalName,
-        url: bankDetails.bankAccountProof.fileUrl,
-        status: bankDetails.status === 1 ? 'approved' : 'pending',
+        id: bank.bankAccountProof.id,
+        name: bank.bankAccountProof.fileOriginalName,
+        url: bank.bankAccountProof.fileUrl,
+        status: bank.status === 1 ? 'approved' : 'pending',
         isServerFile: true,
       }
     : null;
@@ -161,7 +151,7 @@ export default function InvestorBankDetails({ investorProfile }) {
       }
 
       const payload = {
-        bankDetails: {
+        bank: {
           bankName: data.bankName,
           bankShortCode: data.bankShortCode,
           ifscCode: data.ifscCode,
@@ -209,21 +199,21 @@ export default function InvestorBankDetails({ investorProfile }) {
   const percent = calculatePercent();
 
   useEffect(() => {
-    if (bankDetails) {
+    if (bank) {
       reset({
-        documentType: bankDetails.bankAccountProofType === 0 ? 'cheque' : 'bank_statement',
-        bankName: bankDetails.bankName || '',
-        branchName: bankDetails.branchName || '',
-        accountNumber: bankDetails.accountNumber || '',
-        ifscCode: bankDetails.ifscCode || '',
-        accountType: bankDetails.accountType === 1 ? 'CURRENT' : 'SAVINGS',
+        documentType: bank.bankAccountProofType === 0 ? 'cheque' : 'bank_statement',
+        bankName: bank.bankName || '',
+        branchName: bank.branchName || '',
+        accountNumber: bank.accountNumber || '',
+        ifscCode: bank.ifscCode || '',
+        accountType: bank.accountType === 1 ? 'CURRENT' : 'SAVINGS',
         addressProof: null,
-        accountHolderName: bankDetails.accountHolderName || '',
-        bankAddress: bankDetails.bankAddress || '',
-        bankShortCode: bankDetails.bankShortCode || '',
+        accountHolderName: bank.accountHolderName || '',
+        bankAddress: bank.bankAddress || '',
+        bankShortCode: bank.bankShortCode || '',
       });
     }
-  }, [bankDetails, reset]);
+  }, [bank, reset]);
 
   return (
     <Container>
@@ -342,7 +332,7 @@ export default function InvestorBankDetails({ investorProfile }) {
                                   `/bank-details/get-by-ifsc/${ifsc}`
                                 );
 
-                                const data = res?.data?.bankDetails;
+                                const data = res?.data?.bank;
 
                                 if (!data) {
                                   enqueueSnackbar('No bank details found', { variant: 'error' });
@@ -461,9 +451,9 @@ export default function InvestorBankDetails({ investorProfile }) {
               variant="soft"
               color="error"
               onClick={() => setRejectOpen(true)}
-              disabled={bankDetails?.status === 1 || bankDetails?.status === 2}
+              disabled={bank?.status === 1 || bank?.status === 2}
               sx={{
-                opacity: bankDetails?.status === 1 || bankDetails?.status === 2 ? 0.4 : 1,
+                opacity: bank?.status === 1 || bank?.status === 2 ? 0.4 : 1,
               }}
             >
               Reject
@@ -474,9 +464,9 @@ export default function InvestorBankDetails({ investorProfile }) {
               variant="soft"
               color="success"
               onClick={handleApprove}
-              disabled={bankDetails?.status === 1 || bankDetails?.status === 2}
+              disabled={bank?.status === 1 || bank?.status === 2}
               sx={{
-                opacity: bankDetails?.status === 1 || bankDetails?.status === 2 ? 0.4 : 1,
+                opacity: bank?.status === 1 || bank?.status === 2 ? 0.4 : 1,
               }}
             >
               Approve

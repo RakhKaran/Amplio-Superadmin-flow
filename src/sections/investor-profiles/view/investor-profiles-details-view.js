@@ -9,7 +9,6 @@ import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
 
-
 import InvestorProfileDetails from '../investor-profiles-details';
 import { useGetInvestorProfile } from 'src/api/investor-profiles';
 import { useCallback, useState } from 'react';
@@ -18,6 +17,8 @@ import InvestorDocumentDetails from '../investor-document-details';
 import InvestorBankPage from '../investor-bank-page';
 import InvestorSignatories from '../investor-signatories';
 import { useSearchParams } from 'react-router-dom';
+import InvestorBankDetails from '../investor-bank-details';
+import { useGetBankDetails } from 'src/api/investorKyc';
 
 // ----------------------------------------------------------------------
 
@@ -34,15 +35,17 @@ export default function InvestorProfilesDetailsView() {
 
   const router = useRouter();
   const { investorProfile } = useGetInvestorProfile(id);
+  const userId = investorProfile?.data?.id;
+  const { bankDetails, loading } = useGetBankDetails(userId);
   console.log(investorProfile);
 
   const [searchParams] = useSearchParams();
   const tab = searchParams.get('tab');
-  const [currentTab, setCurrentTab] = useState(tab || 'basic' ) ;
+  const [currentTab, setCurrentTab] = useState(tab || 'basic');
   const handleChangeTab = useCallback((event, newValue) => {
     setCurrentTab(newValue);
     router.push({
-      search: `?tab=${newValue}`
+      search: `?tab=${newValue}`,
     });
   }, []);
   return (
@@ -52,8 +55,7 @@ export default function InvestorProfilesDetailsView() {
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'Investor Profile', href: paths.dashboard.investorProfiles.root },
           {
-            name: investorProfile?.data?.investorName || 'Investor Profile'
-
+            name: investorProfile?.data?.investorName || 'Investor Profile',
           },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
@@ -68,7 +70,9 @@ export default function InvestorProfilesDetailsView() {
 
       {/* {currentTab === 'details' && <InvestorDocumentDetails investorProfile={investorProfile} />} */}
 
-      {currentTab === 'bank' && <InvestorBankPage investorProfile={investorProfile} />}
+      {currentTab === 'bank' && (
+        <InvestorBankDetails  bank={bankDetails} />
+      )}
       {/* {currentTab === 'bank' && <TrusteeBankPage investorPrifle={investorPrifle} />} */}
 
       {/* {currentTab === 'signatories' && <InvestorSignatories investorProfile={investorProfile} />} */}

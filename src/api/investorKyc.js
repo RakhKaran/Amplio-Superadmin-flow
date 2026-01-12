@@ -40,7 +40,7 @@ export function useGetBankDetails(investorId) {
     };
 
     return {
-        bankDetails: data?.bankDetails || [],   // <-- ALWAYS ARRAY
+        bankDetails: data?.bankDetails,
         loading: isLoading,
         error,
         validating: isValidating,

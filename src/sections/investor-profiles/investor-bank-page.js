@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { CircularProgress, Box, Button, Stack, Typography, Grid, Card } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-
-
 import InvestorBankCard from './investor-bank-cards';
 import InvestorBankDetails from './investor-bank-details';
 import { useGetBankDetails } from 'src/api/investorKyc';
@@ -49,20 +47,11 @@ export default function InvestorBankPage({ investorProfile }) {
         </Button> */}
       </Stack>
 
-      {/* No Bank Found */}
-      {bankDetails.length === 0 ? (
-        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-          No bank details added yet. Click "Create Bank Details" to continue.
-        </Typography>
-      ) : (
-        <Grid container spacing={3}>
-          {bankDetails.map((item) => (
-            <Grid key={item.id} item xs={12} md={6}>
-              <InvestorBankCard bank={item} onViewRow={() => handleViewRow(item)} />
-            </Grid>
-          ))}
+      <Grid container spacing={3}>
+        <Grid key={bankDetails?.id} item xs={12} md={6}>
+          <InvestorBankCard bank={bankDetails} onViewRow={() => handleViewRow(bankDetails)} />
         </Grid>
-      )}
+      </Grid>
       {selectedBank && (
         <Box sx={{ mt: 5 }}>
           <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
