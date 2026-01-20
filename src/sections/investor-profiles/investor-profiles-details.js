@@ -172,7 +172,7 @@ export default function InvestorProfileDetails({ data }) {
 
             <Stack spacing={0.8}>
               <Typography variant="h5" fontWeight={600}>
-                {data?.data?.investorName}
+                {data?.data?.fullName}
               </Typography>
             </Stack>
           </Stack>
@@ -199,11 +199,11 @@ export default function InvestorProfileDetails({ data }) {
         <Grid container spacing={2} sx={{ mt: 2 }}>
           <Grid item xs={12} md={12}>
             <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
-              Pancard front image
+              Pancard Front Image
             </Typography>
             <RHFCustomFileUploadBox
               name="panCardFrontImage"
-              label="Upload template"
+              label="Pancard"
               icon="mdi:file-document-outline"
               accept={{
                 'application/pdf': ['.pdf'],
@@ -215,11 +215,11 @@ export default function InvestorProfileDetails({ data }) {
 
           <Grid item xs={12} md={12}>
             <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
-              Adharcard front image
+              Adharcard Front Image
             </Typography>
             <RHFCustomFileUploadBox
               name="adharcardFrontImage"
-              label="Upload template"
+              label="Adharcard Front Image"
               icon="mdi:file-document-outline"
               accept={{
                 'application/pdf': ['.pdf'],
@@ -231,11 +231,11 @@ export default function InvestorProfileDetails({ data }) {
 
           <Grid item xs={12} md={12}>
             <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
-              Adharcard back image
+              Adharcard Back Image
             </Typography>
             <RHFCustomFileUploadBox
               name="adharcardBackImage"
-              label="Upload template"
+              label="Adharcard Back Image"
               icon="mdi:file-document-outline"
               accept={{
                 'application/pdf': ['.pdf'],
@@ -247,11 +247,11 @@ export default function InvestorProfileDetails({ data }) {
 
           <Grid item xs={12} md={12}>
             <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
-              Selfie image
+              Selfie Image
             </Typography>
             <RHFCustomFileUploadBox
               name="selfieImage"
-              label="Upload template"
+              label="Selfie Image"
               icon="mdi:file-document-outline"
               accept={{
                 'application/pdf': ['.pdf'],

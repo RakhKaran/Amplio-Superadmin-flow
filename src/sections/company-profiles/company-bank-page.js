@@ -41,7 +41,7 @@ export default function CompanyBankPage({ companyProfile }) {
       {/* Header */}
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
         <Typography variant="h4" sx={{ fontWeight: 700 }}>
-          Company Bank Details
+          Seller Bank Details
         </Typography>
         {/* 
         <Button variant="contained" onClick={() => navigate(paths.dashboard.companyProfiles.new)}>

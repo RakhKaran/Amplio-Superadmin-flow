@@ -62,7 +62,7 @@ const STATUS_OPTIONS = [
 ];
 
 const TABLE_HEAD = [
-  { id: 'companyName', label: 'Company Name' },
+  { id: 'sellerName', label: 'Seller Name' },
   { id: 'CIN', label: 'CIN' },
   { id: 'GSTIN', label: 'GSTIN' },
   { id: 'isActive', label: 'Status' },
@@ -169,7 +169,7 @@ export default function CompanyProfileListView() {
           heading="List"
           links={[
             { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Company Profiles', href: paths.dashboard.companyProfiles.list },
+            { name: 'Seller Profiles', href: paths.dashboard.companyProfiles.list },
             { name: 'List' },
           ]}
           sx={{

@@ -22,8 +22,8 @@ import { useSearchParams } from 'react-router-dom';
 // ----------------------------------------------------------------------
 
 const TABS = [
-  { value: 'basic', label: 'Company Basic Info' },
-  { value: 'details', label: 'Company Documents' },
+  { value: 'basic', label: 'Seller Basic Info' },
+  { value: 'details', label: 'Seller Documents' },
   { value: 'bank', label: 'Bank Details' },
   { value: 'signatories', label: 'Signatories' },
 ];
@@ -50,9 +50,9 @@ export default function CompanyProfilesDetailsView() {
       <CustomBreadcrumbs
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Company Profile', href: paths.dashboard.companyProfiles.root },
+          { name: 'Seller Profile', href: paths.dashboard.companyProfiles.root },
           {
-            name: companyProfile?.data?.companyName || 'Company Profile'
+            name: companyProfile?.data?.companyName || 'Seller Profile'
 
           },
         ]}

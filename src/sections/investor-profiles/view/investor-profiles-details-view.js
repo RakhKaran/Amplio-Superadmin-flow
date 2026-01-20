@@ -51,11 +51,12 @@ export default function InvestorProfilesDetailsView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
+        heading="Details"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Investor Profile', href: paths.dashboard.investorProfiles.root },
+          { name: 'Investor Profile', href: paths.dashboard.investorProfiles.list },
           {
-            name: investorProfile?.data?.investorName || 'Investor Profile',
+            name: investorProfile?.data?.fullName || 'Investor Profile',
           },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
@@ -70,9 +71,7 @@ export default function InvestorProfilesDetailsView() {
 
       {/* {currentTab === 'details' && <InvestorDocumentDetails investorProfile={investorProfile} />} */}
 
-      {currentTab === 'bank' && (
-        <InvestorBankDetails  bank={bankDetails} />
-      )}
+      {currentTab === 'bank' && <InvestorBankDetails bank={bankDetails} />}
       {/* {currentTab === 'bank' && <TrusteeBankPage investorPrifle={investorPrifle} />} */}
 
       {/* {currentTab === 'signatories' && <InvestorSignatories investorProfile={investorProfile} />} */}
