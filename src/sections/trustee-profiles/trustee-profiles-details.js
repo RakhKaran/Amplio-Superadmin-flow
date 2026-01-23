@@ -76,7 +76,7 @@ export default function TrusteeProfileDetails({ data }) {
     {
       name: 'createdAt',
       label: 'Created At',
-      value: data?.createdAt ? new Date(data?.createdAt).toLocaleDateString() : '—',
+      value: data?.createdAt ? data?.createdAt.split('T')[0] : '—',
     },
   ];
 
@@ -245,7 +245,7 @@ export default function TrusteeProfileDetails({ data }) {
             </Typography>
             <RHFCustomFileUploadBox
               name="panCardImage"
-              label="Upload template"
+              label="Pancard"
               icon="mdi:file-document-outline"
               accept={{
                 'application/pdf': ['.pdf'],

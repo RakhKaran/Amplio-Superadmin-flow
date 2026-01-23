@@ -75,7 +75,7 @@ export default function CompanyProfileDetails({ data }) {
     {
       name: 'createdAt',
       label: 'Created At',
-      value: data?.data?.createdAt ? new Date(data?.data?.createdAt).toLocaleDateString() : '—',
+      value: data?.data?.createdAt ? data?.data?.createdAt.split('T')[0] : '—',
     },
   ];
 
@@ -233,7 +233,7 @@ export default function CompanyProfileDetails({ data }) {
             )} */}
             <RHFCustomFileUploadBox
               name="panCardImage"
-              label="Upload template"
+              label="Pancard"
               icon="mdi:file-document-outline"
               accept={{
                 'application/pdf': ['.pdf'],

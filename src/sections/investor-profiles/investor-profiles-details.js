@@ -56,7 +56,7 @@ export default function InvestorProfileDetails({ data }) {
     {
       name: 'createdAt',
       label: 'Created At',
-      value: data?.data?.createdAt ? new Date(data?.data?.createdAt).toLocaleDateString() : '—',
+      value: data?.data?.createdAt ? data?.data?.createdAt.split('T')[0] : '—',
     },
   ];
 
@@ -77,7 +77,7 @@ export default function InvestorProfileDetails({ data }) {
       name: v?.fullName || '',
       gender: v?.gender || '',
       kycMode: v?.kycMode || '',
-      createdAt: v?.createdAt ? new Date(v.createdAt).toLocaleDateString() : '—',
+      createdAt: v?.createdAt ? v?.createdAt.split('T')[0] : '—',
 
       // 🔽 UPLOADS (FIXED)
       panCardFrontImage: v?.investorPanCards?.panCardDocument || null,
@@ -153,10 +153,10 @@ export default function InvestorProfileDetails({ data }) {
     {
       parameter: 'Date of Birth / Incorporation',
       extracted: data?.data?.investorPanCards?.extractedDateOfBirth
-        ? new Date(data?.data?.investorPanCards?.extractedDateOfBirth).toLocaleDateString()
+        ? data?.data?.investorPanCards?.extractedDateOfBirth.split('T')[0]
         : '—',
       submitted: data?.data?.investorPanCards?.submittedDateOfBirth
-        ? new Date(data?.data?.investorPanCards?.submittedDateOfBirth).toLocaleDateString()
+        ? data?.data?.investorPanCards?.submittedDateOfBirth.split('T')[0]
         : '—',
     },
   ];
