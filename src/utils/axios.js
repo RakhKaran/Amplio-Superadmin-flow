@@ -99,6 +99,10 @@ export const endpoints = {
     // getFilteredBankDetails: (companyId) => `/company-profiles/${companyId}/bank-details?filter=${filter}`,
     getCompanySignatories: (companyId) => `/company-profiles/${companyId}/authorize-signatory`,
     getCompanySignatoriesWithFilter: (companyId, queryString) => `/company-profiles/${companyId}/authorize-signatory?filter=${queryString}`,
+    getBusinessProfile: (companyId)=> `/company-profiles/${companyId}/business-profile`,
+    getCollateralassets: (companyId)=> `/company-profiles/${companyId}/collateral-details`,
+    getGuarantorDetails: (companyId) => `/company-profiles/${companyId}/guarantor-details`,
+    getAuditedFinancials: (companyId) => `/company-profiles/${companyId}/audited-financials`
   },
   InvestorKyc: {
     getDocuments: (investorId) => `/investor-profiles/${investorId}/documents`,

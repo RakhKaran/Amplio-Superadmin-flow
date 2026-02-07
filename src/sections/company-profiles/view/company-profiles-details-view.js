@@ -18,6 +18,12 @@ import CompanyDocumentDetails from '../company-document-details';
 import CompanyBankPage from '../company-bank-page';
 import CompanySignatories from '../company-signatories';
 import { useSearchParams } from 'react-router-dom';
+import BusinessProfileDetails from '../business-profile';
+import CollateralAssetsDetails from '../company-collateral-assets';
+import GuarantorDetailsListView from './guarantor-details-list-view';
+import AuditedFinancialsListView from './audited-financial-list-view';
+import AllAuditedFinancialsDetailsView from './all-audited-financials-details-view';
+import PendingVerificationForm from '../company-profiles-agreement';
 
 // ----------------------------------------------------------------------
 
@@ -26,6 +32,11 @@ const TABS = [
   { value: 'details', label: 'Seller Documents' },
   { value: 'bank', label: 'Bank Details' },
   { value: 'signatories', label: 'Signatories' },
+  { value: 'busienssProfile', label: 'Business Profile' },
+  { value: 'auditedFinancials', label: 'Audited Financials' },
+  { value: 'collateralAssets', label: 'Collateral Assets' },
+  { value: 'guarantorDetails', label: 'Guarantor Details' },
+  { value: 'agreement', label: 'Agreement' }
 ];
 
 export default function CompanyProfilesDetailsView() {
@@ -38,7 +49,7 @@ export default function CompanyProfilesDetailsView() {
 
   const [searchParams] = useSearchParams();
   const tab = searchParams.get('tab');
-  const [currentTab, setCurrentTab] = useState(tab || 'basic' ) ;
+  const [currentTab, setCurrentTab] = useState(tab || 'basic');
   const handleChangeTab = useCallback((event, newValue) => {
     setCurrentTab(newValue);
     router.push({
@@ -73,7 +84,15 @@ export default function CompanyProfilesDetailsView() {
 
       {currentTab === 'signatories' && <CompanySignatories companyProfile={companyProfile} />}
 
-      {/* <CompanyProfileDetails data={companyProfile} /> */}
+      {currentTab === 'busienssProfile' && <BusinessProfileDetails companyProfile={companyProfile} />}
+
+      {currentTab === 'collateralAssets' && <CollateralAssetsDetails companyProfile={companyProfile} />}
+
+      {currentTab === 'guarantorDetails' && <GuarantorDetailsListView companyProfile={companyProfile} />}
+
+      {currentTab === 'auditedFinancials' && <AllAuditedFinancialsDetailsView companyProfile={companyProfile} />}
+
+      {currentTab === 'agreement' && <PendingVerificationForm companyProfiles={companyProfile} />}
     </Container>
   );
 }

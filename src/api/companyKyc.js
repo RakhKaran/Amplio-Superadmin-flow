@@ -97,3 +97,105 @@ export function useGetSignatories(companyId, queryString) {
     refreshSignatories,
   };
 }
+
+export function useGetBusinessProfiles(companyId) {
+    const URL =
+        companyId ? endpoints.CompanyKyc.getBusinessProfile(String(companyId))
+            : null;
+
+    const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher, {
+        keepPreviousData: true,
+    });
+
+    const refreshProfiles = () => {
+        mutate(); // <-- trigger re-fetch
+    };
+
+    return {
+        businessProfile: data?.data || [],   // <-- ALWAYS ARRAY
+        loading: isLoading,
+        error,
+        validating: isValidating,
+        empty: !isLoading && (!data?.data || data?.data?.length === 0),
+        refreshProfiles,
+    };
+}
+
+export function useGetCollateralAssets(companyId) {
+    const URL =
+        companyId ? endpoints.CompanyKyc.getCollateralassets(String(companyId))
+            : null;
+
+    const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher, {
+        keepPreviousData: true,
+    });
+    
+
+    const refreshCollateralAssets = () => {
+        mutate(); // <-- trigger re-fetch
+    };
+
+    return {
+        collateralAssets: data?.data || [],   // <-- ALWAYS ARRAY
+        loading: isLoading,
+        error,
+        validating: isValidating,
+        empty: !isLoading && (!data?.data || data?.data?.length === 0),
+        refreshCollateralAssets,
+    };
+
+
+}
+
+
+export function useGetGuarantorDetails(companyId) {
+    const URL =
+        companyId ? endpoints.CompanyKyc.getGuarantorDetails(String(companyId))
+            : null;
+
+    const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher, {
+        keepPreviousData: true,
+    });
+    
+
+    const refreshGuarantorDetails = () => {
+        mutate(); // <-- trigger re-fetch
+    };
+
+    return {
+        guarantorDetails: data?.data || [],   // <-- ALWAYS ARRAY
+        loading: isLoading,
+        error,
+        validating: isValidating,
+        empty: !isLoading && (!data?.data || data?.data?.length === 0),
+        refreshGuarantorDetails,
+    };
+
+
+}
+
+export function useGetAuditedFinancialsDetails(companyId) {
+    const URL =
+        companyId ? endpoints.CompanyKyc.getAuditedFinancials(String(companyId))
+            : null;
+
+    const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher, {
+        keepPreviousData: true,
+    });
+    
+
+    const refreshGuarantorDetails = () => {
+        mutate(); // <-- trigger re-fetch
+    };
+
+    return {
+        auditedFinancials: data?.data || [],   // <-- ALWAYS ARRAY
+        loading: isLoading,
+        error,
+        validating: isValidating,
+        empty: !isLoading && (!data?.data || data?.data?.length === 0),
+        refreshGuarantorDetails,
+    };
+
+
+}

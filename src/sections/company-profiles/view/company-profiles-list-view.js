@@ -267,12 +267,6 @@ export default function CompanyProfileListView() {
                     />
                   ))}
 
-
-                  <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
-                  />
-
                   <TableNoData notFound={notFound} />
                 </TableBody>
               </Table>
