@@ -53,6 +53,7 @@ import AuditedFinancialsGst3bRow from '../audited-financials-gst3b';
 const TABLE_HEAD = [
     { id: 'auditorName', label: 'Auditer Name' },
     { id: 'auditedType', label: 'Audited Type' },
+    { id: 'auditedType', label: 'Uplaoded Files' },
     { id: 'status', label: 'Status' },
     { id: 'auditedType', label: 'ReportedAt' },
 ];
@@ -74,9 +75,9 @@ export default function AuditedFinancialsGst3bListView({ companyProfile }) {
     const companyId = companyProfile?.data?.id
 
 
-    const {auditedFinancials = []}= useGetAuditedFinancialsDetails(companyId);
+    const { auditedFinancials = [] } = useGetAuditedFinancialsDetails(companyId);
 
-   const financialsData  =  auditedFinancials?.gst3b  || []
+    const financialsData = auditedFinancials?.gst3b || []
 
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedGuarantor, setSelectedGuarantor] = useState(null);

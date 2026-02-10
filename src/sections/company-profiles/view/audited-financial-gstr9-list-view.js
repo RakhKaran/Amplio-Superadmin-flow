@@ -52,6 +52,7 @@ import AuditedFinancialsGstr9Row from '../audited-financials-gstr9row';
 const TABLE_HEAD = [
     { id: 'auditorName', label: 'Auditer Name' },
     { id: 'auditedType', label: 'Audited Type' },
+    { id: 'auditedType', label: 'Uplaoded Files' },
     { id: 'status', label: 'Status' },
     { id: 'auditedType', label: 'ReportedAt' },
 ];
@@ -73,9 +74,9 @@ export default function AuditedFinancialsGstr9ListView({ companyProfile }) {
     const companyId = companyProfile?.data?.id
 
 
-    const {auditedFinancials = []}= useGetAuditedFinancialsDetails(companyId);
+    const { auditedFinancials = [] } = useGetAuditedFinancialsDetails(companyId);
 
-   const financialsData  =  auditedFinancials?.gstr9 || []
+    const financialsData = auditedFinancials?.gstr9 || []
 
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedGuarantor, setSelectedGuarantor] = useState(null);

@@ -6,9 +6,10 @@ import TableCell from '@mui/material/TableCell';
 import ListItemText from '@mui/material/ListItemText';
 // utils
 import { format } from 'date-fns';
-import { IconButton, Tooltip } from '@mui/material';
+import { Button, IconButton, Tooltip, Typography } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import Label from 'src/components/label';
+import { enqueueSnackbar } from 'notistack';
 
 // ----------------------------------------------------------------------
 
@@ -19,13 +20,39 @@ const statusConfig = {
 };
 
 export default function AuditedFinancialsRow({ row, selected, onSelectRow, onViewRow, onEditRow }) {
-  const { auditorName, auditedType, status , reportDate} = row;
+  const { auditorName, auditedType, status, reportDate, file } = row;
 
   return (
     <TableRow hover selected={selected}>
       <TableCell>{auditorName || 'NA'}</TableCell>
       <TableCell>{auditedType || 'NA'}</TableCell>
-       <TableCell>
+      <TableCell>
+        {file?.fileUrl ? (
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              const url = file?.fileUrl;
+              if (url) {
+                window.open(url, '_blank');
+              } else {
+                enqueueSnackbar('audited financials found!', { variant: 'error' });
+              }
+            }}
+            sx={{
+              height: 36,
+              textTransform: 'none',
+              fontWeight: 600,
+            }}
+            startIcon={<Iconify icon="mdi:eye" />}
+          >
+            {file?.fileOriginalName || 'Preview Document'}
+          </Button>
+        ) : (
+          <Typography color="text.secondary">No file uploaded.</Typography>
+        )}
+      </TableCell>
+      <TableCell>
         <Label
           variant="soft"
           color={statusConfig[Number(status)]?.color || 'default'}
@@ -33,25 +60,25 @@ export default function AuditedFinancialsRow({ row, selected, onSelectRow, onVie
           {statusConfig[Number(status)]?.label || 'Unknown'}
         </Label>
       </TableCell>
-        <TableCell>
-                <ListItemText
-                  primary={format(new Date(reportDate), 'dd MMM yyyy')}
-                  secondary={format(new Date(reportDate), 'p')}
-                  primaryTypographyProps={{ typography: 'body2', noWrap: true }}
-                  secondaryTypographyProps={{
-                    mt: 0.5,
-                    component: 'span',
-                    typography: 'caption',
-                  }}
-                />
-              </TableCell>
+      <TableCell>
+        <ListItemText
+          primary={format(new Date(reportDate), 'dd MMM yyyy')}
+          secondary={format(new Date(reportDate), 'p')}
+          primaryTypographyProps={{ typography: 'body2', noWrap: true }}
+          secondaryTypographyProps={{
+            mt: 0.5,
+            component: 'span',
+            typography: 'caption',
+          }}
+        />
+      </TableCell>
 
-        {/* <Tooltip title="View Events">
+      {/* <Tooltip title="View Events">
             <IconButton onClick={onViewRow}>
               <Iconify icon="carbon:view-filled" />
             </IconButton>
           </Tooltip> */}
-        {/* <Tooltip title="Edit" placement="top" arrow>
+      {/* <Tooltip title="Edit" placement="top" arrow>
           <IconButton onClick={onViewRow}>
             <Iconify icon="solar:eye-bold" />
           </IconButton>

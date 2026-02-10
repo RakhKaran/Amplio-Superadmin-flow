@@ -26,7 +26,7 @@ export default function AllAuditedFinancialsDetailsView({ companyProfile }) {
 
   const companyProfilesId = companyProfile?.data?.id;
 
-  const { auditedFinancials } = useGetAuditedFinancialsDetails(companyProfilesId);
+  const { auditedFinancials, refreshAuditedFinancialsDetails } = useGetAuditedFinancialsDetails(companyProfilesId);
 
   const flatAuditedFinancials = [
     ...(auditedFinancials?.financialStatements ?? []),
@@ -58,6 +58,7 @@ export default function AllAuditedFinancialsDetailsView({ companyProfile }) {
     );
 
     enqueueSnackbar('Audited financials approved', { variant: 'success' });
+    refreshAuditedFinancialsDetails();
   };
 
   const handleRejectSubmit = async () => {

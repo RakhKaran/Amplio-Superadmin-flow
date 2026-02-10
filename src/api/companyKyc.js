@@ -210,7 +210,7 @@ export function useGetAuditedFinancialsDetails(companyId) {
     });
     
 
-    const refreshGuarantorDetails = () => {
+    const refreshAuditedFinancialsDetails = () => {
         mutate(); // <-- trigger re-fetch
     };
 
@@ -220,7 +220,7 @@ export function useGetAuditedFinancialsDetails(companyId) {
         error,
         validating: isValidating,
         empty: !isLoading && (!data?.data || data?.data?.length === 0),
-        refreshGuarantorDetails,
+        refreshAuditedFinancialsDetails,
     };
 
 

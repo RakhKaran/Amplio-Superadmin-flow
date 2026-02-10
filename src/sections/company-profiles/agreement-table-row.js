@@ -33,40 +33,40 @@ export default function AgreementTableRow({ row, selected, onSelectRow, onViewRo
       <TableCell>{businessKycDocumentType?.name || 'NA'}</TableCell>
 
       {/* <TableCell>{media?.fileName || 'NA'}</TableCell> */}
-       <TableCell>
-                            {/* <Button
+      <TableCell>
+        {/* <Button
                               variant="outlined"
                               startIcon={<Iconify icon="mdi:eye" />}
                               onClick={() => window.open(media?.fileName, '_blank')}
                             >
                               Preview
                             </Button> */}
-      
-                            {media?.fileUrl ? (
-                              <Button
-                                variant="outlined"
-                                color="primary"
-                                onClick={() => {
-                                  const url = media?.fileUrl;
-                                  if (url) {
-                                    window.open(url, '_blank');
-                                  } else {
-                                    enqueueSnackbar('Agreement found!', { variant: 'error' });
-                                  }
-                                }}
-                                sx={{
-                                  height: 36,
-                                  textTransform: 'none',
-                                  fontWeight: 600,
-                                }}
-                                startIcon={<Iconify icon="mdi:eye" />}
-                              >
-                                {media?.fileName || 'Preview Document'}
-                              </Button>
-                            ) : (
-                              <Typography color="text.secondary">No agreement file uploaded.</Typography>
-                            )}
-                          </TableCell>
+
+        {media?.fileUrl ? (
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              const url = media?.fileUrl;
+              if (url) {
+                window.open(url, '_blank');
+              } else {
+                enqueueSnackbar('Agreement found!', { variant: 'error' });
+              }
+            }}
+            sx={{
+              height: 36,
+              textTransform: 'none',
+              fontWeight: 600,
+            }}
+            startIcon={<Iconify icon="mdi:eye" />}
+          >
+            {media?.fileName || 'Preview Document'}
+          </Button>
+        ) : (
+          <Typography color="text.secondary">No agreement file uploaded.</Typography>
+        )}
+      </TableCell>
       <TableCell>
         <Label
           variant="soft"
@@ -87,12 +87,12 @@ export default function AgreementTableRow({ row, selected, onSelectRow, onViewRo
 
 
       {/* <TableCell> */}
-        {/* <Tooltip title="View Events">
+      {/* <Tooltip title="View Events">
             <IconButton onClick={onViewRow}>
               <Iconify icon="carbon:view-filled" />
             </IconButton>
           </Tooltip> */}
-        {/* <Tooltip title="Edit" placement="top" arrow>
+      {/* <Tooltip title="Edit" placement="top" arrow>
           <IconButton onClick={onViewRow}>
             <Iconify icon="solar:eye-bold" />
           </IconButton>

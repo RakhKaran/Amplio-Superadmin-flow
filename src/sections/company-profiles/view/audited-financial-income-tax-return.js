@@ -53,6 +53,7 @@ import AuditedFinancialsIncomeTaxRow from '../audited-financials-income-tax-retu
 const TABLE_HEAD = [
     { id: 'auditorName', label: 'Auditer Name' },
     { id: 'auditedType', label: 'Audited Type' },
+    { id: 'auditedType', label: 'Uplaoded Files' },
     { id: 'status', label: 'Status' },
     { id: 'auditedType', label: 'ReportedAt' },
 ];
@@ -74,9 +75,9 @@ export default function AuditedFinancialsIncomeTaxReturnListView({ companyProfil
     const companyId = companyProfile?.data?.id
 
 
-    const {auditedFinancials = []}= useGetAuditedFinancialsDetails(companyId);
+    const { auditedFinancials = [] } = useGetAuditedFinancialsDetails(companyId);
 
-   const financialsData  =  auditedFinancials?.incomeTaxReturns  || []
+    const financialsData = auditedFinancials?.incomeTaxReturns || []
 
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedGuarantor, setSelectedGuarantor] = useState(null);

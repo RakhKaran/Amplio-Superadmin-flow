@@ -52,6 +52,7 @@ import AuditedFinancialsRow from '../audited-financials-row';
 const TABLE_HEAD = [
     { id: 'auditorName', label: 'Auditer Name' },
     { id: 'auditedType', label: 'Audited Type' },
+    { id: 'auditedType', label: 'Uplaoded Files' },
     { id: 'status', label: 'Status' },
     { id: 'auditedType', label: 'ReportedAt' },
 ];
