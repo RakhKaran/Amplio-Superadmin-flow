@@ -9,7 +9,7 @@ export default function CompanyBankCard({ bank, onViewRow }) {
   if (!bank) return null;
 
   const STATUS = {
-    0: { label: 'Under Review', color: '#ED6C02', icon: 'mdi:clock-time-eight-outline' },
+    0: { label: 'Under Review', color: '#f8a15a', icon: 'mdi:clock-time-eight-outline' },
     1: { label: 'Approved', color: '#2E7D32', icon: 'mdi:check-decagram' },
     2: { label: 'Rejected', color: '#C62828', icon: 'mdi:close-circle' },
   };
@@ -64,6 +64,13 @@ export default function CompanyBankCard({ bank, onViewRow }) {
                     state: { bankData: bank },
                   })
                 }
+                sx={{
+                  cursor: 'pointer',
+                  textDecoration: 'none',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                }}
               >
                 {bank?.bankName}
               </Typography>
@@ -97,8 +104,12 @@ export default function CompanyBankCard({ bank, onViewRow }) {
             color: STATUS[bank?.status]?.color,
             fontWeight: 600,
             px: 1.5,
+            '&:hover': {
+              bgcolor: `${STATUS[bank?.status]?.color}1A`,
+            },
           }}
         />
+
       </Stack>
 
       <Divider />

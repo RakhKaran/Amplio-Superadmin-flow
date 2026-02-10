@@ -89,7 +89,7 @@ export function useNavData() {
           //   ],
           // },
           {
-            title: t('Company Profiles'),
+            title: t('Seller Profiles'),
             path: paths.dashboard.companyProfiles.root,
             icon: ICONS.company,
           },

@@ -26,8 +26,22 @@ export default function AllAuditedFinancialsDetailsView({ companyProfile }) {
 
   const companyProfilesId = companyProfile?.data?.id;
 
-  const { auditedFinancials = [] } =
-    useGetAuditedFinancialsDetails(companyProfilesId);
+  const { auditedFinancials } = useGetAuditedFinancialsDetails(companyProfilesId);
+
+  const flatAuditedFinancials = [
+    ...(auditedFinancials?.financialStatements ?? []),
+    ...(auditedFinancials?.incomeTaxReturns ?? []),
+    ...(auditedFinancials?.gstr9 ?? []),
+    ...(auditedFinancials?.gst3b ?? []),
+  ];
+
+
+  const allApproved =
+    flatAuditedFinancials.length > 0 &&
+    flatAuditedFinancials.every(item => item.status === 1);
+
+
+
 
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
@@ -103,6 +117,7 @@ export default function AllAuditedFinancialsDetailsView({ companyProfile }) {
             <Button
               variant="soft"
               color="error"
+              disabled={allApproved}
               onClick={() => setRejectOpen(true)}
             >
               Decline
@@ -111,6 +126,7 @@ export default function AllAuditedFinancialsDetailsView({ companyProfile }) {
             <Button
               variant="soft"
               color="success"
+              disabled={allApproved}
               onClick={handleApproveAll}
             >
               Approve

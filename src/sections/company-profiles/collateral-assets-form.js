@@ -1,4 +1,5 @@
 import { Button, Divider, Grid, Stack, Typography } from "@mui/material";
+import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import FormProvider, {
     RHFCustomFileUploadBox,
@@ -21,8 +22,10 @@ export function CollateralAssetForm({ asset, index, onApprove, onReject }) {
             description: asset.description ?? '',
             estimatedValue: asset.estimatedValue ?? '',
             valuationDate: asset.valuationDate
-                ? asset.valuationDate.split('T')[0]
+                ? format(new Date(asset?.valuationDate), 'dd/MM/yyyy') 
                 : '',
+
+
             trustName: asset.trustName ?? '',
             securityDocRef: asset.securityDocumentRef ?? '',
             securityDocument: asset.securityDocument

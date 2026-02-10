@@ -28,8 +28,8 @@ import PendingVerificationForm from '../company-profiles-agreement';
 // ----------------------------------------------------------------------
 
 const TABS = [
-  { value: 'basic', label: 'Seller Basic Info' },
-  { value: 'details', label: 'Seller Documents' },
+  { value: 'basic', label: 'Basic Info' },
+  { value: 'details', label: 'Documents' },
   { value: 'bank', label: 'Bank Details' },
   { value: 'signatories', label: 'Signatories' },
   { value: 'busienssProfile', label: 'Business Profile' },

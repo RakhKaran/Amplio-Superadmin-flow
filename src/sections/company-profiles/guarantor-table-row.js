@@ -18,8 +18,14 @@ const statusConfig = {
   2: { label: 'Rejected', color: 'error' },
 };
 
+const verificationConfig = {
+  true: { label: 'Verified', color: 'success' },
+  false: { label: 'Pending', color: 'warning' },
+};
+
+
 export default function GuarantorTableRow({ row, selected, onSelectRow, onViewRow, onEditRow }) {
-  const { guarantorCompanyName, CIN, guarantorType, status } = row;
+  const { guarantorCompanyName, CIN, guarantorType, status, businessKycGuarantorVerification } = row;
 
   return (
     <TableRow hover selected={selected}>
@@ -35,6 +41,16 @@ export default function GuarantorTableRow({ row, selected, onSelectRow, onViewRo
           {statusConfig[Number(status)]?.label || 'Unknown'}
         </Label>
       </TableCell>
+
+      <TableCell>
+  <Label
+    variant="soft"
+    color={verificationConfig[businessKycGuarantorVerification?.isVerified]?.color}
+  >
+    {verificationConfig[businessKycGuarantorVerification?.isVerified]?.label}
+  </Label>
+</TableCell>
+
 
       <TableCell>
         {/* <Tooltip title="View Events">

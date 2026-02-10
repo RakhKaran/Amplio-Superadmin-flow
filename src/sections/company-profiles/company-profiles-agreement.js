@@ -3,69 +3,75 @@ import { Card, Stack, Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 import axiosInstance from 'src/utils/axios';
+import AgreementDetailsListView from './view/agreement-details-list-view';
+import { useGetAgreementDetails } from 'src/api/companyKyc';
 
 export default function PendingVerificationForm({ companyProfiles }) {
-    const { enqueueSnackbar } = useSnackbar();
-    const [loading, setLoading] = useState(false);
-    const [isCompleted, setIsCompleted] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState(false);
 
+  const companyId = companyProfiles?.data?.id;
 
-    const companyId = companyProfiles?.data?.id
+  const { agreementDetails = [] } =
+    useGetAgreementDetails(companyId);
 
-    const handleFetchAgreement = async () => {
-        try {
-            setLoading(true);
+  const hasAgreements = Array.isArray(agreementDetails) && agreementDetails.length > 0;
 
-            const res = await axiosInstance.patch(
-                `/company-profiles/${companyId}/pending-verification`
-            );
+  const handleFetchAgreement = async () => {
+    try {
+      setLoading(true);
 
-            enqueueSnackbar(res.data.message || 'Moved to Agreement', {
-                variant: 'success',
-            });
+      const res = await axiosInstance.patch(
+        `/company-profiles/${companyId}/pending-verification`
+      );
 
-            setIsCompleted(true);
+      enqueueSnackbar(res.data.message || 'Moved to Agreement', {
+        variant: 'success',
+      });
+    } catch (error) {
+      enqueueSnackbar(
+        error?.response?.data?.error?.message || 'Verification failed',
+        { variant: 'error' }
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        } catch (error) {
-            const message =
-                error?.response?.data?.message ||
-                error?.response?.data?.error?.message ||
-                'Verification failed';
+  return (
+    <Card sx={{ p: 3 }}>
+      <Stack spacing={2}>
 
-            enqueueSnackbar(message, { variant: 'error' });
-        } finally {
-            setLoading(false);
-        }
-    };
+        {hasAgreements ? (
+          <AgreementDetailsListView
+            companyProfile={agreementDetails}
+          />
+        ) : (
+          <>
+            <Typography variant="h6">Verification</Typography>
 
-    return (
-        <Card sx={{ p: 3 }}>
-            <Stack spacing={2}>
-                <Typography variant="h6">
-                    Final Verification
-                </Typography>
+            <Typography variant="body2" color="text.secondary">
+              This will verify Business Profile, Audited Financials,
+              Collateral, and Guarantor details.
+              If everything is approved, the application will move to
+              <b> Agreement</b>.
+            </Typography>
 
-                <Typography variant="body2" color="text.secondary">
-                    This will verify Business Profile, Audited Financials,
-                    Collateral, and Guarantor details.
-                    If everything is approved, the application will move to
-                    <b> Agreement</b>.
-                </Typography>
-
-                <Stack alignItems="center">
-                    <LoadingButton
-                        size="small"
-                        variant="soft"
-                        color="success"
-                        disabled={isCompleted}
-                        loading={loading}
-                        onClick={handleFetchAgreement}
-                        sx={{ px: 3 }} 
-                    >
-                        Fetch Agreement
-                    </LoadingButton>
-                </Stack>
+            <Stack alignItems="flex-end">
+              <LoadingButton
+                size="small"
+                variant="soft"
+                color="success"
+                loading={loading}
+                onClick={handleFetchAgreement}
+                sx={{ px: 3 }}
+              >
+                Agreement
+              </LoadingButton>
             </Stack>
-        </Card>
-    );
+          </>
+        )}
+      </Stack>
+    </Card>
+  );
 }

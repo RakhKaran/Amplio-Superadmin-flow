@@ -93,7 +93,7 @@ export default function CompanyProfileListView() {
     orderBy: table.orderBy,
     startDate: filters.startDate,
     endDate: filters.endDate,
-    validSortFields: ['companyName', 'CIN', 'GSTIN'],
+    validSortFields: ['createdAt', 'companyName', 'CIN', 'GSTIN'],
     searchTextValue: filters.name,
   })
 

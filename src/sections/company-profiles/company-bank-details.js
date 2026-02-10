@@ -25,6 +25,7 @@ import Iconify from 'src/components/iconify';
 import { useLocation } from 'react-router';
 import { Card } from '@mui/material';
 import RejectReasonDialog from 'src/components/reject dialog box/reject-dialog-box';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 
 // ----------------------------------------------------------------------
@@ -227,6 +228,17 @@ export default function CompanyBankDetails({ companyProfile }) {
 
   return (
     <Container>
+              <CustomBreadcrumbs
+                heading="Details"
+                links={[
+                  { name: 'Dashboard', href: paths.dashboard.root },
+                  { name: 'Bank Details', href: paths.dashboard.companyProfiles.list },
+                  { name: bankDetails?.bankName },
+                ]}
+                sx={{
+                  mb: { xs: 3, md: 5 },
+                }}
+              />
       <FormProvider methods={methods} onSubmit={onSubmit}>
         <Card
           sx={{

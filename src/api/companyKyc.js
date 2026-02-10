@@ -174,6 +174,32 @@ export function useGetGuarantorDetails(companyId) {
 
 }
 
+export function useGetAgreementDetails(companyId) {
+    const URL =
+        companyId ? endpoints.CompanyKyc.getAgrrement(String(companyId))
+            : null;
+
+    const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher, {
+        keepPreviousData: true,
+    });
+    
+
+    const refreshAgreementDetails = () => {
+        mutate(); // <-- trigger re-fetch
+    };
+
+    return {
+        agreementDetails: data?.data || [],   // <-- ALWAYS ARRAY
+        loading: isLoading,
+        error,
+        validating: isValidating,
+        empty: !isLoading && (!data?.data || data?.data?.length === 0),
+        refreshAgreementDetails,
+    };
+
+
+}
+
 export function useGetAuditedFinancialsDetails(companyId) {
     const URL =
         companyId ? endpoints.CompanyKyc.getAuditedFinancials(String(companyId))

@@ -41,21 +41,19 @@ import {
     TablePaginationCustom,
 } from 'src/components/table';
 //
-import { useGetGuarantorDetails } from 'src/api/companyKyc';
 
 import GuarantorTableRow from '../guarantor-table-row';
 import GuarantorApprovalForm from '../guarantor-approvel-form';
+import AgreementTableRow from '../agreement-table-row';
 
 
 // ----------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'guarantorCompanyName', label: 'Company Name' },
-    { id: 'guarantorType', label: 'Guarantor Type' },
-    { id: 'CIN', label: 'CIN' },
-    { id: 'status', label: 'Status' },
-    { id: 'status', label: 'Execution' },
-    { id: '', label: 'Actions' },
+    { id: 'guarantorCompanyName', label: 'Agreement Name' },
+    { id: 'guarantorType', label: 'Uploaded Files' },
+    { id: 'status', label: 'E-Sign' },
+    // { id: '', label: 'Actions' },
 ];
 
 const defaultFilters = {
@@ -65,16 +63,14 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function GuarantorDetailsListView({ companyProfile }) {
+export default function AgreementDetailsListView({ companyProfile }) {
     const table = useTable();
 
     const settings = useSettingsContext();
     const router = useRouter();
     const confirm = useBoolean();
 
-    const companyId = companyProfile?.data?.id
 
-    const { guarantorDetails = [] } = useGetGuarantorDetails(companyId);
 
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedGuarantor, setSelectedGuarantor] = useState(null);
@@ -94,7 +90,7 @@ export default function GuarantorDetailsListView({ companyProfile }) {
     const [filters, setFilters] = useState(defaultFilters);
 
     const dataFiltered = applyFilter({
-        inputData: guarantorDetails,
+        inputData: companyProfile,
         comparator: getComparator(table.order, table.orderBy),
         filters,
     });
@@ -119,11 +115,11 @@ export default function GuarantorDetailsListView({ companyProfile }) {
 
     const handleDeleteRows = useCallback(() => {
         table.onUpdatePageDeleteRows({
-            totalRows: guarantorDetails.length,
+            totalRows: companyProfile.length,
             totalRowsInPage: dataInPage.length,
             totalRowsFiltered: dataFiltered.length,
         });
-    }, [dataFiltered.length, dataInPage.length, guarantorDetails.length, table]);
+    }, [dataFiltered.length, dataInPage.length, companyProfile.length, table]);
 
 
 
@@ -135,11 +131,11 @@ export default function GuarantorDetailsListView({ companyProfile }) {
                         <TableSelectedAction
                             dense={table.dense}
                             numSelected={table.selected.length}
-                            rowCount={guarantorDetails.length}
+                            rowCount={companyProfile.length}
                             onSelectAllRows={(checked) =>
                                 table.onSelectAllRows(
                                     checked,
-                                    guarantorDetails.map((row) => row.id)
+                                    companyProfile.map((row) => row.id)
                                 )
                             }
                             action={
@@ -158,13 +154,13 @@ export default function GuarantorDetailsListView({ companyProfile }) {
                                     order={table.order}
                                     orderBy={table.orderBy}
                                     headLabel={TABLE_HEAD}
-                                    rowCount={guarantorDetails.length}
+                                    rowCount={companyProfile.length}
                                     numSelected={table.selected.length}
                                     onSort={table.onSort}
                                     onSelectAllRows={(checked) =>
                                         table.onSelectAllRows(
                                             checked,
-                                            guarantorDetails.map((row) => row.id)
+                                            companyProfile.map((row) => row.id)
                                         )
                                     }
                                     showCheckbox={false}
@@ -177,7 +173,7 @@ export default function GuarantorDetailsListView({ companyProfile }) {
                                             table.page * table.rowsPerPage + table.rowsPerPage
                                         )
                                         .map((row) => (
-                                            <GuarantorTableRow
+                                            <AgreementTableRow
                                                 key={row.id}
                                                 row={row}
                                                 selected={table.selected.includes(row.id)}
