@@ -93,7 +93,7 @@ export default function CompanyProfileListView() {
     orderBy: table.orderBy,
     startDate: filters.startDate,
     endDate: filters.endDate,
-    validSortFields: ['createdAt', 'companyName', 'CIN', 'GSTIN'],
+    validSortFields: ['companyName', 'CIN', 'GSTIN'],
     searchTextValue: filters.name,
   })
 
@@ -195,7 +195,11 @@ export default function CompanyProfileListView() {
                     variant={filters.status === tab.value ? 'filled' : 'soft'}
                     color={tab.color}
                   >
-                    {tab.value === 'all' ? totalCount.total : totalCount[tab.value]}
+                    {tab.value === 'all' ? totalCount.totalCount : totalCount[tab.value]}
+                    {tab.value === 0 && totalCount.totalPending}
+                    {tab.value === 1 && totalCount.totalUnderReview}
+                    {tab.value === 2 && totalCount.totalVerified}
+                    {tab.value === 3 && totalCount.totalRejected}
                   </Label>
                 }
                 iconPosition="end"
@@ -274,7 +278,7 @@ export default function CompanyProfileListView() {
           </TableContainer>
 
           <TablePaginationCustom
-            count={totalCount}
+            count={totalCount.totalCount}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}
