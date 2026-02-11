@@ -10,6 +10,7 @@ import { Button, IconButton, Tooltip, Typography } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import Label from 'src/components/label';
 import { enqueueSnackbar } from 'notistack';
+import DocumentPreviewButton from 'src/components/custom-preview-button/preview-button';
 
 // ----------------------------------------------------------------------
 
@@ -31,41 +32,13 @@ export default function AgreementTableRow({ row, selected, onSelectRow, onViewRo
   return (
     <TableRow hover selected={selected}>
       <TableCell>{businessKycDocumentType?.name || 'NA'}</TableCell>
-
-      {/* <TableCell>{media?.fileName || 'NA'}</TableCell> */}
-      <TableCell>
-        {/* <Button
-                              variant="outlined"
-                              startIcon={<Iconify icon="mdi:eye" />}
-                              onClick={() => window.open(media?.fileName, '_blank')}
-                            >
-                              Preview
-                            </Button> */}
-
-        {media?.fileUrl ? (
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => {
-              const url = media?.fileUrl;
-              if (url) {
-                window.open(url, '_blank');
-              } else {
-                enqueueSnackbar('Agreement found!', { variant: 'error' });
-              }
-            }}
-            sx={{
-              height: 36,
-              textTransform: 'none',
-              fontWeight: 600,
-            }}
-            startIcon={<Iconify icon="mdi:eye" />}
-          >
-            {media?.fileName || 'Preview Document'}
-          </Button>
-        ) : (
-          <Typography color="text.secondary">No agreement file uploaded.</Typography>
-        )}
+        <TableCell>
+        <DocumentPreviewButton
+        fileName={media?.fileName}
+        fileUrl={media?.fileUrl}
+        errorMessage='File not found'
+        buttonText='Preview Document'
+        />
       </TableCell>
       <TableCell>
         <Label

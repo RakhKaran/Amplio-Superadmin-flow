@@ -25,6 +25,7 @@ import Label from 'src/components/label';
 import { TableNoData } from 'src/components/table';
 import RejectReasonDialog from 'src/components/reject dialog box/reject-dialog-box';
 import { useGetDocuments } from 'src/api/companyKyc';
+import DocumentPreviewButton from 'src/components/custom-preview-button/preview-button';
 
 export default function CompanyDocumentDetails({ companyProfile }) {
   const companyId = companyProfile?.data?.id;
@@ -117,40 +118,16 @@ export default function CompanyDocumentDetails({ companyProfile }) {
                 documents.map((doc) => (
                   <TableRow key={doc.id}>
                     <TableCell>{doc.documents?.name || 'NA'}</TableCell>
-                    <TableCell>
-                      {/* <Button
-                        variant="outlined"
-                        startIcon={<Iconify icon="mdi:eye" />}
-                        onClick={() => window.open(doc.documentsFile?.fileUrl, '_blank')}
-                      >
-                        Preview
-                      </Button> */}
 
-                      {doc.documentsFile?.fileUrl ? (
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          onClick={() => {
-                            const url = doc.documentsFile?.fileUrl;
-                            if (url) {
-                              window.open(url, '_blank');
-                            } else {
-                              enqueueSnackbar('PAN preview file not found!', { variant: 'error' });
-                            }
-                          }}
-                          sx={{
-                            height: 36,
-                            textTransform: 'none',
-                            fontWeight: 600,
-                          }}
-                          startIcon={<Iconify icon="mdi:eye" />}
-                        >
-                          {doc.documentsFile?.fileName || 'Preview Document'}
-                        </Button>
-                      ) : (
-                        <Typography color="text.secondary">No PAN file uploaded.</Typography>
-                      )}
+                    <TableCell>
+                      <DocumentPreviewButton
+                        fileName={doc.documentsFile?.fileOriginalName}
+                        fileUrl={doc.documentsFile?.fileUrl}
+                        errorMessage='File not found'
+                        buttonText='Preview Document'
+                      />
                     </TableCell>
+
                     <TableCell>
                       <Label
                         variant="soft"

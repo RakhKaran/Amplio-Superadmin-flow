@@ -26,6 +26,7 @@ import { useLocation } from 'react-router';
 import { Card } from '@mui/material';
 import RejectReasonDialog from 'src/components/reject dialog box/reject-dialog-box';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import DocumentPreviewButton from 'src/components/custom-preview-button/preview-button';
 
 
 // ----------------------------------------------------------------------
@@ -131,17 +132,17 @@ export default function CompanyBankDetails({ companyProfile }) {
 
   const existingProof = bankDetails?.bankAccountProof
     ? {
-        id: bankDetails.bankAccountProof.id,
-        name: bankDetails.bankAccountProof.fileOriginalName,
-        url: bankDetails.bankAccountProof.fileUrl,
-        status: bankDetails.status === 1 ? 'approved' : 'pending',
-        isServerFile: true,
-      }
+      id: bankDetails.bankAccountProof.id,
+      name: bankDetails.bankAccountProof.fileOriginalName,
+      url: bankDetails.bankAccountProof.fileUrl,
+      status: bankDetails.status === 1 ? 'approved' : 'pending',
+      isServerFile: true,
+    }
     : null;
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-  
+
       const proofFile = data.addressProof;
       let uploadedProofId = null;
 
@@ -228,17 +229,17 @@ export default function CompanyBankDetails({ companyProfile }) {
 
   return (
     <Container>
-              <CustomBreadcrumbs
-                heading="Details"
-                links={[
-                  { name: 'Dashboard', href: paths.dashboard.root },
-                  { name: 'Bank Details', href: paths.dashboard.companyProfiles.list },
-                  { name: bankDetails?.bankName },
-                ]}
-                sx={{
-                  mb: { xs: 3, md: 5 },
-                }}
-              />
+      <CustomBreadcrumbs
+        heading="Details"
+        links={[
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'Bank Details', href: paths.dashboard.companyProfiles.list },
+          { name: bankDetails?.bankName },
+        ]}
+        sx={{
+          mb: { xs: 3, md: 5 },
+        }}
+      />
       <FormProvider methods={methods} onSubmit={onSubmit}>
         <Card
           sx={{
@@ -280,24 +281,12 @@ export default function CompanyBankDetails({ companyProfile }) {
                   Uploaded {documentType === 'cheque' ? 'Cheque' : 'Bank Statement'} :
                 </Typography>
               </Box>
-
-              {existingProof?.url ? (
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<Iconify icon="mdi:eye" />}
-                  sx={{
-                    height: 36,
-                    textTransform: 'none',
-                    fontWeight: 600,
-                  }}
-                  onClick={() => window.open(existingProof.url, '_blank')}
-                >
-                  Preview {documentType === 'cheque' ? 'Cheque' : 'Statement'}
-                </Button>
-              ) : (
-                <Typography color="text.secondary">No file uploaded.</Typography>
-              )}
+              <DocumentPreviewButton
+                fileName={`preview ${documentType === 'cheque' ? 'Cheque' : 'Bank Statement'}`}
+                fileUrl={existingProof?.url}
+                errorMessage='File not found'
+                buttonText='Preview Document'
+              />
             </Box>
           </Box>
           {/* <RHFFileUploadBox

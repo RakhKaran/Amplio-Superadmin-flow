@@ -12,7 +12,7 @@ export default function PendingVerificationForm({ companyProfiles }) {
 
   const companyId = companyProfiles?.data?.id;
 
-  const { agreementDetails = [] } =
+  const { agreementDetails = [] , refreshAgreementDetails } =
     useGetAgreementDetails(companyId);
 
   const hasAgreements = Array.isArray(agreementDetails) && agreementDetails.length > 0;
@@ -28,6 +28,7 @@ export default function PendingVerificationForm({ companyProfiles }) {
       enqueueSnackbar(res.data.message || 'Moved to Agreement', {
         variant: 'success',
       });
+      refreshAgreementDetails();
     } catch (error) {
       enqueueSnackbar(
         error?.response?.data?.error?.message || 'Verification failed',

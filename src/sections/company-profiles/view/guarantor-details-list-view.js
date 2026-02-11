@@ -74,7 +74,7 @@ export default function GuarantorDetailsListView({ companyProfile }) {
 
     const companyId = companyProfile?.data?.id
 
-    const { guarantorDetails = [] } = useGetGuarantorDetails(companyId);
+    const { guarantorDetails = [], refreshGuarantorDetails } = useGetGuarantorDetails(companyId);
 
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedGuarantor, setSelectedGuarantor] = useState(null);
@@ -214,6 +214,7 @@ export default function GuarantorDetailsListView({ companyProfile }) {
                     setOpenDialog(false);
                     setSelectedGuarantor(null);
                 }}
+                refreshGuarantorDetails={refreshGuarantorDetails}
             />
 
 

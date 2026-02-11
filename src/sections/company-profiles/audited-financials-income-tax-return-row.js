@@ -10,6 +10,7 @@ import { Button, IconButton, Tooltip, Typography } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import Label from 'src/components/label';
 import { enqueueSnackbar } from 'notistack';
+import DocumentPreviewButton from 'src/components/custom-preview-button/preview-button';
 
 // ----------------------------------------------------------------------
 const statusConfig = {
@@ -26,30 +27,12 @@ export default function AuditedFinancialsIncomeTaxRow({ row, selected, onSelectR
       <TableCell>{auditorName || 'NA'}</TableCell>
       <TableCell>{auditedType || 'NA'}</TableCell>
       <TableCell>
-        {file?.fileUrl ? (
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => {
-              const url = file?.fileUrl;
-              if (url) {
-                window.open(url, '_blank');
-              } else {
-                enqueueSnackbar('audited financials found!', { variant: 'error' });
-              }
-            }}
-            sx={{
-              height: 36,
-              textTransform: 'none',
-              fontWeight: 600,
-            }}
-            startIcon={<Iconify icon="mdi:eye" />}
-          >
-            {file?.fileOriginalName || 'Preview Document'}
-          </Button>
-        ) : (
-          <Typography color="text.secondary">No file uploaded.</Typography>
-        )}
+        <DocumentPreviewButton
+          fileName={file?.fileOriginalName}
+          fileUrl={file?.fileUrl}
+          errorMessage='File not found'
+          buttonText='Preview Document'
+        />
       </TableCell>
       <TableCell>
         <Label

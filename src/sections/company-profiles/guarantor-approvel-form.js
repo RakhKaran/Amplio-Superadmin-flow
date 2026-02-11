@@ -15,7 +15,7 @@ import FormProvider, { RHFCustomFileUploadBox, RHFTextField } from 'src/componen
 import RejectReasonDialog from 'src/components/reject dialog box/reject-dialog-box';
 import axiosInstance from 'src/utils/axios';
 
-export default function GuarantorApprovalForm({ open, guarantor, onClose }) {
+export default function GuarantorApprovalForm({ open, guarantor, onClose , refreshGuarantorDetails}) {
     const { enqueueSnackbar } = useSnackbar();
 
     const methods = useForm({
@@ -76,6 +76,7 @@ export default function GuarantorApprovalForm({ open, guarantor, onClose }) {
         });
 
         enqueueSnackbar('Guarantor approved', { variant: 'success' });
+        refreshGuarantorDetails();
         onClose();
     };
 

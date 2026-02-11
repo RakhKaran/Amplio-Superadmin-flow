@@ -24,6 +24,7 @@ import axiosInstance from 'src/utils/axios';
 import { useLocation } from 'react-router';
 import { useRouter } from 'src/routes/hook';
 import RejectReasonDialog from 'src/components/reject dialog box/reject-dialog-box';
+import DocumentPreviewButton from 'src/components/custom-preview-button/preview-button';
 
 
 
@@ -86,7 +87,7 @@ export default function CompanySignatoriesDetails({ currentUser, isViewMode, isE
         [currentUser]
     );
 
-const router = useRouter();
+    const router = useRouter();
     const methods = useForm({
         defaultValues,
         resolver: yupResolver(schema),
@@ -213,7 +214,7 @@ const router = useRouter();
             <FormProvider methods={methods} onSubmit={onSubmit}>
                 <Typography variant="h6">
                     Signatory Details
-                </Typography>   
+                </Typography>
                 <Grid container spacing={3} mt={2}>
                     <Grid item xs={12} sm={6}>
                         <RHFTextField name="name" label="Name*" disabled />
@@ -266,25 +267,12 @@ const router = useRouter();
                                         Check  Uploaded PanCard :
                                     </Typography>
                                 </Box>
-
-                                {currentUser?.panCardFile?.fileUrl ? (
-                                    <Button
-                                        variant="outlined"
-                                        color="primary"
-
-                                        startIcon={<Iconify icon="mdi:eye" />}
-                                        sx={{
-                                            height: 36,
-                                            textTransform: 'none',
-                                            fontWeight: 600,
-                                        }}
-                                        onClick={() => window.open(currentUser.panCardFile.fileUrl, '_blank')}
-                                    >
-                                        Preview Document
-                                    </Button>
-                                ) : (
-                                    <Typography color="text.secondary">No file uploaded.</Typography>
-                                )}
+                                <DocumentPreviewButton
+                                    fileName={currentUser?.panCardFile?.fileOriginalName}
+                                    fileUrl={currentUser?.panCardFile?.fileUrl}
+                                    errorMessage='File not found'
+                                    buttonText='Preview Document'
+                                />
                             </Box>
                         </Box>
                     </Grid>
@@ -331,24 +319,12 @@ const router = useRouter();
                                         Check  Uploaded Resolution :
                                     </Typography>
                                 </Box>
-
-                                {currentUser?.boardResolutionFile?.fileUrl ? (
-                                    <Button
-                                        variant="outlined"
-                                        color="primary"
-                                        startIcon={<Iconify icon="mdi:eye" />}
-                                        sx={{
-                                            height: 36,
-                                            textTransform: 'none',
-                                            fontWeight: 600,
-                                        }}
-                                        onClick={() => window.open(currentUser.boardResolutionFile.fileUrl, '_blank')}
-                                    >
-                                        Preview Document
-                                    </Button>
-                                ) : (
-                                    <Typography color="text.secondary">No file uploaded.</Typography>
-                                )}
+                                 <DocumentPreviewButton
+                                    fileName={currentUser?.boardResolutionFile?.fileOriginalName}
+                                    fileUrl={currentUser?.boardResolutionFile?.fileUrl}
+                                    errorMessage='File not found'
+                                    buttonText='Preview Document'
+                                />
                             </Box>
                         </Box>
                     </Grid>
@@ -374,14 +350,14 @@ const router = useRouter();
                     </Button>
                 </Stack>
             </FormProvider>
-             <RejectReasonDialog
-                    title="Reject Signatory"
-                    open={rejectOpen}
-                    onClose={() => setRejectOpen(false)}
-                    reason={rejectReason}
-                    setReason={setRejectReason}
-                    onSubmit={handleRejectSubmit}
-                  />
+            <RejectReasonDialog
+                title="Reject Signatory"
+                open={rejectOpen}
+                onClose={() => setRejectOpen(false)}
+                reason={rejectReason}
+                setReason={setRejectReason}
+                onSubmit={handleRejectSubmit}
+            />
         </Card>
     );
 }
