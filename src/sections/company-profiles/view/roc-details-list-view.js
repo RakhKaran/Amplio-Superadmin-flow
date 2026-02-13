@@ -45,25 +45,29 @@ import {
 import GuarantorTableRow from '../guarantor-table-row';
 import GuarantorApprovalForm from '../guarantor-approvel-form';
 import AgreementTableRow from '../agreement-table-row';
+import RocTableRow from '../roc-table-row';
 
 
 // ----------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'guarantorCompanyName', label: 'Agreement Name' },
-    { id: 'guarantorType', label: 'Uploaded Files' },
-    { id: 'status', label: 'E-Sign' },
-    // { id: '', label: 'Actions' },
+    { id: 'serviceRequestNumber', label: 'Service Request No' },
+    { id: 'date', label: 'Date' },
+    { id: 'file', label: 'Uploaded File' },
+    { id: 'status', label: 'Status' },
 ];
+
 
 const defaultFilters = {
     name: '',
     status: 'all',
 };
 
+
+
 // ----------------------------------------------------------------------
 
-export default function AgreementDetailsListView({ companyProfile }) {
+export default function RocDetailsListView({ companyProfile }) {
     const table = useTable();
 
     const settings = useSettingsContext();
@@ -173,7 +177,7 @@ export default function AgreementDetailsListView({ companyProfile }) {
                                             table.page * table.rowsPerPage + table.rowsPerPage
                                         )
                                         .map((row) => (
-                                            <AgreementTableRow
+                                            <RocTableRow
                                                 key={row.id}
                                                 row={row}
                                                 selected={table.selected.includes(row.id)}

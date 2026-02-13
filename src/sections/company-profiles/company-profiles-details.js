@@ -36,7 +36,7 @@ const STATUS_DISPLAY = {
   3: { label: 'Rejected', color: 'error' },
 };
 
-export default function CompanyProfileDetails({ data }) {
+export default function CompanyProfileDetails({ data, refreshProfilesDetails }) {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
@@ -111,6 +111,7 @@ const handleStatusUpdate = async (type, reason = null) => {
       variant: String(type) === '2' ? 'success' : 'error',
     });
 
+    refreshProfilesDetails();
     setTimeout(() => router.back(), 800);
   } catch (error) {
     enqueueSnackbar(error?.response?.data?.message || 'Something went wrong', {
@@ -242,6 +243,7 @@ return (
               'image/png': ['.png'],
               'image/jpeg': ['.jpg', '.jpeg'],
             }}
+            disabled
           />
         </Grid>
       </Grid>

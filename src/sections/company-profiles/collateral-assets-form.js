@@ -8,7 +8,7 @@ import FormProvider, {
 import Label from "src/components/label";
 
 const STATUS_DISPLAY = {
-    0: { label: 'Under Review', color: 'info' },
+    0: { label: 'Under Review', color: 'warning' },
     1: { label: 'Approved', color: 'success' },
     2: { label: 'Rejected', color: 'error' },
 };
@@ -45,14 +45,14 @@ export function CollateralAssetForm({ asset, index, onApprove, onReject }) {
         <FormProvider methods={methods}>
 
 
-            <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Typography
+            <Stack direction="row" alignItems="center" sx={{mb:2}} justifyContent="end">
+                {/* <Typography
                     variant="subtitle1"
                     fontWeight={600}
                     sx={{ mb: 2, mt: index ? 4 : 0 }}
                 >
                     Collateral Asset {index + 1}
-                </Typography>
+                </Typography> */}
 
                 {/* Status */}
                 <Label
@@ -127,8 +127,6 @@ export function CollateralAssetForm({ asset, index, onApprove, onReject }) {
                 </Grid>
             </Grid>
 
-
-
             <Stack direction="row" spacing={2} justifyContent="flex-end">
                 <Button
                     variant="soft"
@@ -148,7 +146,6 @@ export function CollateralAssetForm({ asset, index, onApprove, onReject }) {
                     Approve
                 </Button>
             </Stack>
-            <Divider sx={{ my: 3 }} />
         </FormProvider>
     );
 }

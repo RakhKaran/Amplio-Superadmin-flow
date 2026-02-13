@@ -103,9 +103,10 @@ export const endpoints = {
     getCollateralassets: (companyId)=> `/company-profiles/${companyId}/collateral-details`,
     getGuarantorDetails: (companyId) => `/company-profiles/${companyId}/guarantor-details`,
     getAuditedFinancials: (companyId) => `/company-profiles/${companyId}/audited-financials`,
-    getAgrrement:   (companyId) => `/company-profiles/${companyId}/agreement-details`
+    getAgrrement:   (companyId) => `/company-profiles/${companyId}/agreement-details`,
+    getDpn: (companyId) => `/company-profiles/${companyId}/dpn-details`,
+    getRoc:  (companyId) => `/company-profiles/${companyId}/roc-details`,
   },
-
  
   InvestorKyc: {
     getDocuments: (investorId) => `/investor-profiles/${investorId}/documents`,

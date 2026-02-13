@@ -31,7 +31,7 @@ export default function PendingVerificationForm({ companyProfiles }) {
       refreshAgreementDetails();
     } catch (error) {
       enqueueSnackbar(
-        error?.response?.data?.error?.message || 'Verification failed',
+        error?.error?.message || 'Verification failed',
         { variant: 'error' }
       );
     } finally {
@@ -40,7 +40,6 @@ export default function PendingVerificationForm({ companyProfiles }) {
   };
 
   return (
-    <Card sx={{ p: 3 }}>
       <Stack spacing={2}>
 
         {hasAgreements ? (
@@ -67,12 +66,11 @@ export default function PendingVerificationForm({ companyProfiles }) {
                 onClick={handleFetchAgreement}
                 sx={{ px: 3 }}
               >
-                Agreement
+                Generate Agreement
               </LoadingButton>
             </Stack>
           </>
         )}
       </Stack>
-    </Card>
   );
 }

@@ -45,14 +45,15 @@ import {
 import GuarantorTableRow from '../guarantor-table-row';
 import GuarantorApprovalForm from '../guarantor-approvel-form';
 import AgreementTableRow from '../agreement-table-row';
+import DpnTableRow from '../dpn-table-row';
 
 
 // ----------------------------------------------------------
 
 const TABLE_HEAD = [
-    { id: 'guarantorCompanyName', label: 'Agreement Name' },
+    { id: 'guarantorCompanyName', label: 'Name' },
     { id: 'guarantorType', label: 'Uploaded Files' },
-    { id: 'status', label: 'E-Sign' },
+    { id: 'status', label: 'Status' },
     // { id: '', label: 'Actions' },
 ];
 
@@ -63,7 +64,7 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function AgreementDetailsListView({ companyProfile }) {
+export default function DpnDetailsListView({ companyProfile }) {
     const table = useTable();
 
     const settings = useSettingsContext();
@@ -173,7 +174,7 @@ export default function AgreementDetailsListView({ companyProfile }) {
                                             table.page * table.rowsPerPage + table.rowsPerPage
                                         )
                                         .map((row) => (
-                                            <AgreementTableRow
+                                            <DpnTableRow
                                                 key={row.id}
                                                 row={row}
                                                 selected={table.selected.includes(row.id)}
@@ -183,8 +184,6 @@ export default function AgreementDetailsListView({ companyProfile }) {
                                                 onEditRow={() => handleEditRow(row.id)}
                                             />
                                         ))}
-
-
                                     <TableNoData notFound={notFound} />
                                 </TableBody>
                             </Table>

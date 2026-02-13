@@ -200,6 +200,58 @@ export function useGetAgreementDetails(companyId) {
 
 }
 
+export function useGetDpnDetails(companyId) {
+    const URL =
+        companyId ? endpoints.CompanyKyc.getDpn(String(companyId))
+            : null;
+
+    const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher, {
+        keepPreviousData: true,
+    });
+    
+
+    const refreshDpnDetails = () => {
+        mutate(); 
+    };
+
+    return {
+        dpnDetails: data?.data || [], 
+        loading: isLoading,
+        error,
+        validating: isValidating,
+        empty: !isLoading && (!data?.data || data?.data?.length === 0),
+        refreshDpnDetails,
+    };
+
+
+}
+
+export function useGetRocDetails(companyId) {
+    const URL =
+        companyId ? endpoints.CompanyKyc.getRoc(String(companyId))
+            : null;
+
+    const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher, {
+        keepPreviousData: true,
+    });
+    
+
+    const refreshRocDetails = () => {
+        mutate(); 
+    };
+
+    return {
+        rocDetails: data?.data || [], 
+        loading: isLoading,
+        error,
+        validating: isValidating,
+        empty: !isLoading && (!data?.data || data?.data?.length === 0),
+        refreshRocDetails,
+    };
+
+
+}
+
 export function useGetAuditedFinancialsDetails(companyId) {
     const URL =
         companyId ? endpoints.CompanyKyc.getAuditedFinancials(String(companyId))

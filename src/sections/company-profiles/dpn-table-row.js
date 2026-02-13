@@ -6,35 +6,40 @@ import TableCell from '@mui/material/TableCell';
 import ListItemText from '@mui/material/ListItemText';
 // utils
 import { format } from 'date-fns';
-import { IconButton, Tooltip } from '@mui/material';
+import { Button, IconButton, Tooltip, Typography } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import Label from 'src/components/label';
+import { enqueueSnackbar } from 'notistack';
+import DocumentPreviewButton from 'src/components/custom-preview-button/preview-button';
 
 // ----------------------------------------------------------------------
 
 const statusConfig = {
-  0: { label: 'Under Review', color: 'warning' },
+  0: { label: 'pending', color: 'warning' },
   1: { label: 'Approved', color: 'success' },
   2: { label: 'Rejected', color: 'error' },
 };
 
 const verificationConfig = {
-  0: { label: 'Pending', color: 'warning' },
-  1: { label: 'Verified', color: 'success' },
-  2: { label: 'Expired', color: 'error' },
+  true: { label: 'Verified', color: 'success' },
+  false: { label: 'Pending', color: 'warning' },
 };
 
 
-
-export default function GuarantorTableRow({ row, selected, onSelectRow, onViewRow, onEditRow }) {
-  const { guarantorCompanyName, CIN, guarantorType, status, verificationStatus } = row;
+export default function DpnTableRow({ row, selected, onSelectRow, onViewRow, onEditRow }) {
+  const { businessKycDocumentType, media, guarantorType, status, businessKycGuarantorVerification } = row;
 
   return (
     <TableRow hover selected={selected}>
-      <TableCell>{guarantorCompanyName || 'NA'}</TableCell>
-
-      <TableCell>{guarantorType || 'NA'}</TableCell>
-      <TableCell>{CIN || 'NA'}</TableCell>
+      <TableCell>{businessKycDocumentType?.name || 'NA'}</TableCell>
+        <TableCell>
+        <DocumentPreviewButton
+        fileName={media?.fileName}
+        fileUrl={media?.fileUrl}
+        errorMessage='File not found'
+        buttonText='Preview Document'
+        />
+      </TableCell>
       <TableCell>
         <Label
           variant="soft"
@@ -44,33 +49,33 @@ export default function GuarantorTableRow({ row, selected, onSelectRow, onViewRo
         </Label>
       </TableCell>
 
-      <TableCell>
+      {/* <TableCell>
   <Label
     variant="soft"
-    color={verificationConfig[verificationStatus]?.color}
+    color={verificationConfig[businessKycGuarantorVerification?.isVerified]?.color}
   >
-    {verificationConfig[verificationStatus]?.label}
+    {verificationConfig[businessKycGuarantorVerification?.isVerified]?.label}
   </Label>
-</TableCell>
+</TableCell> */}
 
 
-      <TableCell>
-        {/* <Tooltip title="View Events">
+      {/* <TableCell> */}
+      {/* <Tooltip title="View Events">
             <IconButton onClick={onViewRow}>
               <Iconify icon="carbon:view-filled" />
             </IconButton>
           </Tooltip> */}
-        <Tooltip title="Edit" placement="top" arrow>
+      {/* <Tooltip title="Edit" placement="top" arrow>
           <IconButton onClick={onViewRow}>
             <Iconify icon="solar:eye-bold" />
           </IconButton>
         </Tooltip>
-      </TableCell>
+      </TableCell> */}
     </TableRow>
   );
 }
 
-GuarantorTableRow.propTypes = {
+DpnTableRow.propTypes = {
   onSelectRow: PropTypes.func,
   row: PropTypes.object,
   selected: PropTypes.bool,

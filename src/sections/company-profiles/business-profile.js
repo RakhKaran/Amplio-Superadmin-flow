@@ -68,6 +68,9 @@ export default function BusinessProfileDetails({ companyProfile }) {
 
   const isFinalStatus = profile?.status === 1;
 
+  const hasProfile = !!profile;
+
+
 
   const handleApprove = async (id) => {
     if (!id) return;
@@ -176,7 +179,7 @@ export default function BusinessProfileDetails({ companyProfile }) {
             <Button
               variant="soft"
               color="error"
-              disabled={isFinalStatus}
+             disabled={!hasProfile || isFinalStatus}
               onClick={() =>
                 handleRejectClick(profile?.id)
               }
@@ -187,7 +190,7 @@ export default function BusinessProfileDetails({ companyProfile }) {
             <Button
               variant="soft"
               color="success"
-              disabled={isFinalStatus}
+             disabled={!hasProfile || isFinalStatus}
               onClick={() =>
                 handleApprove(profile?.id)
               }

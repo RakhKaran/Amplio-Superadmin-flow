@@ -24,6 +24,7 @@ import GuarantorDetailsListView from './guarantor-details-list-view';
 import AuditedFinancialsListView from './audited-financial-list-view';
 import AllAuditedFinancialsDetailsView from './all-audited-financials-details-view';
 import PendingVerificationForm from '../company-profiles-agreement';
+import DpnAndRocPendingVerification from '../dpn-and-roc-verification';
 
 // ----------------------------------------------------------------------
 
@@ -36,7 +37,8 @@ const TABS = [
   { value: 'auditedFinancials', label: 'Audited Financials' },
   { value: 'collateralAssets', label: 'Collateral Assets' },
   { value: 'guarantorDetails', label: 'Guarantor Details' },
-  { value: 'agreement', label: 'Agreement' }
+  { value: 'agreement', label: 'Agreement' },
+  { value: 'rocAndDpn', label: 'ROC And DPN' }
 ];
 
 export default function CompanyProfilesDetailsView() {
@@ -44,7 +46,7 @@ export default function CompanyProfilesDetailsView() {
   const { id } = useParams();
 
   const router = useRouter();
-  const { companyProfile } = useGetCompanyProfile(id);
+  const { companyProfile, refreshProfilesDetails } = useGetCompanyProfile(id);
   console.log(companyProfile);
 
   const [searchParams] = useSearchParams();
@@ -75,7 +77,7 @@ export default function CompanyProfilesDetailsView() {
           <Tab key={tab.value} value={tab.value} label={tab.label} />
         ))}
       </Tabs>
-      {currentTab === 'basic' && <CompanyProfileDetails data={companyProfile} />}
+      {currentTab === 'basic' && <CompanyProfileDetails data={companyProfile} refreshProfilesDetails={refreshProfilesDetails} />}
 
       {currentTab === 'details' && <CompanyDocumentDetails companyProfile={companyProfile} />}
 
@@ -93,6 +95,8 @@ export default function CompanyProfilesDetailsView() {
       {currentTab === 'auditedFinancials' && <AllAuditedFinancialsDetailsView companyProfile={companyProfile} />}
 
       {currentTab === 'agreement' && <PendingVerificationForm companyProfiles={companyProfile} />}
+
+      {currentTab === 'rocAndDpn' && <DpnAndRocPendingVerification companyProfiles={companyProfile} />}
     </Container>
   );
 }

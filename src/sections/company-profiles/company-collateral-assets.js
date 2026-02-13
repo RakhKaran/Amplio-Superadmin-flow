@@ -62,36 +62,34 @@ export default function CollateralAssetsDetails({ companyProfile }) {
   return (
     <Container>
 
- <Card sx={{ p: 3, mt: 3, maxHeight: '70vh', overflowY: 'auto' }}>
-  <Typography variant="h5" mb={2} fontWeight={700}>
+<Box sx={{ mt: 3 }}>
+  <Typography variant="h5" mb={3} fontWeight={700}>
     Collateral Assets Verification
   </Typography>
 
   {collateralAssets.length === 0 ? (
-    <Stack
-      alignItems="center"
-      justifyContent="center"
-      sx={{ py: 6 }}
-    >
+    <Stack alignItems="center" justifyContent="center" sx={{ py: 6 }}>
       <Typography variant="body1" color="text.secondary">
         No collateral assets found
       </Typography>
     </Stack>
   ) : (
     collateralAssets.map((asset, index) => (
-      <CollateralAssetForm
-        key={asset.id}
-        asset={asset}
-        index={index}
-        onApprove={handleApprove}
-        onReject={(id) => {
-          setRejectAssetId(id);
-          setRejectOpen(true);
-        }}
-      />
+      <Card key={asset.id} sx={{ p: 3, mb: 3 }}>
+        <CollateralAssetForm
+          asset={asset}
+          index={index}
+          onApprove={handleApprove}
+          onReject={(id) => {
+            setRejectAssetId(id);
+            setRejectOpen(true);
+          }}
+        />
+      </Card>
     ))
   )}
-</Card>
+</Box>
+
 
 
       <RejectReasonDialog

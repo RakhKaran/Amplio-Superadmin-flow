@@ -8,7 +8,11 @@ import { fetcher, endpoints } from 'src/utils/axios';
 export function useGetCompanyProfiles() {
     const URL = endpoints.companyProfiles.list;
 
-    const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+    const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
+
+    const refreshProfilesDetails = () => {
+        mutate();
+    };
 
     const memoizedValue = useMemo(
         () => ({
@@ -18,6 +22,7 @@ export function useGetCompanyProfiles() {
             companyProfilesError: error,
             companyProfilesValidating: isValidating,
             companyProfilesEmpty: !isLoading && (!data?.data?.profiles?.length),
+            refreshProfilesDetails
         }),
         [data, error, isLoading, isValidating]
     );
@@ -30,7 +35,10 @@ export function useGetCompanyProfiles() {
 export function useGetCompanyProfile(id) {
     const URL = id ? [endpoints.companyProfiles.details(id)] : null;
 
-    const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+    const { data, isLoading, error, isValidating , mutate} = useSWR(URL, fetcher);
+        const refreshProfilesDetails = () => {
+        mutate();
+    };
 
     const memoizedValue = useMemo(
         () => ({
@@ -38,6 +46,7 @@ export function useGetCompanyProfile(id) {
             companyProfileLoading: isLoading,
             companyProfileError: error,
             companyProfileValidating: isValidating,
+            refreshProfilesDetails
         }),
         [data, error, isLoading, isValidating]
     );
@@ -63,11 +72,11 @@ export function useFilterCompanyProfiles(params) {
     const { data, isLoading, error, isValidating } = useSWR(URL, fetcher, {
         keepPreviousData: true,
     });
-   
+
     return useMemo(
         () => ({
             filteredCompanyProfiles: data?.data || [],
-             totalCount: data?.count || {
+            totalCount: data?.count || {
                 totalCount: 0,
                 totalRejected: 0,
                 totalPending: 0,

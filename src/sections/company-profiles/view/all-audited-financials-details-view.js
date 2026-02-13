@@ -35,6 +35,9 @@ export default function AllAuditedFinancialsDetailsView({ companyProfile }) {
     ...(auditedFinancials?.gst3b ?? []),
   ];
 
+  const hasData = flatAuditedFinancials.length > 0;
+
+
 
   const allApproved =
     flatAuditedFinancials.length > 0 &&
@@ -118,7 +121,7 @@ export default function AllAuditedFinancialsDetailsView({ companyProfile }) {
             <Button
               variant="soft"
               color="error"
-              disabled={allApproved}
+              disabled={!hasData ||allApproved}
               onClick={() => setRejectOpen(true)}
             >
               Decline
@@ -127,7 +130,7 @@ export default function AllAuditedFinancialsDetailsView({ companyProfile }) {
             <Button
               variant="soft"
               color="success"
-              disabled={allApproved}
+              disabled={!hasData ||allApproved}
               onClick={handleApproveAll}
             >
               Approve
