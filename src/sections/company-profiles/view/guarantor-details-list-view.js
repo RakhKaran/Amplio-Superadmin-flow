@@ -55,6 +55,7 @@ const TABLE_HEAD = [
     { id: 'CIN', label: 'CIN' },
     { id: 'status', label: 'Status' },
     { id: 'status', label: 'Execution' },
+    { id: 'status', label: 'Resend Link' },
     { id: '', label: 'Actions' },
 ];
 
@@ -185,10 +186,9 @@ export default function GuarantorDetailsListView({ companyProfile }) {
                                                 onDeleteRow={() => handleDeleteRow(row.id)}
                                                 onViewRow={() => handleViewRow(row)}
                                                 onEditRow={() => handleEditRow(row.id)}
+                                                refreshGuarantorDetails={refreshGuarantorDetails}
                                             />
                                         ))}
-
-
                                     <TableNoData notFound={notFound} />
                                 </TableBody>
                             </Table>

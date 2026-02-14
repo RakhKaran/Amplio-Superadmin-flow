@@ -6,9 +6,12 @@ import TableCell from '@mui/material/TableCell';
 import ListItemText from '@mui/material/ListItemText';
 // utils
 import { format } from 'date-fns';
-import { IconButton, Tooltip } from '@mui/material';
+import { Button, IconButton, Tooltip } from '@mui/material';
 import Iconify from 'src/components/iconify';
 import Label from 'src/components/label';
+import { useSnackbar } from 'notistack';
+import axiosInstance from 'src/utils/axios';
+import { useState } from 'react';
 
 // ----------------------------------------------------------------------
 
@@ -26,9 +29,35 @@ const verificationConfig = {
 
 
 
-export default function GuarantorTableRow({ row, selected, onSelectRow, onViewRow, onEditRow }) {
-  const { guarantorCompanyName, CIN, guarantorType, status, verificationStatus } = row;
+export default function GuarantorTableRow({ row, selected, refreshGuarantorDetails, onViewRow, onEditRow }) {
+  const { guarantorCompanyName, CIN, guarantorType, id, status, verificationStatus } = row;
+  const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState(false);
 
+  const handleResend = async () => {
+    try {
+      setLoading(true);
+
+      await axiosInstance.patch(
+        `/business-kyc/guarantor-execution/${id}/resend`
+      );
+
+      enqueueSnackbar('Verification link resent successfully', {
+        variant: 'success',
+      });
+      refreshGuarantorDetails();
+    } catch (error) {
+      enqueueSnackbar(
+        error?.error?.message ||
+        'Failed to resend verification link',
+        { variant: 'error' }
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verificationDisabled = verificationStatus === 1 || verificationStatus === 0;
   return (
     <TableRow hover selected={selected}>
       <TableCell>{guarantorCompanyName || 'NA'}</TableCell>
@@ -45,13 +74,26 @@ export default function GuarantorTableRow({ row, selected, onSelectRow, onViewRo
       </TableCell>
 
       <TableCell>
-  <Label
-    variant="soft"
-    color={verificationConfig[verificationStatus]?.color}
-  >
-    {verificationConfig[verificationStatus]?.label}
-  </Label>
-</TableCell>
+        <Label
+          variant="soft"
+          color={verificationConfig[verificationStatus]?.color}
+        >
+          {verificationConfig[verificationStatus]?.label}
+        </Label>
+      </TableCell>
+
+      <TableCell>
+        <Button
+          variant="contained"
+          color='primary'
+          size="small"
+          onClick={handleResend}
+          disabled={loading || verificationDisabled}
+        >
+          {loading ? 'Sending...' : 'Resend Link'}
+        </Button>
+      </TableCell>
+
 
 
       <TableCell>
