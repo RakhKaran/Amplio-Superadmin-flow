@@ -178,7 +178,7 @@ export default function AccountGeneral() {
                 sm: 'repeat(2, 1fr)',
               }}
             >
-              <RHFTextField name="fullName" label="First Name" />
+              <RHFTextField name="fullName" label="Full Name" disabled />
               <RHFTextField name="email" label="Email Address" disabled />
               <RHFTextField name="phone" label="Phone Number" type="number"  disabled/>
               {/* <Controller
