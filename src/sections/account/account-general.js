@@ -209,6 +209,7 @@ export default function AccountGeneral() {
             <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton
                 type="submit"
+                color='primary'
                 variant="contained"
                 loading={isSubmitting}
               >
