@@ -14,7 +14,6 @@ export default function DpnAndRocPendingVerification({ companyProfiles }) {
     const { enqueueSnackbar } = useSnackbar();
     const [loading, setLoading] = useState(false);
 
-    const [isBusinessKycComplete, setIsBusinessKycComplete] = useState(false);
 
 
     const companyId = companyProfiles?.data?.id;
@@ -29,6 +28,7 @@ export default function DpnAndRocPendingVerification({ companyProfiles }) {
             : [dpnDetails]
         : [];
 
+const isBusinessKycComplete = companyProfiles?.data?.isBusinessKycComplete;
 
     const handleApprovedKyc = async () => {
         try {
@@ -41,10 +41,6 @@ export default function DpnAndRocPendingVerification({ companyProfiles }) {
             enqueueSnackbar(res.data.message || 'Kyc Approved Successfully', {
                 variant: 'success',
             });
-
-            if (res?.data?.isBusinessKycComplete) {
-                setIsBusinessKycComplete(true);
-            }
 
         } catch (error) {
             enqueueSnackbar(

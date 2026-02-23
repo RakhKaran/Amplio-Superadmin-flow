@@ -95,6 +95,8 @@ export const endpoints = {
   },
   CompanyKyc: {
     getDocuments: (companyId) => `/company-profiles/${companyId}/documents`,
+    getBusinessAddressDetails: (companyId) =>
+      `/company-profiles/${companyId}/business-address-details`,
     getBankDetails: (companyId) => `/company-profiles/${companyId}/bank-details`,
     // getFilteredBankDetails: (companyId) => `/company-profiles/${companyId}/bank-details?filter=${filter}`,
     getCompanySignatories: (companyId) => `/company-profiles/${companyId}/authorize-signatory`,

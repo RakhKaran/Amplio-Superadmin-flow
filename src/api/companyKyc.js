@@ -26,6 +26,29 @@ export function useGetDocuments(companyId) {
     };
 }
 
+export function useGetBusinessAddressDetails(companyId) {
+    const URL =
+        companyId ? endpoints.CompanyKyc.getBusinessAddressDetails(String(companyId))
+            : null;
+
+    const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher, {
+        keepPreviousData: true,
+    });
+
+    const refreshAddressDetails = () => {
+        mutate();
+    };
+
+    return {
+        registeredAddress: data?.registeredAddress || null,
+        correspondenceAddress: data?.correspondenceAddress || null,
+        loading: isLoading,
+        error,
+        validating: isValidating,
+        refreshAddressDetails,
+    };
+}
+
 export function useGetBankDetails(companyId) {
     const URL =
         companyId ? endpoints.CompanyKyc.getBankDetails(String(companyId))

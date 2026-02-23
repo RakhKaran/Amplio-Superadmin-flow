@@ -15,6 +15,7 @@ import { useGetCompanyProfile } from 'src/api/company-profiles';
 import { useCallback, useState } from 'react';
 import { Tab, Tabs } from '@mui/material';
 import CompanyDocumentDetails from '../company-document-details';
+import CompanyAddressVerification from '../company-address-verification';
 import CompanyBankPage from '../company-bank-page';
 import CompanySignatories from '../company-signatories';
 import { useSearchParams } from 'react-router-dom';
@@ -31,6 +32,7 @@ import DpnAndRocPendingVerification from '../dpn-and-roc-verification';
 const TABS = [
   { value: 'basic', label: 'Basic Info' },
   { value: 'details', label: 'Documents' },
+  { value: 'addressDetails', label: 'Address Details' },
   { value: 'bank', label: 'Bank Details' },
   { value: 'signatories', label: 'Signatories' },
   { value: 'busienssProfile', label: 'Business Profile' },
@@ -80,6 +82,10 @@ export default function CompanyProfilesDetailsView() {
       {currentTab === 'basic' && <CompanyProfileDetails data={companyProfile} refreshProfilesDetails={refreshProfilesDetails} />}
 
       {currentTab === 'details' && <CompanyDocumentDetails companyProfile={companyProfile} />}
+
+      {currentTab === 'addressDetails' && (
+        <CompanyAddressVerification companyProfile={companyProfile} />
+      )}
 
       {currentTab === 'bank' && <CompanyBankPage companyProfile={companyProfile} />}
       {/* {currentTab === 'bank' && <TrusteeBankPage companyPrifle={companyPrifle} />} */}
