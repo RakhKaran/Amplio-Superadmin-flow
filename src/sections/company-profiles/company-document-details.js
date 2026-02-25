@@ -117,12 +117,12 @@ export default function CompanyDocumentDetails({ companyProfile }) {
               ) : (
                 documents.map((doc) => (
                   <TableRow key={doc.id}>
-                    <TableCell>{doc.documents?.name || 'NA'}</TableCell>
+                    <TableCell>{doc.companyKycDocumentRequirements?.documentLabel || 'NA'}</TableCell>
 
                     <TableCell>
                       <DocumentPreviewButton
-                        fileName={doc.documentsFile?.fileOriginalName}
-                        fileUrl={doc.documentsFile?.fileUrl}
+                        fileName={doc.media?.fileName}
+                        fileUrl={doc.media?.fileUrl}
                         errorMessage='File not found'
                         buttonText='Preview Document'
                       />
