@@ -198,7 +198,7 @@ export default function AuditedFinancialsGst3bListView({ companyProfile }) {
                         </Scrollbar>
                     </TableContainer>
 
-                    {/* <TablePaginationCustom
+                    <TablePaginationCustom
                         count={dataFiltered.length}
                         page={table.page}
                         rowsPerPage={table.rowsPerPage}
@@ -206,7 +206,7 @@ export default function AuditedFinancialsGst3bListView({ companyProfile }) {
                         onRowsPerPageChange={table.onChangeRowsPerPage}
                         dense={table.dense}
                         onChangeDense={table.onChangeDense}
-                    /> */}
+                    />
                 </Card>
             </Container>
 

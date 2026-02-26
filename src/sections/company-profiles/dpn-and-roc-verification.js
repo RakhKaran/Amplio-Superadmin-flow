@@ -18,9 +18,9 @@ export default function DpnAndRocPendingVerification({ companyProfiles }) {
 
     const companyId = companyProfiles?.data?.id;
 
-    const { dpnDetails } = useGetDpnDetails(companyId);
+    const { dpnDetails, refreshDpnDetails } = useGetDpnDetails(companyId);
 
-    const {rocDetails} = useGetRocDetails(companyId);
+    const {rocDetails, refreshRocDetails} = useGetRocDetails(companyId);
 
     const safeDpnData = dpnDetails
         ? Array.isArray(dpnDetails)
@@ -41,6 +41,8 @@ const isBusinessKycComplete = companyProfiles?.data?.isBusinessKycComplete;
             enqueueSnackbar(res.data.message || 'Kyc Approved Successfully', {
                 variant: 'success',
             });
+            refreshDpnDetails();
+            refreshRocDetails();
 
         } catch (error) {
             enqueueSnackbar(

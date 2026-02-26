@@ -300,3 +300,29 @@ export function useGetAuditedFinancialsDetails(companyId) {
 
 
 }
+
+export function useGetFinancialsDetails(companyId) {
+    const URL =
+        companyId ? endpoints.CompanyKyc.getFinancials(String(companyId))
+            : null;
+
+    const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher, {
+        keepPreviousData: true,
+    });
+    
+
+    const refreshFinancialsDetails = () => {
+        mutate(); // <-- trigger re-fetch
+    };
+
+    return {
+        financialDetails: data?.data || [],   // <-- ALWAYS ARRAY
+        loading: isLoading,
+        error,
+        validating: isValidating,
+        empty: !isLoading && (!data?.data || data?.data?.length === 0),
+        refreshFinancialsDetails,
+    };
+
+
+}

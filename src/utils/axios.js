@@ -108,6 +108,7 @@ export const endpoints = {
     getAgrrement:   (companyId) => `/company-profiles/${companyId}/agreement-details`,
     getDpn: (companyId) => `/company-profiles/${companyId}/dpn-details`,
     getRoc:  (companyId) => `/company-profiles/${companyId}/roc-details`,
+    getFinancials: (companyId)=> `/company-profiles/${companyId}/financials-details`
   },
  
   InvestorKyc: {

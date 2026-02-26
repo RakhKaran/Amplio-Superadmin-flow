@@ -19,7 +19,7 @@ import Label from 'src/components/label';
 
 
 const STATUS_DISPLAY = {
-  0: { label: 'Under Review', color: 'info' },
+  0: { label: 'Under Review', color: 'warning' },
   1: { label: 'Approved', color: 'success' },
   2: { label: 'Rejected', color: 'error' },
 };

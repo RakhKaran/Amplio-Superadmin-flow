@@ -1,4 +1,3 @@
-import { addYears, format } from 'date-fns';
 // @mui
 import Container from '@mui/material/Container';
 // routes
@@ -22,10 +21,10 @@ import { useSearchParams } from 'react-router-dom';
 import BusinessProfileDetails from '../business-profile';
 import CollateralAssetsDetails from '../company-collateral-assets';
 import GuarantorDetailsListView from './guarantor-details-list-view';
-import AuditedFinancialsListView from './audited-financial-list-view';
 import AllAuditedFinancialsDetailsView from './all-audited-financials-details-view';
 import PendingVerificationForm from '../company-profiles-agreement';
 import DpnAndRocPendingVerification from '../dpn-and-roc-verification';
+import AllFinancialDetailsView from './all-financial-details-view';
 
 // ----------------------------------------------------------------------
 
@@ -37,6 +36,7 @@ const TABS = [
   { value: 'signatories', label: 'Signatories' },
   { value: 'busienssProfile', label: 'Business Profile' },
   { value: 'auditedFinancials', label: 'Audited Financials' },
+  { value: 'financialDetails', label: 'Financial Details' },
   { value: 'collateralAssets', label: 'Collateral Assets' },
   { value: 'guarantorDetails', label: 'Guarantor Details' },
   { value: 'agreement', label: 'Agreement' },
@@ -59,7 +59,7 @@ export default function CompanyProfilesDetailsView() {
     router.push({
       search: `?tab=${newValue}`
     });
-  }, []);
+  }, [router]);
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
@@ -99,6 +99,8 @@ export default function CompanyProfilesDetailsView() {
       {currentTab === 'guarantorDetails' && <GuarantorDetailsListView companyProfile={companyProfile} />}
 
       {currentTab === 'auditedFinancials' && <AllAuditedFinancialsDetailsView companyProfile={companyProfile} />}
+
+      {currentTab === 'financialDetails' && <AllFinancialDetailsView companyProfile={companyProfile} />}
 
       {currentTab === 'agreement' && <PendingVerificationForm companyProfiles={companyProfile} />}
 
