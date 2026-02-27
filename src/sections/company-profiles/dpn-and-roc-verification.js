@@ -10,7 +10,7 @@ import DpnDetailsListView from './view/dpn-details-list-view';
 
 
 
-export default function DpnAndRocPendingVerification({ companyProfiles }) {
+export default function DpnAndRocPendingVerification({ companyProfiles, refreshProfilesDetails }) {
     const { enqueueSnackbar } = useSnackbar();
     const [loading, setLoading] = useState(false);
 
@@ -20,7 +20,7 @@ export default function DpnAndRocPendingVerification({ companyProfiles }) {
 
     const { dpnDetails, refreshDpnDetails } = useGetDpnDetails(companyId);
 
-    const {rocDetails, refreshRocDetails} = useGetRocDetails(companyId);
+    const { rocDetails, refreshRocDetails } = useGetRocDetails(companyId);
 
     const safeDpnData = dpnDetails
         ? Array.isArray(dpnDetails)
@@ -28,7 +28,7 @@ export default function DpnAndRocPendingVerification({ companyProfiles }) {
             : [dpnDetails]
         : [];
 
-const isBusinessKycComplete = companyProfiles?.data?.isBusinessKycComplete;
+    const isBusinessKycComplete = companyProfiles?.data?.isBusinessKycComplete;
 
     const handleApprovedKyc = async () => {
         try {
@@ -41,6 +41,7 @@ const isBusinessKycComplete = companyProfiles?.data?.isBusinessKycComplete;
             enqueueSnackbar(res.data.message || 'Kyc Approved Successfully', {
                 variant: 'success',
             });
+            refreshProfilesDetails();
             refreshDpnDetails();
             refreshRocDetails();
 

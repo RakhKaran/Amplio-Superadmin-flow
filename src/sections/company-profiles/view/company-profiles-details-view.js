@@ -104,7 +104,7 @@ export default function CompanyProfilesDetailsView() {
 
       {currentTab === 'agreement' && <PendingVerificationForm companyProfiles={companyProfile} />}
 
-      {currentTab === 'rocAndDpn' && <DpnAndRocPendingVerification companyProfiles={companyProfile} />}
+      {currentTab === 'rocAndDpn' && <DpnAndRocPendingVerification companyProfiles={companyProfile} refreshProfilesDetails ={refreshProfilesDetails} />}
     </Container>
   );
 }
