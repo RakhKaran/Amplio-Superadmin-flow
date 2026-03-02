@@ -197,7 +197,11 @@ export default function TrusteeProfileListView() {
                     variant={filters.status === tab.value ? 'filled' : 'soft'}
                     color={tab.color}
                   >
-                    {tab.value === 'all' ? totalCount.total : totalCount[tab.value]}
+                    {tab.value === 'all' ? totalCount.totalCount : totalCount[tab.value]}
+                    {tab.value === 0 && totalCount.totalPending}
+                    {tab.value === 1 && totalCount.totalUnderReview}
+                    {tab.value === 2 && totalCount.totalVerified}
+                    {tab.value === 3 && totalCount.totalRejected}
                   </Label>
                 }
                 iconPosition="end"
@@ -214,7 +218,7 @@ export default function TrusteeProfileListView() {
               onFilters={handleFilters}
               onResetFilters={handleResetFilters}
               results={filteredTrusteeProfiles.length}
-              statusOptions={STATUS_OPTIONS}   
+              statusOptions={STATUS_OPTIONS}
 
               sx={{ p: 2.5, pt: 0 }}
             />
@@ -272,10 +276,10 @@ export default function TrusteeProfileListView() {
                   ))}
 
 
-                  <TableEmptyRows
+                  {/* <TableEmptyRows
                     height={denseHeight}
                     emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
-                  />
+                  /> */}
 
                   <TableNoData notFound={notFound} />
                 </TableBody>
@@ -284,7 +288,7 @@ export default function TrusteeProfileListView() {
           </TableContainer>
 
           <TablePaginationCustom
-            count={totalCount}
+            count={totalCount?.totalCount}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}

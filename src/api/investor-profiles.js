@@ -66,12 +66,18 @@ export function useFilterInvestorProfiles(params) {
    
     return useMemo(
         () => ({
-            filteredInvestorProfiles: data?.data?.profiles || [],
-            totalCount: data?.data?.count || 0,
+            filteredInvestorProfiles: data?.data || [],
+            count: data?.count || {
+                totalCount: 0,
+                totalRejected: 0,
+                totalPending: 0,
+                totalUnderReview: 0,
+                totalVerified: 0,
+            },
             filterLoading: isLoading,
             filterError: error,
             filterValidating: isValidating,
-            filterEmpty: !isLoading && (!data?.data?.profiles?.length),
+            filterEmpty: !isLoading && (!data?.data?.length),
         }),
         [data, error, isLoading, isValidating]
     );
