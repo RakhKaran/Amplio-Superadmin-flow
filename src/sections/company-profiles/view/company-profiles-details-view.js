@@ -10,9 +10,22 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 
 import CompanyProfileDetails from '../company-profiles-details';
-import { useGetCompanyProfile } from 'src/api/company-profiles';
-import { useCallback, useState } from 'react';
-import { Tab, Tabs } from '@mui/material';
+import {
+  useGetAgreementDetails,
+  useGetAuditedFinancialsDetails,
+  useGetBankDetails,
+  useGetBusinessAddressDetails,
+  useGetBusinessProfiles,
+  useGetCollateralAssets,
+  useGetDocuments,
+  useGetDpnDetails,
+  useGetFinancialsDetails,
+  useGetGuarantorDetails,
+  useGetRocDetails,
+  useGetSignatories,
+} from 'src/api/companyKyc';
+import { useCallback, useMemo, useState } from 'react';
+import { Box, Tab, Tabs } from '@mui/material';
 import CompanyDocumentDetails from '../company-document-details';
 import CompanyAddressVerification from '../company-address-verification';
 import CompanyBankPage from '../company-bank-page';
@@ -25,6 +38,7 @@ import AllAuditedFinancialsDetailsView from './all-audited-financials-details-vi
 import PendingVerificationForm from '../company-profiles-agreement';
 import DpnAndRocPendingVerification from '../dpn-and-roc-verification';
 import AllFinancialDetailsView from './all-financial-details-view';
+import { useGetCompanyProfile } from 'src/api/company-profiles';
 
 // ----------------------------------------------------------------------
 
@@ -43,13 +57,114 @@ const TABS = [
   { value: 'rocAndDpn', label: 'ROC And DPN' }
 ];
 
+function toStatusNumber(status) {
+  if (typeof status === 'number') return status;
+  const parsed = Number(status);
+  return Number.isNaN(parsed) ? null : parsed;
+}
+
+function toArray(value) {
+  if (Array.isArray(value)) return value;
+  return value ? [value] : [];
+}
+
+function getOverallStatus(
+  statuses,
+  mapping = {
+    pendingValues: [0],
+    approvedValues: [1],
+    rejectedValues: [2],
+  }
+) {
+  const { pendingValues, approvedValues, rejectedValues } = mapping;
+  const validValues = [...pendingValues, ...approvedValues, ...rejectedValues];
+
+  const validStatuses = statuses
+    .map(toStatusNumber)
+    .filter((status) => validValues.includes(status));
+
+  if (!validStatuses.length) return null;
+  if (validStatuses.some((status) => rejectedValues.includes(status))) return 2;
+  if (validStatuses.every((status) => approvedValues.includes(status))) return 1;
+  return 0;
+}
+
+function getTabColor(status) {
+  if (status === 1) return 'success.main';
+  if (status === 2) return 'error.main';
+  if (status === 0) return 'warning.main';
+  return 'grey.400';
+}
+
 export default function CompanyProfilesDetailsView() {
   const settings = useSettingsContext();
   const { id } = useParams();
 
   const router = useRouter();
   const { companyProfile, refreshProfilesDetails } = useGetCompanyProfile(id);
-  console.log(companyProfile);
+  const companyId = companyProfile?.data?.id;
+
+  const { documents = [] } = useGetDocuments(companyId);
+  const { registeredAddress, correspondenceAddress } = useGetBusinessAddressDetails(companyId);
+  const { bankDetails = [] } = useGetBankDetails(companyId);
+  const { signatories = [] } = useGetSignatories(companyId);
+  const { businessProfile = [] } = useGetBusinessProfiles(companyId);
+  const { collateralAssets = [] } = useGetCollateralAssets(companyId);
+  const { guarantorDetails = [] } = useGetGuarantorDetails(companyId);
+  const { agreementDetails = [] } = useGetAgreementDetails(companyId);
+  const { dpnDetails = [] } = useGetDpnDetails(companyId);
+  const { rocDetails = [] } = useGetRocDetails(companyId);
+  const { auditedFinancials } = useGetAuditedFinancialsDetails(companyId);
+  const { financialDetails = [] } = useGetFinancialsDetails(companyId);
+
+  const tabStatusMap = useMemo(() => {
+    const auditedItems = [
+      ...(auditedFinancials?.financialStatements ?? []),
+      ...(auditedFinancials?.incomeTaxReturns ?? []),
+      ...(auditedFinancials?.gstr9 ?? []),
+      ...(auditedFinancials?.gst3b ?? []),
+    ];
+    const safeRocDetails = toArray(rocDetails);
+    const safeDpnDetails = toArray(dpnDetails);
+
+    return {
+      basic: getOverallStatus([companyProfile?.data?.kycApplications?.status], {
+        pendingValues: [0, 1],
+        approvedValues: [2],
+        rejectedValues: [3],
+      }),
+      details: getOverallStatus(documents.map((item) => item?.status)),
+      addressDetails: getOverallStatus([registeredAddress?.status, correspondenceAddress?.status]),
+      bank: getOverallStatus(bankDetails.map((item) => item?.status)),
+      signatories: getOverallStatus(signatories.map((item) => item?.status)),
+      busienssProfile: getOverallStatus(businessProfile.map((item) => item?.status)),
+      auditedFinancials: getOverallStatus(auditedItems.map((item) => item?.status)),
+      financialDetails: getOverallStatus(
+        (Array.isArray(financialDetails) ? financialDetails : [financialDetails]).map(
+          (item) => item?.status
+        )
+      ),
+      collateralAssets: getOverallStatus(collateralAssets.map((item) => item?.status)),
+      guarantorDetails: getOverallStatus(guarantorDetails.map((item) => item?.status)),
+      agreement: getOverallStatus(agreementDetails.map((item) => item?.status)),
+      rocAndDpn: getOverallStatus([...safeRocDetails, ...safeDpnDetails].map((item) => item?.status)),
+    };
+  }, [
+    agreementDetails,
+    auditedFinancials,
+    bankDetails,
+    businessProfile,
+    collateralAssets,
+    companyProfile?.data?.kycApplications?.status,
+    correspondenceAddress?.status,
+    documents,
+    dpnDetails,
+    financialDetails,
+    guarantorDetails,
+    registeredAddress?.status,
+    rocDetails,
+    signatories,
+  ]);
 
   const [searchParams] = useSearchParams();
   const tab = searchParams.get('tab');
@@ -73,10 +188,29 @@ export default function CompanyProfilesDetailsView() {
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
-
-      <Tabs value={currentTab} onChange={handleChangeTab} sx={{ mb: { xs: 3, md: 5 } }}>
+      <Tabs
+        value={currentTab}
+        onChange={handleChangeTab}
+        sx={{ mb: { xs: 3, md: 5 } }}
+      >
         {TABS.map((tab) => (
-          <Tab key={tab.value} value={tab.value} label={tab.label} />
+          <Tab
+            key={tab.value}
+            value={tab.value}
+            label={
+              <Box display="flex" alignItems="center" gap={1}>
+                {tab.label}
+                <Box
+                  sx={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    bgcolor: getTabColor(tabStatusMap[tab.value]),
+                  }}
+                />
+              </Box>
+            }
+          />
         ))}
       </Tabs>
       {currentTab === 'basic' && <CompanyProfileDetails data={companyProfile} refreshProfilesDetails={refreshProfilesDetails} />}
@@ -104,7 +238,7 @@ export default function CompanyProfilesDetailsView() {
 
       {currentTab === 'agreement' && <PendingVerificationForm companyProfiles={companyProfile} />}
 
-      {currentTab === 'rocAndDpn' && <DpnAndRocPendingVerification companyProfiles={companyProfile} refreshProfilesDetails ={refreshProfilesDetails} />}
+      {currentTab === 'rocAndDpn' && <DpnAndRocPendingVerification companyProfiles={companyProfile} refreshProfilesDetails={refreshProfilesDetails} />}
     </Container>
   );
 }
