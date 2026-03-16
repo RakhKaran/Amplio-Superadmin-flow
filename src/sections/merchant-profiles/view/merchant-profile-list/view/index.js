@@ -1,0 +1,1 @@
+export { default as MerchantProfileListView } from './merchant-profiles-list-view';
