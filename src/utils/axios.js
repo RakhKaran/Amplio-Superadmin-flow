@@ -34,8 +34,8 @@ export const endpoints = {
     me: '/auth/me',
     login: '/auth/super-admin-login',
     register: '/register',
-    forgotPassword:'/auth/forget-password/send-email-otp',
-    newPassword:'/auth/forget-password/verify-email-otp',
+    forgotPassword: '/auth/forget-password/send-email-otp',
+    newPassword: '/auth/forget-password/verify-email-otp',
   },
   mail: {
     list: '/api/mail/list',
@@ -79,12 +79,22 @@ export const endpoints = {
     filterList: (filter) => `/document-types?filter=${filter}`,
     details: (id) => `/document-types/${id}`,
   },
+  pspMaster: {
+    list: '/psp-masters',
+  },
   companyProfiles: {
     list: '/company-profiles',
     filterList: (filter) => `/company-profiles?filter=${filter}`,
     statusList: (status) => `/company-profiles?status=${status}`,
     filterStatusList: (filter, status) => `/company-profiles?filter=${filter}&status=${status}`,
     details: (id) => `/company-profiles/${id}`,
+  },
+  merchantProfiles: {
+    list: '/merchant-profiles',
+    filterList: (filter) => `/merchant-profiles?filter=${filter}`,
+    statusList: (status) => `/merchant-profiles?status=${status}`,
+    filterStatusList: (filter, status) => `/merchant-profiles?filter=${filter}&status=${status}`,
+    details: (id) => `/merchant-profiles/${id}`,
   },
   investorProfiles: {
     list: '/investor-profiles',
@@ -100,23 +110,37 @@ export const endpoints = {
     getBankDetails: (companyId) => `/company-profiles/${companyId}/bank-details`,
     // getFilteredBankDetails: (companyId) => `/company-profiles/${companyId}/bank-details?filter=${filter}`,
     getCompanySignatories: (companyId) => `/company-profiles/${companyId}/authorize-signatory`,
-    getCompanySignatoriesWithFilter: (companyId, queryString) => `/company-profiles/${companyId}/authorize-signatory?filter=${queryString}`,
-    getBusinessProfile: (companyId)=> `/company-profiles/${companyId}/business-profile`,
-    getCollateralassets: (companyId)=> `/company-profiles/${companyId}/collateral-details`,
+    getCompanySignatoriesWithFilter: (companyId, queryString) =>
+      `/company-profiles/${companyId}/authorize-signatory?filter=${queryString}`,
+    getBusinessProfile: (companyId) => `/company-profiles/${companyId}/business-profile`,
+    getCollateralassets: (companyId) => `/company-profiles/${companyId}/collateral-details`,
     getGuarantorDetails: (companyId) => `/company-profiles/${companyId}/guarantor-details`,
     getAuditedFinancials: (companyId) => `/company-profiles/${companyId}/audited-financials`,
-    getAgrrement:   (companyId) => `/company-profiles/${companyId}/agreement-details`,
+    getAgrrement: (companyId) => `/company-profiles/${companyId}/agreement-details`,
     getDpn: (companyId) => `/company-profiles/${companyId}/dpn-details`,
-    getRoc:  (companyId) => `/company-profiles/${companyId}/roc-details`,
-    getFinancials: (companyId)=> `/company-profiles/${companyId}/financials-details`
+    getRoc: (companyId) => `/company-profiles/${companyId}/roc-details`,
+    getFinancials: (companyId) => `/company-profiles/${companyId}/financials-details`,
   },
- 
+  MerchantKyc: {
+    getDocuments: (merchantId) => `/merchant-profiles/${merchantId}/documents`,
+    getBusinessAddressDetails: (merchantId) =>
+      `/merchant-profiles/${merchantId}/address-details`,
+    getBankDetails: (merchantId) => `/merchant-profiles/${merchantId}/bank-details`,
+    getMerchantSignatories: (merchantId) => `/merchant-profiles/${merchantId}/authorize-signatory`,
+    getMerchantSignatoriesWithFilter: (merchantId, queryString) =>
+      `/merchant-profiles/${merchantId}/authorize-signatory?filter=${queryString}`,
+    getBusinessProfile: (merchantId) => `/merchant-profiles/${merchantId}/business-profile`,
+    getUboDetails: (merchantId) => `/merchant-profiles/${merchantId}/ubo-details`,
+
+    getPspDetails: (merchantId) => `/merchant-profiles/${merchantId}/psp-details`,
+  },
   InvestorKyc: {
     getDocuments: (investorId) => `/investor-profiles/${investorId}/documents`,
     getBankDetails: (investorId) => `/investor-profiles/${investorId}/bank-details`,
     // getFilteredBankDetails: (investorId) => `/investor-profiles/${investorId}/bank-details?filter=${filter}`,
     getinvestorSignatories: (investorId) => `/investor-profiles/${investorId}/authorize-signatory`,
-    getinvestorSignatoriesWithFilter: (investorId, queryString) => `/investor-profiles/${investorId}/authorize-signatory?filter=${queryString}`,
+    getinvestorSignatoriesWithFilter: (investorId, queryString) =>
+      `/investor-profiles/${investorId}/authorize-signatory?filter=${queryString}`,
   },
 
   trusteeProfiles: {
@@ -139,7 +163,7 @@ export const endpoints = {
     getDocuments: (trusteeId) => `/trustee-profiles/${trusteeId}/documents`,
     getBankDetails: (trusteeId) => `/trustee-profiles/${trusteeId}/bank-details`,
     getTrusteeSignatories: (trusteeId) => `/trustee-profiles/${trusteeId}/authorize-signatory`,
-    getTrusteeSignatoriesWithFilter: (trusteeId, queryString) => `/trustee-profiles/${trusteeId}/authorize-signatory?filter=${queryString}`,
+    getTrusteeSignatoriesWithFilter: (trusteeId, queryString) =>
+      `/trustee-profiles/${trusteeId}/authorize-signatory?filter=${queryString}`,
   },
 };
-

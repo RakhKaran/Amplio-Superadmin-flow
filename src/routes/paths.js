@@ -147,6 +147,12 @@ export const paths = {
       list: `${ROOTS.DASHBOARD}/investorProfiles/list`,
       details: (id) => `${ROOTS.DASHBOARD}/investorProfiles/${id}`,
     },
+    merchant: {
+      root: `${ROOTS.DASHBOARD}/merchant`,
+      new: `${ROOTS.DASHBOARD}/merchant/new`,
+      list: `${ROOTS.DASHBOARD}/merchant/list`,
+      details: (id) => `${ROOTS.DASHBOARD}/merchant/${id}`,
+    },
     signatory: {
       root: `${ROOTS.DASHBOARD}/signatory`,
 
@@ -177,7 +183,6 @@ export const paths = {
       new: `${ROOTS.DASHBOARD}/document/new`,
       edit: (id) => `${ROOTS.DASHBOARD}/document/${id}/edit`,
       list: `${ROOTS.DASHBOARD}/document/list`,
-
     },
     // debenturetrustees: {
     //   root: `${ROOTS.DASHBOARD}/debenturetrustees`,

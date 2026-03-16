@@ -40,17 +40,29 @@ const UserCreatePage = lazy(() => import('src/pages/dashboard/user/new'));
 const UserEditPage = lazy(() => import('src/pages/dashboard/user/edit'));
 // COMPANY PROFILES FOR KYC
 const CompanyProfileListPage = lazy(() => import('src/pages/dashboard/company-profiles/list'));
-const CompanyProfliesDetailsPage = lazy(() => import('src/pages/dashboard/company-profiles/details'))
-const CompanyProfileNewPage = lazy(() => import('src/pages/dashboard/company-profiles/new'))
+const CompanyProfliesDetailsPage = lazy(() =>
+  import('src/pages/dashboard/company-profiles/details')
+);
+const CompanyProfileNewPage = lazy(() => import('src/pages/dashboard/company-profiles/new'));
 // INVESTOR PROFILES FOR KYC
 const InvestorProfileListPage = lazy(() => import('src/pages/dashboard/investor-profiles/list'));
-const InvestorProfileDetailsPage = lazy(() => import('src/pages/dashboard/investor-profiles/details'));
+const InvestorProfileDetailsPage = lazy(() =>
+  import('src/pages/dashboard/investor-profiles/details')
+);
 const InvestorProfileNewPage = lazy(() => import('src/pages/dashboard/investor-profiles/new'));
+// MERCHANT PROFILES FOR KYC
+const MerchantProfliesListPage = lazy(() => import('src/pages/dashboard/merchant-profiles/list'));
+const MerchantProfliesDetailsPage = lazy(() =>
+  import('src/pages/dashboard/merchant-profiles/details')
+);
+const MerchantProfliesNewPage = lazy(() => import('src/pages/dashboard/merchant-profiles/new'));
 
 // TRUSTEE PROFILE FOR KYC
 const TrusteeProfileListPage = lazy(() => import('src/pages/dashboard/trustee-profiles/list'));
-const TrusteeProfliesDetailsPage = lazy(() => import('src/pages/dashboard/trustee-profiles/details'));
-const TrusteeProfileNewPage = lazy(() => import('src/pages/dashboard/trustee-profiles/new'))
+const TrusteeProfliesDetailsPage = lazy(() =>
+  import('src/pages/dashboard/trustee-profiles/details')
+);
+const TrusteeProfileNewPage = lazy(() => import('src/pages/dashboard/trustee-profiles/new'));
 
 // COMPANY PROFILE
 const CompanyProfilePage = lazy(() => import('src/pages/dashboard/company/profile'));
@@ -62,9 +74,9 @@ const AfterCompleteRoiStagePage = lazy(() => import('src/pages/dashboard/issure-
 // WORKFLOW
 const ReactFlowPage = lazy(() => import('src/pages/dashboard/react-flow/board'));
 // Document
-const NewDocumentPage = lazy(()=> import('src/pages/dashboard/documents/new')); 
-const DocumentEditPage = lazy(()=> import('src/pages/dashboard/documents/edit'));
-const DocumentListPage = lazy(()=> import('src/pages/dashboard/documents/list'));
+const NewDocumentPage = lazy(() => import('src/pages/dashboard/documents/new'));
+const DocumentEditPage = lazy(() => import('src/pages/dashboard/documents/edit'));
+const DocumentListPage = lazy(() => import('src/pages/dashboard/documents/list'));
 // DEBENTURE TRUSTEES
 // const DebentureTrusteeEditPage = lazy(() => import('src/pages/dashboard/debenture-trustees/edit'))
 // const NewDebentureTrusteesPage = lazy(() => import('src/pages/dashboard/debenture-trustees/new'));
@@ -76,8 +88,12 @@ const SchedulerListPage = lazy(() => import('src/pages/dashboard/scheduler/list'
 const SchedulerEditPage = lazy(() => import('src/pages/dashboard/scheduler/edit'));
 const SchedulerViewPage = lazy(() => import('src/pages/dashboard/scheduler/view'));
 // SIGNATORY
-const TrusteeSignatoryDetailsPage = lazy(() => import('src/pages/dashboard/signatories/trustee-signatory-details'));
-const CompanySignatoryDetailsPage = lazy(() => import('src/pages/dashboard/signatories/company-signatory-details'));
+const TrusteeSignatoryDetailsPage = lazy(() =>
+  import('src/pages/dashboard/signatories/trustee-signatory-details')
+);
+const CompanySignatoryDetailsPage = lazy(() =>
+  import('src/pages/dashboard/signatories/company-signatory-details')
+);
 // DESIGNATION
 const DesignationNewPage = lazy(() => import('src/pages/dashboard/designation/new'));
 const DesignationListPage = lazy(() => import('src/pages/dashboard/designation/list'));
@@ -169,12 +185,21 @@ export const dashboardRoutes = [
         ],
       },
       {
+        path: 'merchant',
+        children: [
+          { element: <MerchantProfliesListPage />, index: true },
+          { path: 'list', element: <MerchantProfliesListPage /> },
+          { path: ':id', element: <MerchantProfliesDetailsPage /> },
+          { path: 'new', element: <MerchantProfliesNewPage /> },
+        ],
+      },
+      {
         path: 'trusteeProfiles',
         children: [
           { element: <TrusteeProfileListPage />, index: true },
           { path: 'list', element: <TrusteeProfileListPage /> },
           { path: 'new', element: <TrusteeProfileNewPage /> },
-          { path: ':id', element: <TrusteeProfliesDetailsPage /> }
+          { path: ':id', element: <TrusteeProfliesDetailsPage /> },
         ],
       },
       {

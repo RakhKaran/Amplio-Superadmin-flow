@@ -103,6 +103,11 @@ export function useNavData() {
             path: paths.dashboard.investorProfiles.root,
             icon: ICONS.investor,
           },
+          {
+            title: t('merchant profiles'),
+            path: paths.dashboard.merchant.root,
+            icon: ICONS.investor,
+          },
           // {
           //   title: t('Document Drafting'),
           //   path: paths.dashboard.documentdrafting.root,
