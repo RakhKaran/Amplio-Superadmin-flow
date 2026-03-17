@@ -36,7 +36,7 @@ const STATUS_DISPLAY = {
   3: { label: 'Rejected', color: 'error' },
 };
 
-export default function MerchantDetailsBasicInfo({ data, refreshProfilesDetails }) {
+export default function MerchantDetailsBasicInfoView({ data, refreshProfilesDetails }) {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
@@ -328,6 +328,6 @@ return (
 );
 }
 
-MerchantDetailsBasicInfo.propTypes = {
+MerchantDetailsBasicInfoView.propTypes = {
   data: PropTypes.object,
 };

@@ -1,19 +1,18 @@
 import PropTypes from 'prop-types';
 import { useState, useCallback } from 'react';
+// @mui
 import {
   Card,
   Table,
   TableBody,
-  TableCell,
   TableContainer,
-  TableRow,
   Typography,
   Stack,
   TextField,
   InputAdornment,
 } from '@mui/material';
+// components
 import Scrollbar from 'src/components/scrollbar';
-import Label from 'src/components/label';
 import Iconify from 'src/components/iconify';
 import {
   useTable,
@@ -24,15 +23,16 @@ import {
   TableHeadCustom,
   TablePaginationCustom,
 } from 'src/components/table';
+//
+import AuditTrailTableRow from '../audit-trail-table-row';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'date', label: 'Date' },
-  { id: 'amount', label: 'Amount' },
-  { id: 'psp', label: 'PSP' },
-  { id: 'utr', label: 'UTR' },
-  { id: 'status', label: 'Status' },
+  { id: 'timestamp', label: 'Timestamp' },
+  { id: 'admin', label: 'Admin' },
+  { id: 'action', label: 'Action' },
+  { id: 'changes', label: 'Changes' },
 ];
 
 const defaultFilters = {
@@ -41,12 +41,12 @@ const defaultFilters = {
 
 // ----------------------------------------------------------------------
 
-export default function MerchantDetailsSettlement({ merchant }) {
+export default function MerchantDetailsAuditTrailView({ merchant }) {
   const table = useTable();
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const tableData = merchant?.settlements || [];
+  const tableData = merchant?.auditTrail || [];
 
   const dataFiltered = applyFilter({
     inputData: tableData,
@@ -65,17 +65,17 @@ export default function MerchantDetailsSettlement({ merchant }) {
   const notFound = !dataFiltered.length;
 
   return (
-    <Card>
-      <Typography variant="h6" sx={{ p: 3, pb: 2 }}>
-        Settlement Details
+    <Card sx={{ p: 3 }}>
+      <Typography variant="h6" sx={{ mb: 3 }}>
+        Audit Trail
       </Typography>
 
-      <Stack sx={{ p: 2.5, pt: 0 }}>
+      <Stack sx={{ mb: 3 }}>
         <TextField
           fullWidth
           value={filters.name}
           onChange={(event) => handleFilters('name', event.target.value)}
-          placeholder="Search..."
+          placeholder="Search actions or admins..."
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -102,20 +102,7 @@ export default function MerchantDetailsSettlement({ merchant }) {
                   table.page * table.rowsPerPage + table.rowsPerPage
                 )
                 .map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell>{row.date}</TableCell>
-                    <TableCell>₹{row.amount}</TableCell>
-                    <TableCell>{row.psp}</TableCell>
-                    <TableCell>{row.utr}</TableCell>
-                    <TableCell>
-                      <Label
-                        variant="soft"
-                        color={(row.status === 'Completed' && 'success') || 'warning'}
-                      >
-                        {row.status}
-                      </Label>
-                    </TableCell>
-                  </TableRow>
+                  <AuditTrailTableRow key={row.id} row={row} />
                 ))}
 
               <TableEmptyRows
@@ -140,7 +127,7 @@ export default function MerchantDetailsSettlement({ merchant }) {
   );
 }
 
-MerchantDetailsSettlement.propTypes = {
+MerchantDetailsAuditTrailView.propTypes = {
   merchant: PropTypes.object,
 };
 
@@ -162,8 +149,8 @@ function applyFilter({ inputData, comparator, filters }) {
   if (name) {
     inputData = inputData.filter(
       (item) =>
-        item.psp.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        item.utr.toLowerCase().indexOf(name.toLowerCase()) !== -1
+        item.action.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        item.admin.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 

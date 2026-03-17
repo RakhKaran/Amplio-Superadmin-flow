@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 // @mui
 import Container from '@mui/material/Container';
@@ -10,15 +10,20 @@ import { useParams, useRouter } from 'src/routes/hook';
 // components
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+// mock
+import { _merchantDetailsList } from 'src/_mock/_merchantDetails';
 //
 import { useGetMerchantProfile } from 'src/api/merchant-profiles';
-import MerchantDetailsBasicInfo from '../merchant-details-basic-info';
-import MerchantDetailsDocuments from '../merchant-details-documents';
-import MerchantDetailsBank from '../merchant-details-bank';
+import MerchantDetailsBasicInfoView from '../basic-info/view/merchant-details-basic-info-view';
+import MerchantDetailsDocumentsView from '../documents/view/merchant-details-documents-view';
+import MerchantDetailsBankView from '../bank/view/merchant-details-bank-view';
 import UbosListView from '../ubo/view/kyc-ubo-list-view';
-import MerchantDetailsReceivables from '../merchant-details-receivables';
-import MerchantDetailsSettlement from '../merchant-details-settlement';
-import MerchantDetailsAuditTrail from '../merchant-details-audit-trail';
+import MerchantDetailsReceivableView from '../receivable/view/merchant-details-receivable-view';
+import MerchantDetailsSettlementView from '../settlement/view/merchant-details-settlement-view';
+import MerchantDetailsAuditTrailView from '../audit-trail/view/merchant-details-audit-trail-view';
+import MerchantDetailsRiskView from '../risk/view/merchant-details-risk-view';
+import MerchantDetailsFraudView from '../fraud/view/merchant-details-fraud-view';
+import MerchantDetailsLiquidityView from '../liquidity/view/merchant-details-liquidity-view';
 import { PSPListView } from '../psp/view';
 
 // ----------------------------------------------------------------------
@@ -31,6 +36,9 @@ const TABS = [
   { value: 'psp', label: 'PSP Details' },
   { value: 'receivables', label: 'Receivables' },
   { value: 'settlement', label: 'Settlement' },
+  { value: 'risk', label: 'Risk' },
+  { value: 'fraud', label: 'Fraud/AML' },
+  { value: 'liquidity', label: 'Liquidity' },
   { value: 'audit_trail', label: 'Audit Trail' },
 ];
 
@@ -44,6 +52,25 @@ export default function MerchantDetailsView() {
     useGetMerchantProfile(id);
 
   const merchantDetail = merchantProfile?.data;
+
+  // Find mock data for this merchant or fallback to first one for demo purposes
+  const mockMerchant = useMemo(() => 
+    _merchantDetailsList.find((m) => m.id === id) || _merchantDetailsList[0],
+  [id]);
+
+  const merchantData = useMemo(() => ({
+    ...merchantDetail,
+    ...mockMerchant,
+    // Ensure we don't override important API data if it exists
+    ...merchantDetail?.liquidity && { liquidity: merchantDetail.liquidity },
+    ...merchantDetail?.risk && { risk: merchantDetail.risk },
+    ...merchantDetail?.fraudAML && { fraudAML: merchantDetail.fraudAML },
+    ...merchantDetail?.receivablesSummary && { receivablesSummary: merchantDetail.receivablesSummary },
+    ...merchantDetail?.receivables && { receivables: merchantDetail.receivables },
+    ...merchantDetail?.auditTrail && { auditTrail: merchantDetail.auditTrail },
+    ...merchantDetail?.settlements && { settlements: merchantDetail.settlements },
+    ...merchantDetail?.receivable && { receivable: merchantDetail.receivable },
+  }), [merchantDetail, mockMerchant]);
 
   const tab = searchParams.get('tab');
 
@@ -71,22 +98,28 @@ export default function MerchantDetailsView() {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <Tabs value={currentTab} onChange={handleChangeTab} sx={{ mb: { xs: 3, md: 5 } }}>
+      <Tabs 
+        value={currentTab} 
+        onChange={handleChangeTab} 
+        sx={{ mb: { xs: 3, md: 5 } }}
+        variant="scrollable"
+        scrollButtons="auto"
+      >
         {TABS.map((tab) => (
           <Tab key={tab.value} value={tab.value} label={tab.label} />
         ))}
       </Tabs>
 
       {currentTab === 'basic' && (
-        <MerchantDetailsBasicInfo
+        <MerchantDetailsBasicInfoView
           data={merchantProfile}
           refreshProfilesDetails={refreshProfilesDetails}
         />
       )}
 
-      {currentTab === 'documents' && <MerchantDetailsDocuments merchant={merchantDetail} />}
+      {currentTab === 'documents' && <MerchantDetailsDocumentsView merchant={merchantDetail} />}
 
-      {currentTab === 'bank' && <MerchantDetailsBank merchant={merchantDetail} />}
+      {currentTab === 'bank' && <MerchantDetailsBankView merchant={merchantDetail} />}
 
       {currentTab === 'ubo' && (
         <UbosListView 
@@ -98,11 +131,17 @@ export default function MerchantDetailsView() {
 
       {currentTab === 'psp' && <PSPListView merchantProfile={merchantProfile} />}
 
-      {currentTab === 'receivables' && <MerchantDetailsReceivables merchant={merchantDetail} />}
+      {currentTab === 'receivables' && <MerchantDetailsReceivableView merchant={merchantData} />}
 
-      {currentTab === 'settlement' && <MerchantDetailsSettlement merchant={merchantDetail} />}
+      {currentTab === 'settlement' && <MerchantDetailsSettlementView settlements={merchantData?.settlements} />}
 
-      {currentTab === 'audit_trail' && <MerchantDetailsAuditTrail merchant={merchantDetail} />}
+      {currentTab === 'risk' && <MerchantDetailsRiskView merchant={merchantData} />}
+
+      {currentTab === 'fraud' && <MerchantDetailsFraudView merchant={merchantData} />}
+
+      {currentTab === 'liquidity' && <MerchantDetailsLiquidityView merchant={merchantData} />}
+
+      {currentTab === 'audit_trail' && <MerchantDetailsAuditTrailView merchant={merchantData} />}
     </Container>
   );
 }

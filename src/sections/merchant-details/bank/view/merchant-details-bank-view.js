@@ -2,12 +2,12 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { Typography, Grid, Box, CircularProgress } from '@mui/material';
 import { useGetBankDetails } from 'src/api/merchant-kyc';
-import MerchantDetailsBankCard from './merchant-details-bank-card';
-import MerchantDetailsBankDetails from './merchant-details-bank-details';
+import MerchantDetailsBankCard from '../merchant-details-bank-card';
+import MerchantDetailsBankDetails from '../merchant-details-bank-details';
 
 // ----------------------------------------------------------------------
 
-export default function MerchantDetailsBank({ merchant }) {
+export default function MerchantDetailsBankView({ merchant }) {
   const merchantId = merchant?.id;
   const { bankDetails = [], loading, refreshBankDetails } = useGetBankDetails(merchantId);
 
@@ -57,6 +57,6 @@ export default function MerchantDetailsBank({ merchant }) {
   );
 }
 
-MerchantDetailsBank.propTypes = {
+MerchantDetailsBankView.propTypes = {
   merchant: PropTypes.object,
 };

@@ -12,6 +12,7 @@ export const MERCHANT_STATUS_OPTIONS = [
 export const _merchantDetailsList = [...Array(20)].map((_, index) => ({
   id: _mock.id(index),
   merchantName: _mock.companyName(index),
+  companyName: _mock.companyName(index),
   email: _mock.email(index),
   phone: _mock.phoneNumber(index),
   CIN: `U${Math.floor(Math.random() * 90000) + 10000}MH${Math.floor(Math.random() * 9000) + 1000}PTC${Math.floor(Math.random() * 900000) + 100000}`,
@@ -33,53 +34,49 @@ export const _merchantDetailsList = [...Array(20)].map((_, index) => ({
       fileType: 'image/jpeg',
     },
   },
-  // Bank Details
-  bankAccounts: [
-    {
-      id: '1',
-      bankName: 'HDFC Bank',
-      branchName: 'Andheri West',
-      ifscCode: 'HDFC0001234',
-      accountNumber: '50100012345678',
-      bankAccountProofType: 0,
-      isPrimary: true,
-      status: 1,
-      bankAccountProof: { fileUrl: '#' },
-    },
-    {
-      id: '2',
-      bankName: 'ICICI Bank',
-      branchName: 'Bandra East',
-      ifscCode: 'ICIC0005678',
-      accountNumber: '000405001234',
-      bankAccountProofType: 1,
-      isPrimary: false,
-      status: 0,
-      bankAccountProof: { fileUrl: '#' },
-    },
-  ],
-  // PSP Details
-  psps: [
-    {
-      id: '1',
-      psp: 'Razorpay',
-      merchantId: 'rzp_live_8FJ3kL9dE2',
-      settlementAccount: 'XXXX1234',
-      apiKey: 'rzp_test_key_123456',
-      apiSecret: 'rzp_secret_abcdef',
-      status: 'active',
-    },
-    {
-      id: '2',
-      psp: 'Cashfree',
-      merchantId: 'cf_live_92kslK2',
-      settlementAccount: 'XXXX5678',
-      apiKey: 'cf_api_key_987654',
-      apiSecret: 'cf_secret_123abc',
-      status: 'pending',
-    },
-  ],
-  // Receivables Data (EcommerceYearlySales format)
+  // Liquidity Data
+  liquidity: {
+    autoLiquidity: true,
+    utilization: 32,
+    creditLimit: 50,
+    used: 16,
+    available: 34,
+    haircut: [
+      { label: "D0", value: 5 },
+      { label: "D1", value: 8 },
+      { label: "D2", value: 12 }
+    ]
+  },
+  // Risk Data
+  risk: {
+    timeline: [
+      { month: "Jan", value: 8 },
+      { month: "Feb", value: 12 },
+      { month: "Mar", value: 10 }
+    ],
+    factors: [
+      { label: "Payment Behavior", value: 92, status: "Good", color: 'info' },
+      { label: "Refund Rate", value: 98, status: "Excellent", color: 'success' },
+      { label: "Settlement Timeliness", value: 95, status: "Good", color: 'success' },
+      { label: "Transaction Volume", value: 88, status: "Fair", color: 'warning' }
+    ]
+  },
+  // Fraud / AML Data
+  fraudAML: {
+    aml: [
+      { label: "PEP Match", status: "Clear", color: 'success' },
+      { label: "Sanctions Score", status: "No Match", color: 'success' },
+      { label: "UBO Risk", status: "Low", color: 'success' }
+    ],
+    alerts: []
+  },
+  // Receivables Summary
+  receivablesSummary: {
+    total: 120,
+    pending: 30,
+    upcoming: 50
+  },
+  // Receivables Chart Data
   receivables: {
     categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     series: [
@@ -99,22 +96,101 @@ export const _merchantDetailsList = [...Array(20)].map((_, index) => ({
       },
     ],
   },
-  // Settlement Data
-  settlements: [
-    { id: '1', date: '2023-10-01', amount: 5000, status: 'Completed', psp: 'Razorpay', utr: 'UTR123456' },
-    { id: '2', date: '2023-10-02', amount: 7500, status: 'Pending', psp: 'Cashfree', utr: '-' },
-    { id: '3', date: '2023-10-03', amount: 12000, status: 'Completed', psp: 'Razorpay', utr: 'UTR789012' },
-  ],
-  // Documents
-  documents: [
-    { id: '1', name: 'GST Certificate', label: 'GST Certificate', status: 1, fileUrl: 'https://example.com/gst.pdf' },
-    { id: '2', name: 'PAN Card', label: 'PAN Card', status: 1, fileUrl: 'https://example.com/pan.pdf' },
-    { id: '3', name: 'Incorporation Certificate', label: 'Incorporation Certificate', status: 0, fileUrl: 'https://example.com/inc.pdf' },
-  ],
   // Audit Trail
   auditTrail: [
-    { id: '1', action: 'KYC Approved', user: 'Admin', date: '2023-10-01 10:00 AM' },
-    { id: '2', action: 'Document Uploaded', user: 'Merchant', date: '2023-09-28 02:30 PM' },
-    { id: '3', action: 'Profile Created', user: 'System', date: '2023-09-25 09:15 AM' },
+    {
+      id: '1',
+      timestamp: "Mar 1, 2026 10:30 AM",
+      admin: "admin@smilewave.com",
+      action: "Updated Risk Tier",
+      changes: "Medium → Low",
+    },
+    {
+      id: '2',
+      timestamp: "Mar 2, 2026 11:45 AM",
+      admin: "manager@smilewave.com",
+      action: "Approved PSP",
+      changes: "Pending → Approved",
+    }
   ],
+  // Settlements Data
+  settlements: {
+    summary: {
+      totalSettled: 4.5,
+      deductions: 0.32,
+      netAmount: 4.18,
+      pending: 1.8
+    },
+    list: [
+      {
+        id: "STL-2026-001",
+        date: "Mar 9, 2026",
+        status: "Completed",
+        netSettlement: 21.5,
+        grossAmount: 23.5,
+        d0Haircut: -58.75,
+        d1Haircut: -117.5,
+        processingFee: -23.5,
+        sourceAccount: "Razorpay Pool Account",
+        sourceRef: "RAZR0000123456789",
+        destinationAccount: "Merchant Registered Account",
+        destinationRef: "YESB000001234567890",
+        transferInitiated: "09:30:00",
+        creditReceived: "09:35:22",
+        utr: "RAZR2026030900123",
+        transactions: 2
+      },
+      {
+        id: "STL-2026-002",
+        date: "Mar 10, 2026",
+        status: "Pending",
+        netSettlement: 15.0,
+        grossAmount: 16.5,
+        d0Haircut: -41.25,
+        d1Haircut: -82.5,
+        processingFee: -16.5,
+        sourceAccount: "Razorpay Pool Account",
+        sourceRef: "RAZR0000123456790",
+        destinationAccount: "Merchant Registered Account",
+        destinationRef: "YESB000001234567891",
+        transferInitiated: "10:30:00",
+        creditReceived: "-",
+        utr: "-",
+        transactions: 5
+      }
+    ]
+  },
+  // Receivable Data
+  receivable: {
+    distribution: [
+      { label: "D0", value: 2.5 },
+      { label: "D1", value: 5.8 },
+      { label: "D2", value: 3.2 }
+    ],
+    recentTransactions: [
+      {
+        id: "TXN123456",
+        type: "UPI",
+        date: "Mar 1, 2026",
+        amount: 2.5,
+        status: "Assigned"
+      },
+      {
+        id: "TXN123457",
+        type: "NEFT",
+        date: "Mar 1, 2026",
+        amount: 1.8,
+        status: "Pending"
+      },
+      {
+        id: "TXN123458",
+        type: "UPI",
+        date: "Feb 29, 2026",
+        amount: 3.2,
+        status: "Assigned"
+      }
+    ]
+  }
 }));
+
+
