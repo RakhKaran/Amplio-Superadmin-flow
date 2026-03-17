@@ -1,13 +1,16 @@
 import PropTypes from 'prop-types';
 // @mui
-import { Card, Typography, Stack, Box } from '@mui/material';
 import { alpha } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 // components
 import Label from 'src/components/label';
 
 // ----------------------------------------------------------------------
 
-export default function MerchantDetailsSummaryCard({ title, data, sx, ...other }) {
+export default function SummaryCard({ title, data, sx, ...other }) {
   return (
     <Card sx={{ p: 3, height: 1, ...sx }} {...other}>
       <Typography variant="h6" sx={{ mb: 3 }}>
@@ -58,7 +61,7 @@ export default function MerchantDetailsSummaryCard({ title, data, sx, ...other }
   );
 }
 
-MerchantDetailsSummaryCard.propTypes = {
+SummaryCard.propTypes = {
   data: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string,

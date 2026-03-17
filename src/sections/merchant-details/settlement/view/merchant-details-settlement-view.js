@@ -21,7 +21,7 @@ import { fIndianCurrency } from 'src/utils/format-number';
 //
 import SettlementTableRow from '../settlement-table-row';
 import SettlementTableToolbar from '../settlement-table-toolbar';
-import MerchantDetailsSummaryCard from '../../common/merchant-details-summary-card';
+import SummaryCard from 'src/components/summary-card';
 
 // ----------------------------------------------------------------------
 
@@ -94,13 +94,14 @@ export default function MerchantDetailsSettlementView({ settlements }) {
       <Grid container spacing={3}>
         {summaryCards.map((card) => (
           <Grid item xs={12} md={3} key={card.label}>
-            <MerchantDetailsSummaryCard 
+            <SummaryCard 
                 title={card.label} 
                 data={[{ label: 'Current', value: card.value, color: card.color }]} 
             />
           </Grid>
         ))}
       </Grid>
+
 
       <Card>
         <SettlementTableToolbar

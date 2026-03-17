@@ -9,8 +9,7 @@ import {
 } from '@mui/material';
 // components
 import EmptyContent from 'src/components/empty-content';
-//
-import MerchantDetailsSummaryCard from '../../common/merchant-details-summary-card';
+import SummaryCard from 'src/components/summary-card';
 
 // ----------------------------------------------------------------------
 
@@ -30,8 +29,9 @@ export default function MerchantDetailsFraudView({ merchant }) {
     <Grid container spacing={3}>
       {/* AML Screening */}
       <Grid item xs={12} md={6}>
-        <MerchantDetailsSummaryCard title="AML Screening" data={amlData} />
+        <SummaryCard title="AML Screening" data={amlData} />
       </Grid>
+
 
       {/* Fraud Alerts */}
       <Grid item xs={12} md={6}>

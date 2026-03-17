@@ -20,7 +20,7 @@ import {
 // utils
 import { fCurrency } from 'src/utils/format-number';
 // 
-import MerchantDetailsSummaryCard from '../../common/merchant-details-summary-card';
+import SummaryCard from 'src/components/summary-card';
 
 // ----------------------------------------------------------------------
 
@@ -48,15 +48,16 @@ export default function MerchantDetailsLiquidityView({ merchant }) {
       </Grid>
 
       <Grid item xs={12} md={4}>
-        <MerchantDetailsSummaryCard title="Exposure Limits" data={exposureLimits} />
+        <SummaryCard title="Exposure Limits" data={exposureLimits} />
       </Grid>
 
       <Grid item xs={12} md={4}>
-        <MerchantDetailsSummaryCard title="Haircut Table" data={haircutData} />
+        <SummaryCard title="Haircut Table" data={haircutData} />
       </Grid>
     </Grid>
   );
 }
+
 
 
 MerchantDetailsLiquidityView.propTypes = {
