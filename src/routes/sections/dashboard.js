@@ -63,6 +63,10 @@ const MerchantProfliesDetailsPage = lazy(() =>
 );
 const MerchantProfliesNewPage = lazy(() => import('src/pages/dashboard/merchant-profiles/new'));
 
+// MERCHANT DETAILS (DUMMY)
+const MerchantDetailsListPage = lazy(() => import('src/pages/dashboard/merchant-details/list'));
+const MerchantDetailsPage = lazy(() => import('src/pages/dashboard/merchant-details/details'));
+
 // TRUSTEE PROFILE FOR KYC
 const TrusteeProfileListPage = lazy(() => import('src/pages/dashboard/trustee-profiles/list'));
 const TrusteeProfliesDetailsPage = lazy(() =>
@@ -206,6 +210,14 @@ export const dashboardRoutes = [
           { path: 'list', element: <MerchantProfliesListPage /> },
           { path: ':id', element: <MerchantProfliesDetailsPage /> },
           { path: 'new', element: <MerchantProfliesNewPage /> },
+        ],
+      },
+      {
+        path: 'merchant-details',
+        children: [
+          { element: <MerchantDetailsListPage />, index: true },
+          { path: 'list', element: <MerchantDetailsListPage /> },
+          { path: ':id', element: <MerchantDetailsPage /> },
         ],
       },
       {

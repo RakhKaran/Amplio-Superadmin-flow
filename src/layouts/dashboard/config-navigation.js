@@ -45,7 +45,9 @@ const ICONS = {
   menuItem: icon('ic_menu_item'),
   ecommerce: icon('ic_ecommerce'),
   analytics: icon('ic_analytics'),
-  dashboard: icon('ic_dashboard'),
+  dashboard: icon('ic_dashboard'), 
+  merchantprofile: icon('ic_merchantprofile'),
+  merchantdetails: icon('ic_merchantdetails'),
 };
 
 // ----------------------------------------------------------------------
@@ -106,7 +108,12 @@ export function useNavData() {
           {
             title: t('merchant profiles'),
             path: paths.dashboard.merchant.root,
-            icon: ICONS.investor,
+            icon: ICONS.merchantprofile,
+          },
+          {
+            title: t('merchant details'),
+            path: paths.dashboard.merchantDetails.root,
+            icon: ICONS.merchantdetails,
           },
           {
             title: t('investor'),

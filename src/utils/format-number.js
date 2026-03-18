@@ -30,6 +30,17 @@ export function fData(number) {
   return result(format, '.0');
 }
 
+export function fIndianCurrency(number) {
+  if (number === undefined || number === null) return '';
+  
+  if (number >= 1) {
+    return `₹${number} Cr`;
+  }
+  
+  const lakhs = number * 100;
+  return `₹${lakhs.toFixed(0)} L`;
+}
+
 function result(format, key = '.00') {
   const isInteger = format.includes(key);
 

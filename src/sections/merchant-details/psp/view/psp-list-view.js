@@ -33,10 +33,12 @@ import {
   TablePaginationCustom,
 } from 'src/components/table';
 
-import { enqueueSnackbar } from 'notistack';
+import { useSnackbar } from 'src/components/snackbar';
 import PSPIntegrationForm from '../psp-edit-view';
 import { useGetPspDetails } from 'src/api/merchant-kyc';
 import PSPTableRow from '../psp-table-row';
+import PSPTableToolbar from '../psp-table-toolbar';
+import PSPTableFiltersResult from '../psp-table-filters-result';
 
 // ----------------------------------------------------------------------
 
@@ -58,15 +60,13 @@ const defaultFilters = {
 // ----------------------------------------------------------------------
 
 export default function PSPListView({
-  setActiveStepId,
-  saveStepData,
   percent = () => {},
   merchantProfile,
 }) {
   const table = useTable();
 
   const settings = useSettingsContext();
-  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
   const confirm = useBoolean();
   const [openAddPSP, setOpenAddPSP] = useState(false);
   const [selectedPSP, setSelectedPSP] = useState(null);
@@ -75,6 +75,12 @@ export default function PSPListView({
 
   const merchantId = merchantProfile?.data?.id;
   const { pspDetails = [], refreshPspDetails, loading } = useGetPspDetails(merchantId);
+
+  const [tableData, setTableData] = useState([]);
+
+  useEffect(() => {
+    setTableData(pspDetails);
+  }, [pspDetails]);
 
   useEffect(() => {
     if (!loading) {
@@ -86,18 +92,38 @@ export default function PSPListView({
     }
   }, [pspDetails, loading, percent]);
 
-  const tableData = pspDetails;
+  const [filters, setFilters] = useState(defaultFilters);
 
-  const handleOpenAddPSP = () => {
-    setSelectedPSP(null);
-    setOpenAddPSP(true);
-    setEditMode(false);
-  };
+  const dataFiltered = applyFilter({
+    inputData: tableData,
+    comparator: getComparator(table.order, table.orderBy),
+    filters,
+  });
+
+  const denseHeight = table.dense ? 52 : 72;
+  const canReset = !isEqual(defaultFilters, filters);
+  const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
+
+  const handleFilters = useCallback(
+    (name, value) => {
+      table.onResetPage();
+      setFilters((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    },
+    [table]
+  );
+
+  const handleResetFilters = useCallback(() => {
+    setFilters(defaultFilters);
+  }, []);
 
   const handleCloseAddPSP = () => {
     setOpenAddPSP(false);
     setSelectedPSP(null);
     setEditMode(false);
+    setViewMode(false);
   };
 
   const handleFormSubmit = useCallback(async () => {
@@ -118,26 +144,26 @@ export default function PSPListView({
     setEditMode(true);
   }, []);
 
-  const [filters, setFilters] = useState(defaultFilters);
-
-  const dataFiltered = applyFilter({
-    inputData: tableData,
-    comparator: getComparator(table.order, table.orderBy),
-    filters,
-  });
-
-  const denseHeight = table.dense ? 52 : 72;
-  const canReset = !isEqual(defaultFilters, filters);
-  const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
-
   const handleDeleteRow = useCallback(() => {
     enqueueSnackbar('Delete API not implemented yet', { variant: 'warning' });
-  }, []);
+  }, [enqueueSnackbar]);
 
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <Card>
+          <PSPTableToolbar filters={filters} onFilters={handleFilters} />
+
+          {canReset && (
+            <PSPTableFiltersResult
+              filters={filters}
+              onFilters={handleFilters}
+              onResetFilters={handleResetFilters}
+              results={dataFiltered.length}
+              sx={{ p: 2.5, pt: 0 }}
+            />
+          )}
+
           <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
             <TableSelectedAction
               dense={table.dense}
@@ -251,17 +277,7 @@ export default function PSPListView({
 
 PSPListView.propTypes = {
   percent: PropTypes.func,
-  setActiveStepId: PropTypes.func,
-  saveStepData: PropTypes.func,
   merchantProfile: PropTypes.object,
-};
-
-// ----------------------------------------------------------------------
-
-const statusMap = {
-  0: { label: 'Review', color: 'warning' },
-  1: { label: 'Approved', color: 'success' },
-  2: { label: 'Rejected', color: 'error' },
 };
 
 // ----------------------------------------------------------------------
@@ -282,7 +298,7 @@ function applyFilter({ inputData, comparator, filters }) {
   if (name) {
     inputData = inputData.filter(
       (item) =>
-        item?.pspName?.toLowerCase().includes(name.toLowerCase()) ||
+        item?.pspMaster?.name?.toLowerCase().includes(name.toLowerCase()) ||
         item?.merchantId?.toLowerCase().includes(name.toLowerCase())
     );
   }
