@@ -44,7 +44,7 @@ const TABLE_HEAD = [
   { id: 'totalSettlement', label: 'Total Settlement' },
   { id: 'transactionVolume', label: 'Volume' },
   { id: 'activeSettlements', label: 'Active Settlements', align: 'center' },
-  { id: 'avgSettlementTime', label: 'Avg Settlement Time' },
+  { id: 'avgSettlementTime', label: 'Avg Settlement Time', align: 'center' },
   { id: '', label: 'Actions' },
 ];
 

@@ -10,7 +10,7 @@ import { paths } from 'src/routes/paths';
 import { useParams } from 'src/routes/hook';
 // components
 import Label from 'src/components/label';
-import SummaryCard from 'src/components/summary-card';
+import { SummaryDashboardGrid } from 'src/components/summary-card';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 // mock
@@ -71,35 +71,26 @@ export default function PSPDetailsView() {
         </Stack>
       </Stack>
 
-      <Grid container spacing={3} sx={{ mb: { xs: 3, md: 5 } }}>
-        <Grid xs={12} sm={6} md={3}>
-          <SummaryCard
-            title="Total Merchants"
-            data={[{ label: 'Count', value: pspData.summary.totalMerchants, color: 'primary' }]}
-          />
-        </Grid>
-
-        <Grid xs={12} sm={6} md={3}>
-          <SummaryCard
-            title="Total Settlement"
-            data={[{ label: 'Value', value: pspData.summary.totalSettlement, color: 'success' }]}
-          />
-        </Grid>
-
-        <Grid xs={12} sm={6} md={3}>
-          <SummaryCard
-            title="Transaction Volume"
-            data={[{ label: 'Volume', value: pspData.summary.transactionVolume, color: 'info' }]}
-          />
-        </Grid>
-
-        <Grid xs={12} sm={6} md={3}>
-          <SummaryCard
-            title="Active Settlements"
-            data={[{ label: 'Active', value: pspData.summary.activeSettlements, color: 'warning' }]}
-          />
-        </Grid>
-      </Grid>
+      <SummaryDashboardGrid
+        cards={[
+          {
+            title: 'Total Merchants',
+            data: [{ label: 'Count', value: pspData.summary.totalMerchants, color: 'primary' }],
+          },
+          {
+            title: 'Total Settlement',
+            data: [{ label: 'Value', value: pspData.summary.totalSettlement, color: 'success' }],
+          },
+          {
+            title: 'Transaction Volume',
+            data: [{ label: 'Volume', value: pspData.summary.transactionVolume, color: 'info' }],
+          },
+          {
+            title: 'Active Settlements',
+            data: [{ label: 'Active', value: pspData.summary.activeSettlements, color: 'warning' }],
+          },
+        ]}
+      />
 
       <Tabs
         value={currentTab}

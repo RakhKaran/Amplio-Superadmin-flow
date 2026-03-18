@@ -25,6 +25,7 @@ import MerchantDetailsRiskView from '../risk/view/merchant-details-risk-view';
 import MerchantDetailsFraudView from '../fraud/view/merchant-details-fraud-view';
 import MerchantDetailsLiquidityView from '../liquidity/view/merchant-details-liquidity-view';
 import { PSPListView } from '../psp/view';
+import MerchantSummaryCards from '../summary/merchant-summary-cards';
 
 // ----------------------------------------------------------------------
 
@@ -97,6 +98,8 @@ export default function MerchantDetailsView() {
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
+
+      <MerchantSummaryCards merchantId={id} />
 
       <Tabs 
         value={currentTab} 

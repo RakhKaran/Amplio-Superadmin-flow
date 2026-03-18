@@ -134,6 +134,7 @@ export const endpoints = {
     getUboDetails: (merchantId) => `/merchant-profiles/${merchantId}/ubo-details`,
 
     getPspDetails: (merchantId) => `/merchant-profiles/${merchantId}/psp-details`,
+    getSummary: (merchantId) => `/merchant-profiles/${merchantId}/summary`,
   },
   InvestorKyc: {
     getDocuments: (investorId) => `/investor-profiles/${investorId}/documents`,

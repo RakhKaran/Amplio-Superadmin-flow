@@ -33,12 +33,23 @@ export function fData(number) {
 export function fIndianCurrency(number) {
   if (number === undefined || number === null) return '';
   
-  if (number >= 1) {
+  // If number is large (likely in base units), convert to Cr
+  if (number >= 10000000) {
+    const cr = number / 10000000;
+    return `₹${cr.toFixed(1)} Cr`;
+  }
+  
+  if (number >= 100000) {
+    const lakhs = number / 100000;
+    return `₹${lakhs.toFixed(1)} L`;
+  }
+
+  // Handle cases where number might already be in Cr (backward compatibility or specific usage)
+  if (number >= 1 && number < 100) {
     return `₹${number} Cr`;
   }
   
-  const lakhs = number * 100;
-  return `₹${lakhs.toFixed(0)} L`;
+  return `₹${number}`;
 }
 
 function result(format, key = '.00') {

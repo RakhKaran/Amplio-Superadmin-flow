@@ -13,7 +13,7 @@ import { useCallback, useState } from 'react';
 import { Grid, Tab, Tabs } from '@mui/material';
 
 import { useSearchParams } from 'react-router-dom';
-import InvestorSummaryCard from '../investor-summery-cards';
+import { SummaryDashboardGrid } from 'src/components/summary-card';
 import { InvestorData, SummeryData } from 'src/_mock/_investor';
 import InvestorEntityDetailsCard from '../investor-details-card';
 import InvestorBankDetails from '../investor-bank-details';
@@ -67,17 +67,12 @@ export default function InvestorDetailsView() {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <Grid container spacing={3} sx={{ mb: 5 }}>
-        {data?.map((item) => (
-          <Grid item xs={12} sm={6} md={3} key={item.title}>
-            <InvestorSummaryCard
-              icon={item.icon}
-              title={item.title}
-              value={item.value}
-            />
-          </Grid>
-        ))}
-      </Grid>
+      <SummaryDashboardGrid
+        cards={data.map((item) => ({
+          title: item.title,
+          data: [{ label: 'Value', value: item.value, color: 'primary' }],
+        }))}
+      />
 
       <Tabs value={currentTab} onChange={handleChangeTab} sx={{ mb: { xs: 3, md: 5 } }}>
         {TABS.map((tab) => (

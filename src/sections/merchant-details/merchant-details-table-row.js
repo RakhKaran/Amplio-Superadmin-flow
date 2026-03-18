@@ -7,6 +7,7 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
@@ -71,6 +72,12 @@ export default function MerchantDetailsTableRow({
         </TableCell>
 
         <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+          <Tooltip title="View" placement="top" arrow>
+            <IconButton color="default" onClick={onEditRow}>
+              <Iconify icon="solar:eye-bold" />
+            </IconButton>
+          </Tooltip>
+
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
@@ -83,16 +90,6 @@ export default function MerchantDetailsTableRow({
         arrow="right-top"
         sx={{ width: 140 }}
       >
-        <MenuItem
-          onClick={() => {
-            onEditRow();
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:eye-bold" />
-          View
-        </MenuItem>
-
         <MenuItem
           onClick={() => {
             confirm.onTrue();

@@ -8,6 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import ListItemText from '@mui/material/ListItemText';
+import Tooltip from '@mui/material/Tooltip';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
@@ -69,9 +70,15 @@ export default function PSPTableRow({
 
         <TableCell align="center">{fNumber(activeSettlements)}</TableCell>
 
-        <TableCell>{avgSettlementTime}</TableCell>
+        <TableCell align="center">{avgSettlementTime}</TableCell>
 
         <TableCell align="right" sx={{ px: 1, whiteSpace: 'nowrap' }}>
+          <Tooltip title="View" placement="top" arrow>
+            <IconButton color="default" onClick={onViewRow}>
+              <Iconify icon="solar:eye-bold" />
+            </IconButton>
+          </Tooltip>
+
           <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>
@@ -84,16 +91,6 @@ export default function PSPTableRow({
         arrow="right-top"
         sx={{ width: 140 }}
       >
-        <MenuItem
-          onClick={() => {
-            onViewRow();
-            popover.onClose();
-          }}
-        >
-          <Iconify icon="solar:eye-bold" />
-          View
-        </MenuItem>
-
         <MenuItem
           onClick={() => {
             confirm.onTrue();

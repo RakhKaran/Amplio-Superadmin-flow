@@ -190,6 +190,13 @@ export const _merchantDetailsList = [...Array(20)].map((_, index) => ({
         status: "Assigned"
       }
     ]
+  },
+  // Dashboard Summary Data
+  summaryDashboard: {
+    riskTier: (index % 3 === 0 && 'Low') || (index % 3 === 1 && 'Medium') || 'High',
+    exposureUsage: Math.floor(Math.random() * 100),
+    totalReceivables: 115000000 + (index * 1000000),
+    activePsps: (index % 3) + 1,
   }
 }));
 
