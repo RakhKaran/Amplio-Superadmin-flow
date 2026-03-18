@@ -147,6 +147,12 @@ export const paths = {
       list: `${ROOTS.DASHBOARD}/investorProfiles/list`,
       details: (id) => `${ROOTS.DASHBOARD}/investorProfiles/${id}`,
     },
+    investor: {
+      root: `${ROOTS.DASHBOARD}/investor`,
+      // new: `${ROOTS.DASHBOARD}/investor/new`,
+      list: `${ROOTS.DASHBOARD}/investor/list`,
+      details: (id) => `${ROOTS.DASHBOARD}/investor/${id}`,
+    },
     merchant: {
       root: `${ROOTS.DASHBOARD}/merchant`,
       new: `${ROOTS.DASHBOARD}/merchant/new`,
