@@ -41,110 +41,128 @@ import {
 //
 
 import { useFilterDocumentTypes } from 'src/api/document-type';
-import TrusteeProfilesTableRow from '../trustee-profiles-table-row';
-import TrusteeProfileTableToolbar from '../trustee-profiles-table-toolbar';
-import TrusteeProfileTableFiltersResult from '../trustee-profiles-table-filters-result';
-import { useFilterTrusteeProfiles } from 'src/api/trustee-profiles';
+import InvestorTableRow from '../investor-table-row';
+import InvestorTableToolbar from '../investor-table-toolbar';
+import InvestorTableFiltersResult from '../investor-table-filters-result';
+import { useFilterInvestorProfiles, useGetInvestorProfiles } from 'src/api/investor-profiles';
 import { buildFilter } from 'src/utils/filters';
-import { status } from 'nprogress';
-
-
+import { fi } from 'date-fns/locale';
+import { InvestorData } from 'src/_mock/_investor';
 
 
 // ----------------------------------------------------------------------
-
 const STATUS_OPTIONS = [
   { value: 'all', label: 'All', color: 'default' },
-  { value: 0, label: 'Pending', color: 'warning' },
-  { value: 1, label: 'Under Review', color: 'info' },
-  { value: 2, label: 'Approved', color: 'success' },
-  { value: 3, label: 'Rejected', color: 'error' },
+  { value: 0, label: 'Active', color: 'success' },
+  { value: 1, label: 'In-Active', color: 'info' },
 ];
 
-
 const TABLE_HEAD = [
-  { id: 'legalEntityName', label: 'Trustee Name' },
-  { id: 'CIN', label: 'CIN' },
-  { id: 'GSTIN', label: 'GSTIN' },
-  { id: 'isActive', label: 'Status' },
-  { id: 'createdAt', label: 'Created At' },
+  { id: 'investorName', label: 'Investor Name' },
+  { id: 'gender', label: 'Category' },
+  { id: 'kycMode', label: 'Total Exposure' },
+  { id: 'isActive', label: 'Yield' },
+  { id: 'status', label: 'Status' },
+  { id: 'createdAt', label: 'Last Fund Date' },
+
   { id: '', label: 'Actions' },
 ];
 
 const defaultFilters = {
   name: '',
   status: 'all',
+  startDate: null,
+  endDate: null,
 };
 
 // ----------------------------------------------------------------------
 
-export default function TrusteeProfileListView() {
-  const table = useTable();
+export default function InvestorListView() {
+  const table = useTable({ defaultOrderBy: 'orderNumber' });
 
   const settings = useSettingsContext();
+
   const router = useRouter();
-  const [tableData, setTableData] = useState([]);
-  const [filters, setFilters] = useState(defaultFilters);
+
   const confirm = useBoolean();
 
-  const filter = buildFilter({
-    page: table.page,
-    rowsPerPage: table.rowsPerPage,
-    order: table.order,
-    orderBy: table.orderBy,
-    startDate: filters.startDate,
-    endDate: filters.endDate,
-    validSortFields: ['legalEntityName', 'CIN', 'GSTIN'],
-    searchTextValue: filters.name,
+  const [tableData, setTableData] = useState(InvestorData);
+
+  const [filters, setFilters] = useState(defaultFilters);
+
+  const dateError =
+    filters.startDate && filters.endDate
+      ? filters.startDate.getTime() > filters.endDate.getTime()
+      : false;
+
+  const dataFiltered = applyFilter({
+    inputData: tableData,
+    comparator: getComparator(table.order, table.orderBy),
+    filters,
+    dateError,
   });
 
-  const filterJson = encodeURIComponent(JSON.stringify(filter));
-
-  const params = {
-    filter: filterJson,
-    status: filters.status !== 'all' ? filters.status : undefined,
-  }
-
-  const { filteredTrusteeProfiles, totalCount, } = useFilterTrusteeProfiles(params);
-
-  const handleViewRow = useCallback(
-    (id) => {
-      router.push(paths.dashboard.trusteeProfiles.details(id));
-    },
-    [router]
+  const dataInPage = dataFiltered.slice(
+    table.page * table.rowsPerPage,
+    table.page * table.rowsPerPage + table.rowsPerPage
   );
-  console.log("filteredTrusteeProfiles", filteredTrusteeProfiles);
-
-  const handleEditRow = useCallback(
-    (id) => {
-      router.push(paths.dashboard.documentdrafting.edit(id));
-    },
-    [router]
-  );
-
-
-
 
   const denseHeight = table.dense ? 52 : 72;
-  const canReset = !isEqual(defaultFilters, filters);
-  const notFound = (!filteredTrusteeProfiles.length && canReset) || !filteredTrusteeProfiles.length;
+
+  const canReset =
+    !!filters.name || filters.status !== 'all' || (!!filters.startDate && !!filters.endDate);
+
+  const notFound = (!dataFiltered.length && canReset) || !dataFiltered.length;
 
   const handleFilters = useCallback(
     (name, value) => {
       table.onResetPage();
-      setFilters((prev) => ({ ...prev, [name]: value }));
+      setFilters((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
     },
     [table]
   );
 
+  const handleDeleteRow = useCallback(
+    (id) => {
+      const deleteRow = tableData.filter((row) => row.id !== id);
+      setTableData(deleteRow);
+
+      table.onUpdatePageDeleteRow(dataInPage.length);
+    },
+    [dataInPage.length, table, tableData]
+  );
 
   const handleDeleteRows = useCallback(() => {
+    const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
+    setTableData(deleteRows);
+
     table.onUpdatePageDeleteRows({
       totalRows: tableData.length,
-      totalRowsInPage: filteredTrusteeProfiles.length,
-      totalRowsFiltered: filteredTrusteeProfiles.length,
+      totalRowsInPage: dataInPage.length,
+      totalRowsFiltered: dataFiltered.length,
     });
-  }, [filteredTrusteeProfiles.length, table, tableData]);
+  }, [dataFiltered.length, dataInPage.length, table, tableData]);
+
+  const handleResetFilters = useCallback(() => {
+    setFilters(defaultFilters);
+  }, []);
+
+  // const handleViewRow = useCallback(
+  //   (id) => {
+  //     router.push(paths.dashboard.order.details(id));
+  //   },
+  //   [router]
+  // );
+
+    const handleViewRow = useCallback(
+    (id) => {
+      router.push(paths.dashboard.investor.details(id));
+    },
+    [router]
+  );
 
   const handleFilterStatus = useCallback(
     (event, newValue) => {
@@ -153,31 +171,27 @@ export default function TrusteeProfileListView() {
     [handleFilters]
   );
 
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
-  }, []);
-
-
-  useEffect(() => {
-    if (filteredTrusteeProfiles) {
-      setTableData(filteredTrusteeProfiles);
-    }
-  }, [filteredTrusteeProfiles]);
-
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
           heading="List"
           links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Trustee Profiles', href: paths.dashboard.trusteeProfiles.list },
+            {
+              name: 'Dashboard',
+              href: paths.dashboard.root,
+            },
+            {
+              name: 'Investor',
+              href: paths.dashboard.investor.root,
+            },
             { name: 'List' },
           ]}
           sx={{
             mb: { xs: 3, md: 5 },
           }}
         />
+
         <Card>
           <Tabs
             value={filters.status}
@@ -190,36 +204,48 @@ export default function TrusteeProfileListView() {
             {STATUS_OPTIONS.map((tab) => (
               <Tab
                 key={tab.value}
+                iconPosition="end"
                 value={tab.value}
                 label={tab.label}
                 icon={
                   <Label
-                    variant={filters.status === tab.value ? 'filled' : 'soft'}
-                    color={tab.color}
+                    variant={
+                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
+                    }
+                    color={
+                      (tab.value === 'completed' && 'success') ||
+                      (tab.value === 'pending' && 'warning') ||
+                      (tab.value === 'cancelled' && 'error') ||
+                      'default'
+                    }
                   >
-                    {tab.value === 'all' ? totalCount.totalCount : totalCount[tab.value]}
-                    {tab.value === 0 && totalCount.totalPending}
-                    {tab.value === 1 && totalCount.totalUnderReview}
-                    {tab.value === 2 && totalCount.totalVerified}
-                    {tab.value === 3 && totalCount.totalRejected}
+                    {tab.value === 'all' && InvestorData.length}
+                    {tab.value === 0 &&
+                      InvestorData.filter((order) => order.status === 0).length}
+
+                    {tab.value === 1 &&
+                      InvestorData.filter((order) => order.status === 1).length}
                   </Label>
                 }
-                iconPosition="end"
               />
             ))}
           </Tabs>
 
-
-          <TrusteeProfileTableToolbar filters={filters} onFilters={handleFilters} />
+          <InvestorTableToolbar
+            filters={filters}
+            onFilters={handleFilters}
+            //
+            canReset={canReset}
+            onResetFilters={handleResetFilters}
+          />
 
           {canReset && (
-            <TrusteeProfileTableFiltersResult
+            <InvestorTableFiltersResult
               filters={filters}
               onFilters={handleFilters}
               onResetFilters={handleResetFilters}
-              results={filteredTrusteeProfiles.length}
+              results={dataFiltered.length}
               statusOptions={STATUS_OPTIONS}
-
               sx={{ p: 2.5, pt: 0 }}
             />
           )}
@@ -244,7 +270,6 @@ export default function TrusteeProfileListView() {
               }
             />
 
-
             <Scrollbar>
               <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
                 <TableHeadCustom
@@ -260,27 +285,25 @@ export default function TrusteeProfileListView() {
                       tableData.map((row) => row.id)
                     )
                   }
-                  showCheckbox={false}
                 />
 
                 <TableBody>
-                  {filteredTrusteeProfiles.map((row) => (
-                    <TrusteeProfilesTableRow
-                      key={row.id}
-                      row={row}
-                      selected={table.selected.includes(row.id)}
-                      onSelectRow={() => table.onSelectRow(row.id)}
-                      onViewRow={() => handleViewRow(row.id)}
-                      onEditRow={() => handleEditRow(row.id)}
-                    />
-                  ))}
-
-
-                  {/* <TableEmptyRows
-                    height={denseHeight}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
-                  /> */}
-
+                  {dataFiltered
+                    .slice(
+                      table.page * table.rowsPerPage,
+                      table.page * table.rowsPerPage + table.rowsPerPage
+                    )
+                    .map((row) => (
+                      <InvestorTableRow
+                        key={row.id}
+                        row={row}
+                        selected={table.selected.includes(row.id)}
+                        onSelectRow={() => table.onSelectRow(row.id)}
+                        onDeleteRow={() => handleDeleteRow(row.id)}
+                        onViewRow={() => handleViewRow(row.id)}
+                      />
+                    ))}
+                    
                   <TableNoData notFound={notFound} />
                 </TableBody>
               </Table>
@@ -288,11 +311,12 @@ export default function TrusteeProfileListView() {
           </TableContainer>
 
           <TablePaginationCustom
-            count={totalCount?.totalCount}
+            count={dataFiltered.length}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}
             onRowsPerPageChange={table.onChangeRowsPerPage}
+            //
             dense={table.dense}
             onChangeDense={table.onChangeDense}
           />
@@ -303,7 +327,11 @@ export default function TrusteeProfileListView() {
         open={confirm.value}
         onClose={confirm.onFalse}
         title="Delete"
-        content={`Are you sure want to delete ${table.selected.length} items?`}
+        content={
+          <>
+            Are you sure want to delete <strong> {table.selected.length} </strong> items?
+          </>
+        }
         action={
           <Button
             variant="contained"
@@ -323,8 +351,8 @@ export default function TrusteeProfileListView() {
 
 // ----------------------------------------------------------------------
 
-function applyFilter({ inputData, comparator, filters }) {
-  const { name, status } = filters;
+function applyFilter({ inputData, comparator, filters, dateError }) {
+  const { status, name, startDate, endDate } = filters;
 
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
@@ -337,18 +365,27 @@ function applyFilter({ inputData, comparator, filters }) {
   inputData = stabilizedThis.map((el) => el[0]);
 
   if (name) {
-    inputData = inputData.filter((emails) =>
-      Object.values(emails).some((value) =>
-        String(value).toLowerCase().includes(name.toLowerCase())
-      )
+    inputData = inputData.filter(
+      (order) =>
+        order.orderNumber.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.customer.name.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        order.customer.email.toLowerCase().indexOf(name.toLowerCase()) !== -1
     );
   }
 
   if (status !== 'all') {
-    inputData = inputData.filter((emails) =>
-      status === 'active' ? !emails.isDeleted : emails.isDeleted
-    );
+    inputData = inputData.filter((order) => order.status === status);
   }
+
+  // if (!dateError) {
+  //   if (startDate && endDate) {
+  //     inputData = inputData.filter(
+  //       (order) =>
+  //         fTimestamp(order.createdAt) >= fTimestamp(startDate) &&
+  //         fTimestamp(order.createdAt) <= fTimestamp(endDate)
+  //     );
+  //   }
+  // }
 
   return inputData;
 }

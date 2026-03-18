@@ -111,30 +111,46 @@ export default function GuarantorApprovalForm({ open, guarantor, onClose, refres
     const isFinalStatus = guarantor.status === 1;
 
     /* ---------------- APPROVE ---------------- */
-    const handleApprove = async () => {
-        await axiosInstance.patch('/company-profiles/guarantor-profile-verification', {
-            id: guarantor.id,
-            status: 1,
-            reason: '',
-        });
+const handleApprove = async () => {
+  try {
+    await axiosInstance.patch('/company-profiles/guarantor-profile-verification', {
+      id: guarantor.id,
+      status: 1,
+      reason: '',
+    });
 
-        enqueueSnackbar('Guarantor approved', { variant: 'success' });
-        refreshGuarantorDetails();
-        onClose();
-    };
+    enqueueSnackbar('Guarantor approved', { variant: 'success' });
+    refreshGuarantorDetails();
+    onClose();
+  } catch (error) {
+    console.error(error);
+    enqueueSnackbar(
+      error?.error?.message || 'Something went wrong',
+      { variant: 'error' }
+    );
+  }
+};
 
     /* ---------------- REJECT ---------------- */
-    const handleRejectSubmit = async () => {
-        await axiosInstance.patch('/company-profiles/guarantor-profile-verification', {
-            id: guarantor.id,
-            status: 2,
-            reason: rejectReason,
-        });
+   const handleRejectSubmit = async () => {
+  try {
+    await axiosInstance.patch('/company-profiles/guarantor-profile-verification', {
+      id: guarantor.id,
+      status: 2,
+      reason: rejectReason,
+    });
 
-        enqueueSnackbar('Guarantor rejected', { variant: 'error' });
-        setRejectOpen(false);
-        onClose();
-    };
+    enqueueSnackbar('Guarantor rejected', { variant: 'error' });
+    setRejectOpen(false);
+    onClose();
+  } catch (error) {
+    console.error(error);
+    enqueueSnackbar(
+      error?.error?.message || 'Something went wrong',
+      { variant: 'error' }
+    );
+  }
+};
 
     const isCorporate = guarantor?.guarantorType === 'Corporate';
     const isIndividual = guarantor?.guarantorType === 'Individual';

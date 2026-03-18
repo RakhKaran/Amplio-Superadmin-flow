@@ -104,7 +104,7 @@ export default function InvestorProfileListView() {
     status: filters.status === 'all' ? undefined : Number(filters.status),
   }
 
-  const { filteredInvestorProfiles, totalCount, } = useFilterInvestorProfiles(params);
+  const { filteredInvestorProfiles, count } = useFilterInvestorProfiles(params);
 
   const handleViewRow = useCallback(
     (id) => {
@@ -195,7 +195,11 @@ export default function InvestorProfileListView() {
                     variant={filters.status === tab.value ? 'filled' : 'soft'}
                     color={tab.color}
                   >
-                    {tab.value === 'all' ? totalCount.total : totalCount[tab.value]}
+                    {tab.value === 'all' ? count.totalCount : count[tab.value]}
+                    {tab.value === 0 && count.totalPending}
+                    {tab.value === 1 && count.totalUnderReview}
+                    {tab.value === 2 && count.totalVerified}
+                    {tab.value === 3 && count.totalRejected}
                   </Label>
                 }
                 iconPosition="end"
@@ -268,10 +272,10 @@ export default function InvestorProfileListView() {
                   ))}
 
 
-                  <TableEmptyRows
+                  {/* <TableEmptyRows
                     height={denseHeight}
                     emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
-                  />
+                  /> */}
 
                   <TableNoData notFound={notFound} />
                 </TableBody>
@@ -280,7 +284,7 @@ export default function InvestorProfileListView() {
           </TableContainer>
 
           <TablePaginationCustom
-            count={totalCount}
+            count={count.totalCount}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}

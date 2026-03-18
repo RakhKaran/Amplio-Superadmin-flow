@@ -66,12 +66,18 @@ export function useFilterTrusteeProfiles(params) {
 
     return useMemo(
         () => ({
-            filteredTrusteeProfiles: data?.data?.profiles || [],
-            totalCount: data?.data?.count || 0,
+            filteredTrusteeProfiles: data?.data || [],
+            totalCount: data?.count || {
+                totalCount: 0,
+                totalRejected: 0,
+                totalPending: 0,
+                totalUnderReview: 0,
+                totalVerified: 0,
+            },
             filterLoading: isLoading,
             filterError: error,
             filterValidating: isValidating,
-            filterEmpty: !isLoading && (!data?.data?.profiles?.length),
+            filterEmpty: !isLoading && (!data?.data?.length),
         }),
         [data, error, isLoading, isValidating]
     );

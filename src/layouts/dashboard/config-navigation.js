@@ -117,6 +117,11 @@ export function useNavData() {
             icon: ICONS.merchantdetails,
           },
           {
+            title: t('investor'),
+            path: paths.dashboard.investor.root,
+            icon: ICONS.investor,
+          },
+          {
             title: t('PSP'),
             path: paths.dashboard.psp.root,
             icon: ICONS.psp,

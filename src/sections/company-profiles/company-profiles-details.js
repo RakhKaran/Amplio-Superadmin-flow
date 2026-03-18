@@ -114,7 +114,7 @@ const handleStatusUpdate = async (type, reason = null) => {
     refreshProfilesDetails();
     setTimeout(() => router.back(), 800);
   } catch (error) {
-    enqueueSnackbar(error?.response?.data?.message || 'Something went wrong', {
+    enqueueSnackbar(error?.error?.message || 'Something went wrong', {
       variant: 'error',
     });
   } finally {
