@@ -115,25 +115,13 @@ export const paths = {
       root: `${ROOTS.DASHBOARD}/user`,
       new: `${ROOTS.DASHBOARD}/user/new`,
       list: `${ROOTS.DASHBOARD}/user/list`,
-      // cards: `${ROOTS.DASHBOARD}/user/cards`,
       profile: `${ROOTS.DASHBOARD}/user/profile`,
-      // account: `${ROOTS.DASHBOARD}/user/account`,
-      // edit: (id) => `${ROOTS.DASHBOARD}/user/${id}/edit`,
-      // demo: {
-      //   edit: `${ROOTS.DASHBOARD}/user/${MOCK_ID}/edit`,
-      // },
     },
     company: {
       root: `${ROOTS.DASHBOARD}/company`,
       new: `${ROOTS.DASHBOARD}/company/new`,
       list: `${ROOTS.DASHBOARD}/company/list`,
-      // cards: `${ROOTS.DASHBOARD}/company/cards`,
       profile: `${ROOTS.DASHBOARD}/company/profile`,
-      // account: `${ROOTS.DASHBOARD}/company/account`,
-      // edit: (id) => `${ROOTS.DASHBOARD}/company/${id}/edit`,
-      // demo: {
-      //   edit: `${ROOTS.DASHBOARD}/company/${MOCK_ID}/edit`,
-      // },
     },
     companyProfiles: {
       root: `${ROOTS.DASHBOARD}/companyProfiles`,
@@ -149,13 +137,14 @@ export const paths = {
     },
     investor: {
       root: `${ROOTS.DASHBOARD}/investor`,
-      // new: `${ROOTS.DASHBOARD}/investor/new`,
       list: `${ROOTS.DASHBOARD}/investor/list`,
       details: (id) => `${ROOTS.DASHBOARD}/investor/${id}`,
     },
     spvManagement: {
       root: `${ROOTS.DASHBOARD}/spv-management`,
       list: `${ROOTS.DASHBOARD}/spv-management/list`,
+      details: (id) => `${ROOTS.DASHBOARD}/spv-management/${id}`,
+      poolDetails: (id) => `${ROOTS.DASHBOARD}/spv-management/pool/${id}`,
     },
     merchant: {
       root: `${ROOTS.DASHBOARD}/merchant`,
@@ -163,23 +152,21 @@ export const paths = {
       list: `${ROOTS.DASHBOARD}/merchant/list`,
       details: (id) => `${ROOTS.DASHBOARD}/merchant/${id}`,
     },
-    merchantDetails: {
-      root: `${ROOTS.DASHBOARD}/merchant-details`,
-      list: `${ROOTS.DASHBOARD}/merchant-details/list`,
-      details: (id) => `${ROOTS.DASHBOARD}/merchant-details/${id}`,
-    },
     psp: {
       root: `${ROOTS.DASHBOARD}/psp`,
       list: `${ROOTS.DASHBOARD}/psp/list`,
       details: (id) => `${ROOTS.DASHBOARD}/psp/${id}`,
     },
+    merchantDetails: {
+      root: `${ROOTS.DASHBOARD}/merchant-details`,
+      list: `${ROOTS.DASHBOARD}/merchant-details/list`,
+      details: (id) => `${ROOTS.DASHBOARD}/merchant-details/${id}`,
+    },
     signatory: {
       root: `${ROOTS.DASHBOARD}/signatory`,
-
       companydetails: (id) => `${ROOTS.DASHBOARD}/signatory/company/${id}`,
       trusteedetails: (id) => `${ROOTS.DASHBOARD}/signatory/trustee/${id}`,
     },
-
     trusteeProfiles: {
       root: `${ROOTS.DASHBOARD}/trusteeProfiles`,
       new: `${ROOTS.DASHBOARD}/trusteeProfiles/new`,
@@ -192,62 +179,12 @@ export const paths = {
       roifundform: `${ROOTS.DASHBOARD}/issureservices/fund-position-form`,
       view: `${ROOTS.DASHBOARD}/issureservices/view`,
     },
-    // documentdrafting: {
-    //   root: `${ROOTS.DASHBOARD}/documentdrafting`,
-    //   new: `${ROOTS.DASHBOARD}/documentdrafting/new`,
-    //   edit: (id) => `${ROOTS.DASHBOARD}/documentdrafting/${id}/edit`,
-
-    // },
     document: {
       root: `${ROOTS.DASHBOARD}/document`,
       new: `${ROOTS.DASHBOARD}/document/new`,
       edit: (id) => `${ROOTS.DASHBOARD}/document/${id}/edit`,
       list: `${ROOTS.DASHBOARD}/document/list`,
     },
-    // debenturetrustees: {
-    //   root: `${ROOTS.DASHBOARD}/debenturetrustees`,
-    //   new: `${ROOTS.DASHBOARD}/debenturetrustees/new`,
-    //   edit: (id) => `${ROOTS.DASHBOARD}/debenturetrustees/${id}/edit`,
-    //   debenturetrusteeslist: `${ROOTS.DASHBOARD}/debenturetrustees/debenture-trustees-list`,
-    //   draft: (id) => `${ROOTS.DASHBOARD}/debenturetrustees/${id}`,
-    // },
-    //   product: {
-    //     root: `${ROOTS.DASHBOARD}/product`,
-    //     new: `${ROOTS.DASHBOARD}/product/new`,
-    //     details: (id) => `${ROOTS.DASHBOARD}/product/${id}`,
-    //     edit: (id) => `${ROOTS.DASHBOARD}/product/${id}/edit`,
-    //     demo: {
-    //       details: `${ROOTS.DASHBOARD}/product/${MOCK_ID}`,
-    //       edit: `${ROOTS.DASHBOARD}/product/${MOCK_ID}/edit`,
-    //     },
-    //   },
-    //   invoice: {
-    //     root: `${ROOTS.DASHBOARD}/invoice`,
-    //     new: `${ROOTS.DASHBOARD}/invoice/new`,
-    //     details: (id) => `${ROOTS.DASHBOARD}/invoice/${id}`,
-    //     edit: (id) => `${ROOTS.DASHBOARD}/invoice/${id}/edit`,
-    //     demo: {
-    //       details: `${ROOTS.DASHBOARD}/invoice/${MOCK_ID}`,
-    //       edit: `${ROOTS.DASHBOARD}/invoice/${MOCK_ID}/edit`,
-    //     },
-    //   },
-    //   post: {
-    //     root: `${ROOTS.DASHBOARD}/post`,
-    //     new: `${ROOTS.DASHBOARD}/post/new`,
-    //     details: (title) => `${ROOTS.DASHBOARD}/post/${paramCase(title)}`,
-    //     edit: (title) => `${ROOTS.DASHBOARD}/post/${paramCase(title)}/edit`,
-    //     demo: {
-    //       details: `${ROOTS.DASHBOARD}/post/${paramCase(MOCK_TITLE)}`,
-    //       edit: `${ROOTS.DASHBOARD}/post/${paramCase(MOCK_TITLE)}/edit`,
-    //     },
-    //   },
-    //   order: {
-    //     root: `${ROOTS.DASHBOARD}/order`,
-    //     details: (id) => `${ROOTS.DASHBOARD}/order/${id}`,
-    //     demo: {
-    //       details: `${ROOTS.DASHBOARD}/order/${MOCK_ID}`,
-    //     },
-    //   },
     job: {
       root: `${ROOTS.DASHBOARD}/job`,
       new: `${ROOTS.DASHBOARD}/job/new`,
@@ -270,7 +207,6 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/workflow/${MOCK_ID}/edit`,
       },
     },
-
     scheduler: {
       root: `${ROOTS.DASHBOARD}/scheduler`,
       new: `${ROOTS.DASHBOARD}/scheduler/new`,
@@ -282,7 +218,6 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/scheduler/${MOCK_ID}/edit`,
       },
     },
-
     designation: {
       root: `${ROOTS.DASHBOARD}/designation`,
       new: `${ROOTS.DASHBOARD}/designation/new`,
@@ -294,16 +229,5 @@ export const paths = {
         edit: `${ROOTS.DASHBOARD}/designation/${MOCK_ID}/edit`,
       },
     },
-    //   tour: {
-    //     root: `${ROOTS.DASHBOARD}/tour`,
-    //     new: `${ROOTS.DASHBOARD}/tour/new`,
-    //     details: (id) => `${ROOTS.DASHBOARD}/tour/${id}`,
-    //     edit: (id) => `${ROOTS.DASHBOARD}/tour/${id}/edit`,
-    //     demo: {
-    //       details: `${ROOTS.DASHBOARD}/tour/${MOCK_ID}`,
-    //       edit: `${ROOTS.DASHBOARD}/tour/${MOCK_ID}/edit`,
-    //     },
-    //   },
-    // },
   },
 };

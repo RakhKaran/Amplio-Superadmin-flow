@@ -1,147 +1,254 @@
 import PropTypes from 'prop-types';
-import { Card, Box, Typography, Stack, Divider, Chip, Grid, IconButton } from '@mui/material';
+import { useEffect, useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
+// @mui
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import Chip from '@mui/material/Chip';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import MenuItem from '@mui/material/MenuItem';
+import Typography from '@mui/material/Typography';
+import Grid2 from '@mui/material/Unstable_Grid2';
+// components
 import Iconify from 'src/components/iconify';
+import FormProvider, { RHFTextField, RHFSelect } from 'src/components/hook-form';
 
-export default function InvestorBankDetails({ bank }) {
-  const bankData = bank?.primaryBankAccount;
+const STATUS = {
+  Verified: { label: 'Approved', color: '#2E7D32', icon: 'mdi:check-decagram' },
+  Pending: { label: 'Under Review', color: '#f8a15a', icon: 'mdi:clock-time-eight-outline' },
+  Rejected: { label: 'Rejected', color: '#C62828', icon: 'mdi:close-circle' },
+};
 
-  if (!bankData) {
-    return (
-      <Card sx={{ p: 3, borderRadius: 2 }}>
-        <Typography variant="body1">No bank details available.</Typography>
-      </Card>
-    );
-  }
+function maskAccountNumber(num) {
+  if (!num) return '';
+  const lastFour = num.slice(-4);
+  return `**** **** **** ${lastFour}`;
+}
 
-  const STATUS = {
-    'Verified': { label: 'Approved', color: '#2E7D32', icon: 'mdi:check-decagram' },
-    'Pending': { label: 'Under Review', color: '#ED6C02', icon: 'mdi:clock-time-eight-outline' },
-    'Rejected': { label: 'Rejected', color: '#C62828', icon: 'mdi:close-circle' },
-  };
-
-  const maskAccountNumber = (num) => {
-    if (!num) return '';
-    const lastFour = num.slice(-4);
-    return `**** **** **** ${lastFour}`;
-  };
+function InvestorDetailsBankCard({ bank, onOpenForm }) {
+  if (!bank) return null;
 
   return (
-    <Grid container spacing={3}>
-      <Grid item xs={12} md={6}>
-        <Card
+    <Card
+      sx={{
+        p: 2,
+        borderRadius: 2,
+        boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        cursor: 'pointer',
+        transition: '0.2s',
+        '&:hover': {
+          transform: 'scale(1.01)',
+          boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
+        },
+      }}
+      onClick={() => onOpenForm(bank)}
+    >
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack direction="row" spacing={2} alignItems="center">
+          <Iconify icon="mdi:bank" width={30} />
+          <Box>
+            <Typography variant="subtitle2" color="text.secondary">
+              Bank Name
+            </Typography>
+            <Typography variant="h6">{bank?.bankName}</Typography>
+          </Box>
+        </Stack>
+
+        <Chip
+          icon={<Iconify icon={STATUS[bank?.status]?.icon || 'mdi:help-circle'} />}
+          label={STATUS[bank?.status]?.label || 'Unknown'}
           sx={{
-            p: 2,
-            borderRadius: 2,
-            boxShadow: '0 2px 10px rgba(0,0,0,0.08)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-            cursor: 'pointer',
-            transition: '0.2s',
+            bgcolor: `${STATUS[bank?.status]?.color || '#9e9e9e'}1A`,
+            color: STATUS[bank?.status]?.color || '#9e9e9e',
+            fontWeight: 600,
+            px: 1.5,
             '&:hover': {
-              transform: 'scale(1.01)',
-              boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
+              bgcolor: `${STATUS[bank?.status]?.color || '#9e9e9e'}1A`,
             },
           }}
-        >
-          {/* Header */}
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Iconify icon="mdi:bank" width={30} />
-              <Box>
-                <Typography variant="caption" color="text.secondary">
-                  Bank Name
-                </Typography>
-                <Typography variant="subtitle1" fontWeight={600}>
-                  {bankData.bankName}
-                </Typography>
-              </Box>
-            </Stack>
+        />
+      </Stack>
 
-            <Chip
-              icon={<Iconify icon={STATUS[bankData.status]?.icon || 'mdi:help-circle'} />}
-              label={STATUS[bankData.status]?.label || bankData.status}
-              sx={{
-                bgcolor: `${STATUS[bankData.status]?.color || '#9e9e9e'}1A`,
-                color: STATUS[bankData.status]?.color || '#9e9e9e',
-                fontWeight: 600,
-                px: 1.5,
-              }}
-            />
+      <Divider />
+
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Iconify icon="mdi:home-city-outline" width={22} />
+            <Box>
+              <Typography variant="caption" color="text.secondary">
+                Branch Name
+              </Typography>
+              <Typography variant="subtitle1">{bank?.branch || '-'}</Typography>
+            </Box>
           </Stack>
+        </Grid>
 
-          <Divider />
+        <Grid item xs={12} md={6}>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Iconify icon="mdi:web" width={22} />
+            <Box>
+              <Typography variant="caption" color="text.secondary">
+                IFSC Code
+              </Typography>
+              <Typography variant="subtitle1">{bank?.ifscCode || '-'}</Typography>
+            </Box>
+          </Stack>
+        </Grid>
 
-          {/* Details Grid */}
-          <Grid container spacing={2}>
-            {/* Account Holder */}
-            <Grid item xs={12}>
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Iconify icon="mdi:account-circle-outline" width={22} />
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Account Holder Name
-                  </Typography>
-                  <Typography variant="subtitle2">{bankData.accountHolderName}</Typography>
-                </Box>
-              </Stack>
-            </Grid>
+        <Grid item xs={12} md={6}>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Iconify icon="mdi:card-account-details" width={22} />
+            <Box>
+              <Typography variant="caption" color="text.secondary">
+                Account Number
+              </Typography>
+              <Typography variant="subtitle1">{maskAccountNumber(bank?.accountNumber)}</Typography>
+            </Box>
+          </Stack>
+        </Grid>
 
-            {/* Account Number */}
-            <Grid item xs={12} sm={6}>
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Iconify icon="mdi:card-account-details" width={22} />
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Account Number
-                  </Typography>
-                  <Typography variant="subtitle2">{maskAccountNumber(bankData.accountNumber)}</Typography>
-                </Box>
-              </Stack>
-            </Grid>
-
-            {/* IFSC Code */}
-            <Grid item xs={12} sm={6}>
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Iconify icon="mdi:web" width={22} />
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    IFSC Code
-                  </Typography>
-                  <Typography variant="subtitle2">{bankData.ifscCode}</Typography>
-                </Box>
-              </Stack>
-            </Grid>
-
-            {/* Account Type */}
-            <Grid item xs={12} sm={6}>
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Iconify icon="mdi:label-outline" width={22} />
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Account Type
-                  </Typography>
-                  <Typography variant="subtitle2">{bankData.accountType}</Typography>
-                </Box>
-              </Stack>
-            </Grid>
-
-            {/* Branch */}
-            <Grid item xs={12} sm={6}>
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Iconify icon="mdi:home-city-outline" width={22} />
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Branch
-                  </Typography>
-                  <Typography variant="subtitle2">{bankData.branch}</Typography>
-                </Box>
-              </Stack>
-            </Grid>
-          </Grid>
-        </Card>
+        <Grid item xs={12} md={6}>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Iconify icon="mdi:account-circle-outline" width={22} />
+            <Box>
+              <Typography variant="caption" color="text.secondary">
+                Account Holder
+              </Typography>
+              <Typography variant="subtitle1">{bank?.accountHolderName || '-'}</Typography>
+            </Box>
+          </Stack>
+        </Grid>
       </Grid>
-    </Grid>
+    </Card>
+  );
+}
+
+InvestorDetailsBankCard.propTypes = {
+  bank: PropTypes.object,
+  onOpenForm: PropTypes.func,
+};
+
+function InvestorDetailsBankPreview({ bank, onBack }) {
+  const methods = useForm({
+    defaultValues: {
+      bankName: '',
+      branchName: '',
+      accountNumber: '',
+      ifscCode: '',
+      accountType: '',
+      accountHolderName: '',
+      verifiedOn: '',
+      verifiedBy: '',
+    },
+  });
+
+  const { reset } = methods;
+
+  useEffect(() => {
+    if (bank) {
+      reset({
+        bankName: bank.bankName || '',
+        branchName: bank.branch || '',
+        accountNumber: bank.accountNumber || '',
+        ifscCode: bank.ifscCode || '',
+        accountType: bank.accountType || '',
+        accountHolderName: bank.accountHolderName || '',
+        verifiedOn: bank.verifiedOn || '',
+        verifiedBy: bank.verifiedBy || '',
+      });
+    }
+  }, [bank, reset]);
+
+  return (
+    <Box>
+      <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 3 }}>
+        <Button
+          startIcon={<Iconify icon="eva:arrow-ios-back-fill" />}
+          onClick={onBack}
+          sx={{ fontWeight: 600 }}
+        >
+          Back to list
+        </Button>
+      </Stack>
+
+      <FormProvider methods={methods}>
+        <Card sx={{ p: 4, borderRadius: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
+            Bank Details Preview
+          </Typography>
+
+          <Grid2 container spacing={3}>
+            <Grid2 xs={12} md={9}>
+              <Stack spacing={3}>
+                <RHFTextField name="ifscCode" label="IFSC Code" disabled />
+                <RHFTextField name="bankName" label="Bank Name" disabled />
+                <RHFTextField name="branchName" label="Branch Name" disabled />
+                <RHFTextField name="accountHolderName" label="Account Holder Name" disabled />
+                <RHFTextField name="accountNumber" label="Account Number" disabled />
+                <RHFTextField name="verifiedBy" label="Verified By" disabled />
+              </Stack>
+            </Grid2>
+
+            <Grid2 xs={12} md={3}>
+              <Stack spacing={3}>
+                <RHFSelect name="accountType" label="Account Type" disabled>
+                  <MenuItem value="Savings Account">Savings Account</MenuItem>
+                  <MenuItem value="Current Account">Current Account</MenuItem>
+                </RHFSelect>
+                <RHFTextField name="verifiedOn" label="Verified On" disabled />
+              </Stack>
+            </Grid2>
+          </Grid2>
+        </Card>
+      </FormProvider>
+    </Box>
+  );
+}
+
+InvestorDetailsBankPreview.propTypes = {
+  bank: PropTypes.object,
+  onBack: PropTypes.func,
+};
+
+export default function InvestorBankDetails({ bank }) {
+  const bankData = useMemo(() => {
+    const primaryBank = bank?.primaryBankAccount;
+    return primaryBank ? [{ ...primaryBank, id: 'primary-bank' }] : [];
+  }, [bank]);
+
+  const [selectedBank, setSelectedBank] = useState(null);
+
+  if (selectedBank) {
+    return <InvestorDetailsBankPreview bank={selectedBank} onBack={() => setSelectedBank(null)} />;
+  }
+
+  return (
+    <Box>
+      <Typography variant="h6" sx={{ mb: 3 }}>
+        Bank Accounts
+      </Typography>
+
+      {bankData.length === 0 ? (
+        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+          No bank details added yet.
+        </Typography>
+      ) : (
+        <Grid container spacing={3}>
+          {bankData.map((item) => (
+            <Grid item xs={12} md={6} key={item.id}>
+              <InvestorDetailsBankCard bank={item} onOpenForm={(data) => setSelectedBank(data)} />
+            </Grid>
+          ))}
+        </Grid>
+      )}
+    </Box>
   );
 }
 

@@ -1,43 +1,50 @@
 import PropTypes from 'prop-types';
-// @mui
-import Skeleton from '@mui/material/Skeleton';
-import Grid from '@mui/material/Unstable_Grid2';
-//
-import SummaryCard from '../summary-card';
+import { Card, Stack, Typography, Box, Tooltip } from '@mui/material';
+import Iconify from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
-
-export default function SummaryDashboardGrid({ cards, loading, gridSx, ...other }) {
-  if (loading) {
-    return (
-      <Grid container spacing={3} sx={{ mb: { xs: 3, md: 5 }, ...gridSx }} {...other}>
-        {[...Array(4)].map((_, index) => (
-          <Grid key={index} xs={12} sm={6} md={3}>
-            <Skeleton variant="rectangular" height={120} sx={{ borderRadius: 2 }} />
-          </Grid>
-        ))}
-      </Grid>
-    );
-  }
-
+export default function SummaryDashboardGrid({ title, value, icon }) {
   return (
-    <Grid container spacing={3} sx={{ mb: { xs: 3, md: 5 }, ...gridSx }} {...other}>
-      {cards.map((card, index) => (
-        <Grid key={index} xs={12} sm={6} md={3}>
-          <SummaryCard title={card.title} data={card.data} />
-        </Grid>
-      ))}
-    </Grid>
+    <Card
+      sx={{
+        p: 3,
+        borderRadius: 3,
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}
+    >
+      <Stack spacing={1}>
+        <Tooltip title={title}>
+          <Typography variant="body2" sx={{
+            color: 'text.secondary',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            maxWidth: 150,
+          }}>
+            {title}
+          </Typography>
+        </Tooltip>
+
+        <Typography variant="h5">{value}</Typography>
+      </Stack>
+
+      <Box
+        sx={{
+          width: 40,
+          height: 40,
+          color: 'primary.main'
+
+        }}
+      >
+        <Iconify icon={icon} width={24} />
+      </Box>
+    </Card>
   );
 }
 
 SummaryDashboardGrid.propTypes = {
-  cards: PropTypes.arrayOf(
-    PropTypes.shape({
-      title: PropTypes.string,
-      data: PropTypes.array,
-    })
-  ),
-  gridSx: PropTypes.object,
-  loading: PropTypes.bool,
+  title: PropTypes.string,
+  value: PropTypes.any,
+  icon: PropTypes.string,
 };
