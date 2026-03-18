@@ -48,6 +48,7 @@ const ICONS = {
   dashboard: icon('ic_dashboard'), 
   merchantprofile: icon('ic_merchantprofile'),
   merchantdetails: icon('ic_merchantdetails'),
+  psp: icon('ic_banking'),
 };
 
 // ----------------------------------------------------------------------
@@ -114,6 +115,11 @@ export function useNavData() {
             title: t('merchant details'),
             path: paths.dashboard.merchantDetails.root,
             icon: ICONS.merchantdetails,
+          },
+          {
+            title: t('PSP'),
+            path: paths.dashboard.psp.root,
+            icon: ICONS.psp,
           },
           // {
           //   title: t('Document Drafting'),

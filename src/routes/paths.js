@@ -158,6 +158,11 @@ export const paths = {
       list: `${ROOTS.DASHBOARD}/merchant-details/list`,
       details: (id) => `${ROOTS.DASHBOARD}/merchant-details/${id}`,
     },
+    psp: {
+      root: `${ROOTS.DASHBOARD}/psp`,
+      list: `${ROOTS.DASHBOARD}/psp/list`,
+      details: (id) => `${ROOTS.DASHBOARD}/psp/${id}`,
+    },
     signatory: {
       root: `${ROOTS.DASHBOARD}/signatory`,
 

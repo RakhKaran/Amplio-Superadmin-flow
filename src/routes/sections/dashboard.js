@@ -61,6 +61,10 @@ const MerchantProfliesNewPage = lazy(() => import('src/pages/dashboard/merchant-
 const MerchantDetailsListPage = lazy(() => import('src/pages/dashboard/merchant-details/list'));
 const MerchantDetailsPage = lazy(() => import('src/pages/dashboard/merchant-details/details'));
 
+// PSP (DUMMY)
+const PSPListPage = lazy(() => import('src/pages/dashboard/psp/list'));
+const PSPDetailsPage = lazy(() => import('src/pages/dashboard/psp/details'));
+
 // TRUSTEE PROFILE FOR KYC
 const TrusteeProfileListPage = lazy(() => import('src/pages/dashboard/trustee-profiles/list'));
 const TrusteeProfliesDetailsPage = lazy(() =>
@@ -201,8 +205,16 @@ export const dashboardRoutes = [
         path: 'merchant-details',
         children: [
           { element: <MerchantDetailsListPage />, index: true },
-          { path: 'list', element: <MerchantDetailsListPage /> },
+          { path: 'list', element: <MerchantDetailsListPage />, index: true },
           { path: ':id', element: <MerchantDetailsPage /> },
+        ],
+      },
+      {
+        path: 'psp',
+        children: [
+          { element: <PSPListPage />, index: true },
+          { path: 'list', element: <PSPListPage /> },
+          { path: ':id', element: <PSPDetailsPage /> },
         ],
       },
       {

@@ -81,6 +81,7 @@ export const endpoints = {
   },
   pspMaster: {
     list: '/psp-masters',
+    details: (id) => `/psp-masters/${id}`,
   },
   companyProfiles: {
     list: '/company-profiles',

@@ -15,8 +15,27 @@ export function useGetPsp() {
       pspValidating: isValidating,
       pspEmpty: !isLoading && !data?.length,
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data, isLoading, error, isValidating, data?.length]
+    [data, isLoading, error, isValidating]
+  );
+
+  return memoizedValue;
+}
+
+// ----------------------------------------------------------------------
+
+export function useGetPspDetails(pspId) {
+  const URL = pspId ? endpoints.pspMaster.details(pspId) : '';
+
+  const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+
+  const memoizedValue = useMemo(
+    () => ({
+      psp: data,
+      pspLoading: isLoading,
+      pspError: error,
+      pspValidating: isValidating,
+    }),
+    [data, isLoading, error, isValidating]
   );
 
   return memoizedValue;
