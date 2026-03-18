@@ -126,6 +126,11 @@ export function useNavData() {
             path: paths.dashboard.psp.root,
             icon: ICONS.psp,
           },
+          {
+            title: t('SPV Management'),
+            path: paths.dashboard.spvManagement.root,
+            icon: ICONS.company,
+          },
           // {
           //   title: t('Document Drafting'),
           //   path: paths.dashboard.documentdrafting.root,

@@ -54,6 +54,7 @@ const InvestorProfileNewPage = lazy(() => import('src/pages/dashboard/investor-p
 // INVESTOR MASTER
 const InvestorListPage = lazy(() => import('src/pages/dashboard/investor/list'));
 const IvestorDetailsPage = lazy(()=> import('src/pages/dashboard/investor/details'))
+const SpvManagementListPage = lazy(() => import('src/pages/dashboard/spv-management/list'));
 
 
 // MERCHANT PROFILES FOR KYC
@@ -205,6 +206,13 @@ export const dashboardRoutes = [
           { path: 'list', element: <InvestorListPage /> },
           { path: ':id', element: <IvestorDetailsPage /> },
           // { path: 'new', element: <InvestorProfileNewPage /> },
+        ],
+      },
+      {
+        path: 'spv-management',
+        children: [
+          { element: <SpvManagementListPage />, index: true },
+          { path: 'list', element: <SpvManagementListPage /> },
         ],
       },
       {

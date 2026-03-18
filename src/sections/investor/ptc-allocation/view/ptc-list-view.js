@@ -146,7 +146,7 @@ export default function PTCListView({ InvestorData }) {
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <Typography variant="h5" sx={{ mt: { xs: 2, md: 3 }, mb: { xs: 2, md: 2 } }} color="primary">
+        <Typography variant="h5" sx={{ mt: { xs: 2, md: 3 }, mb: { xs: 2, md: 2 } }} >
           Active PTC Holdings
         </Typography>
 

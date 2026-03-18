@@ -153,6 +153,10 @@ export const paths = {
       list: `${ROOTS.DASHBOARD}/investor/list`,
       details: (id) => `${ROOTS.DASHBOARD}/investor/${id}`,
     },
+    spvManagement: {
+      root: `${ROOTS.DASHBOARD}/spv-management`,
+      list: `${ROOTS.DASHBOARD}/spv-management/list`,
+    },
     merchant: {
       root: `${ROOTS.DASHBOARD}/merchant`,
       new: `${ROOTS.DASHBOARD}/merchant/new`,
