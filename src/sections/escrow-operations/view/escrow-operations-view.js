@@ -9,11 +9,12 @@ import { paths } from 'src/routes/paths';
 import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 // data
-import { escrowAccounts, waterfallSteps, settlementMismatches } from 'src/assets/data/escrowData';
+import { escrowAccounts, waterfallSteps, settlementMismatches, escroData } from 'src/assets/data/escrowData';
 // sections
 import EscrowAccountCard from '../escrow-account-card';
 import WaterfallEngine from '../waterfall-engine';
-import SettlementMismatches from '../settlement-mismatches';
+import { SettlementMismatchListView } from '../settlement-mismatch/view';
+import { SummaryDashboardGrid } from 'src/components/summary-card';
 
 // ----------------------------------------------------------------------
 
@@ -30,6 +31,18 @@ export default function EscrowOperationsView() {
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
+      <Grid container spacing={3} sx={{ mb: 3 }}>
+        {escroData.map((item) => (
+          <Grid key={item.id} xs={12} sm={4}>
+            <SummaryDashboardGrid
+              title={item.title}
+              value={`₹${item.value} ${item.unit}`}
+              icon={item.icon}
+            />
+          </Grid>
+        ))}
+      </Grid>
+
 
       <Grid container spacing={3}>
         {/* Real-Time Escrow Monitor (LEFT) */}
@@ -38,7 +51,7 @@ export default function EscrowOperationsView() {
             <Typography variant="h6">Real-Time Escrow Monitor</Typography>
             <Grid container spacing={3}>
               {escrowAccounts.map((account) => (
-                <Grid key={account.id} xs={12} sm={6}>
+                <Grid key={account.id} xs={12}>
                   <EscrowAccountCard account={account} />
                 </Grid>
               ))}
@@ -53,7 +66,7 @@ export default function EscrowOperationsView() {
 
         {/* Settlement Mismatches (BOTTOM FULL WIDTH) */}
         <Grid xs={12}>
-          <SettlementMismatches mismatches={settlementMismatches} />
+          <SettlementMismatchListView mismatches={settlementMismatches} />
         </Grid>
       </Grid>
     </Container>

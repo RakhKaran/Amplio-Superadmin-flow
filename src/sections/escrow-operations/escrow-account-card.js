@@ -17,7 +17,8 @@ export default function EscrowAccountCard({ account }) {
   return (
     <Card
       sx={{
-        p: 2.5,
+        p: 3,
+        borderRadius: 2,
         border: (theme) => `1px solid ${alpha(theme.palette.grey[500], 0.12)}`,
         '&:hover': {
           bgcolor: (theme) => alpha(theme.palette.grey[500], 0.04),
@@ -25,8 +26,25 @@ export default function EscrowAccountCard({ account }) {
       }}
     >
       <Stack spacing={2}>
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography variant="subtitle1">{bankName}</Typography>
+        {/* Top Row */}
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Stack spacing={0.5}>
+            <Typography variant="subtitle1">{bankName}</Typography>
+
+            <Stack direction="row" spacing={1}>
+              <Typography
+                variant="caption"
+                sx={{ color: 'text.secondary', fontWeight: 600 }}
+              >
+                LINKED PSP
+              </Typography>
+
+              <Typography variant="caption" sx={{ color: 'primary.main' }}>
+                {psp}
+              </Typography>
+            </Stack>
+          </Stack>
+
           <Label
             variant="soft"
             color={status === 'active' ? 'success' : 'default'}
@@ -36,19 +54,15 @@ export default function EscrowAccountCard({ account }) {
           </Label>
         </Stack>
 
-        <Stack spacing={0.5}>
-          <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 'bold' }}>
-            LINKED PSP
-          </Typography>
-          <Typography variant="body2">{psp}</Typography>
-        </Stack>
-
-        <Stack direction="row" spacing={3}>
+        {/* Bottom Row */}
+        <Stack direction="row" spacing={15}>
           <Stack spacing={0.5}>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               Balance
             </Typography>
-            <Typography variant="h6">{fIndianCurrency(balance)}</Typography>
+            <Typography variant="h6">
+              {fIndianCurrency(balance)}
+            </Typography>
           </Stack>
 
           <Stack spacing={0.5}>

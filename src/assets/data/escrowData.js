@@ -72,3 +72,28 @@ export const settlementMismatches = [
     difference: -0.4
   }
 ];
+
+
+export const escroData = [
+  {
+    id: 1,
+    title: "Total Escrow Balance",
+    value: 342.5,
+    unit: "Cr",
+    icon: 'solar:wallet-money-bold',
+  },
+  {
+    id: 2,
+    title: "Today's Inflow",
+    value: 12.83,
+    unit: "Cr",
+    icon: 'solar:graph-up-bold'
+  },
+  {
+    id: 3,
+    title: "Pending Settlements",
+    value: 8.2,
+    unit: "Cr",
+    icon: 'solar:graph-down-bold'
+  }
+];
