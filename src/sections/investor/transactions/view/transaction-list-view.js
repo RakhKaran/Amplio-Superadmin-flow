@@ -147,7 +147,7 @@ export default function TransactionListView({ transactionsData }) {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <TransactionDetailsCards transactions={transactionsData} />
-        <Typography variant="h5" color="primary" sx={{mt:{ xs: 2, md: 3 }, mb: { xs: 1, md: 1} }}>
+        <Typography variant="h5" sx={{mt:{ xs: 2, md: 3 }, mb: { xs: 1, md: 1} }}>
           All Transactions - Audit Trail
         </Typography>
 

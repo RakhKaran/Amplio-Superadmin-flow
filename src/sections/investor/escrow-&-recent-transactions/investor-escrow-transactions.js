@@ -19,7 +19,7 @@ const getStatusColor = (status) => {
 export default function InvestorEscrowTransactions({ transactions }) {
     return (
         <Card sx={{ p: 3, borderRadius: 3 }}>
-            <Typography variant="h5" color="primary" sx={{ mb: 3 }}>
+            <Typography variant="h5" sx={{ mb: 3 }}>
                 Recent Escrow Transactions
             </Typography>
 

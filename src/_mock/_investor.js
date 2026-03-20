@@ -308,22 +308,30 @@ export const InvestorData = [
 export const SummeryData = [
     {
         title: 'Total Exposure',
-        value: '₹250 Cr',
+        value: 'INR 250 Cr',
         icon: 'solar:wallet-bold',
+        iconColor: 'primary.main',
+        iconBg: 'primary.lighter',
     },
     {
         title: 'Average Yield',
         value: '12.5%',
         icon: 'solar:graph-up-bold',
+        iconColor: 'success.main',
+        iconBg: 'success.lighter',
     },
     {
         title: 'Active PTCs',
         value: 18,
         icon: 'solar:document-bold',
+        iconColor: 'info.main',
+        iconBg: 'info.lighter',
     },
     {
         title: 'Risk Rating',
         value: 'AAA',
         icon: 'solar:shield-check-bold',
+        iconColor: 'warning.dark',
+        iconBg: 'warning.lighter',
     },
 ];

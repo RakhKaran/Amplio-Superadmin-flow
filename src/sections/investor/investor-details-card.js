@@ -8,7 +8,7 @@ export default function InvestorEntityDetailsCard({ data }) {
   return (
     <>
       <Card sx={{ p: 3, borderRadius: 3, mb:2 }}>
-        <Typography variant="h5" color='primary' sx={{ mb: 2 }}>
+        <Typography variant="h5" sx={{ mb: 2 }}>
           Entity Details
         </Typography>
 

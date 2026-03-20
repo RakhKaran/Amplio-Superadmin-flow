@@ -71,26 +71,13 @@ export default function PSPDetailsView() {
         </Stack>
       </Stack>
 
-      <SummaryDashboardGrid
-        cards={[
-          {
-            title: 'Total Merchants',
-            data: [{ label: 'Count', value: pspData.summary.totalMerchants, color: 'primary' }],
-          },
-          {
-            title: 'Total Settlement',
-            data: [{ label: 'Value', value: pspData.summary.totalSettlement, color: 'success' }],
-          },
-          {
-            title: 'Transaction Volume',
-            data: [{ label: 'Volume', value: pspData.summary.transactionVolume, color: 'info' }],
-          },
-          {
-            title: 'Active Settlements',
-            data: [{ label: 'Active', value: pspData.summary.activeSettlements, color: 'warning' }],
-          },
-        ]}
-      />
+      <Grid container spacing={3} sx={{ mb: { xs: 3, md: 5 } }}>
+        {pspData.summaryCards.map((item) => (
+          <Grid xs={12} sm={6} md={3} key={item.title}>
+            <SummaryDashboardGrid title={item.title} value={item.value} icon={item.icon} />
+          </Grid>
+        ))}
+      </Grid>
 
       <Tabs
         value={currentTab}

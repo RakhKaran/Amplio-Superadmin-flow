@@ -1,6 +1,7 @@
 import { addYears, format } from 'date-fns';
 // @mui
 import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
 // routes
 import { paths } from 'src/routes/paths';
 import { useParams, useRouter } from 'src/routes/hook';
@@ -10,7 +11,7 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
 
 import { useCallback, useState } from 'react';
-import { Grid, Tab, Tabs } from '@mui/material';
+import { Tab, Tabs } from '@mui/material';
 
 import { useSearchParams } from 'react-router-dom';
 import { SummaryDashboardGrid } from 'src/components/summary-card';
@@ -67,12 +68,13 @@ export default function InvestorDetailsView() {
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
-      <SummaryDashboardGrid
-        cards={data.map((item) => ({
-          title: item.title,
-          data: [{ label: 'Value', value: item.value, color: 'primary' }],
-        }))}
-      />
+      <Grid container spacing={3} sx={{ mb: { xs: 3, md: 5 } }}>
+        {data.map((item) => (
+          <Grid item xs={12} sm={6} md={3} key={item.title}>
+            <SummaryDashboardGrid title={item.title} value={item.value} icon={item.icon} />
+          </Grid>
+        ))}
+      </Grid>
 
       <Tabs value={currentTab} onChange={handleChangeTab} sx={{ mb: { xs: 3, md: 5 } }}>
         {TABS.map((tab) => (

@@ -20,7 +20,7 @@ export const _pspList = [
     status: 'active',
     riskLevel: 'low',
     merchantsCount: 1250,
-    totalSettlement: 450.5, // Cr
+    totalSettlement: 450.5,
     transactionVolume: 125000,
     activeSettlements: 45,
     avgSettlementTime: 'T+1',
@@ -36,7 +36,7 @@ export const _pspList = [
     status: 'active',
     riskLevel: 'medium',
     merchantsCount: 850,
-    totalSettlement: 320.8, // Cr
+    totalSettlement: 320.8,
     transactionVolume: 95000,
     activeSettlements: 32,
     avgSettlementTime: 'T+1',
@@ -52,7 +52,7 @@ export const _pspList = [
     status: 'inactive',
     riskLevel: 'high',
     merchantsCount: 2100,
-    totalSettlement: 680.2, // Cr
+    totalSettlement: 680.2,
     transactionVolume: 210000,
     activeSettlements: 12,
     avgSettlementTime: 'T+2',
@@ -68,7 +68,7 @@ export const _pspList = [
     status: 'active',
     riskLevel: 'low',
     merchantsCount: 450,
-    totalSettlement: 150.4, // Cr
+    totalSettlement: 150.4,
     transactionVolume: 42000,
     activeSettlements: 18,
     avgSettlementTime: 'T+1',
@@ -84,7 +84,7 @@ export const _pspList = [
     status: 'active',
     riskLevel: 'medium',
     merchantsCount: 320,
-    totalSettlement: 85.6, // Cr
+    totalSettlement: 85.6,
     transactionVolume: 28000,
     activeSettlements: 10,
     avgSettlementTime: 'T+2',
@@ -98,9 +98,15 @@ export const _pspList = [
 
 export const _pspDetails = (id) => {
   const psp = _pspList.find((item) => item.id === id) || _pspList[0];
-  
-  // Generating some variety based on the PSP
+
   const multiplier = psp.id === 'psp_1' ? 1.5 : (psp.id === 'psp_3' ? 2 : 1);
+
+  const summary = {
+    totalPsps: _pspList.length,
+    totalMerchants: 760,
+    totalSettlement: 'INR 4.94 Cr',
+    activeSettlements: 149,
+  };
 
   return {
     ...psp,
@@ -113,9 +119,9 @@ export const _pspDetails = (id) => {
     settlementTrend: {
       categories: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
       series: [
-        { 
-          name: 'Settlement', 
-          data: [100, 115, 122, 138, 130, 140].map(v => v * multiplier) 
+        {
+          name: 'Settlement',
+          data: [100, 115, 122, 138, 130, 140].map((v) => v * multiplier)
         }
       ]
     },
@@ -141,21 +147,38 @@ export const _pspDetails = (id) => {
     ],
     riskAssessment: {
       score: 8.5,
-      riskLevel: "Low Risk",
-      lastAssessed: "1 hour ago",
+      riskLevel: 'Low Risk',
+      lastAssessed: '1 hour ago',
       factors: [
-        { name: "Settlement Success Rate", value: 99.2, status: "Excellent" },
-        { name: "Payment Processing Time", value: 95.5, status: "Good" },
-        { name: "Transaction Volume Stability", value: 88, status: "Fair" },
-        { name: "API Uptime", value: 99.8, status: "Excellent" }
+        { name: 'Settlement Success Rate', value: 99.2, status: 'Excellent' },
+        { name: 'Payment Processing Time', value: 95.5, status: 'Good' },
+        { name: 'Transaction Volume Stability', value: 88, status: 'Fair' },
+        { name: 'API Uptime', value: 99.8, status: 'Excellent' }
       ],
       recentEvents: []
     },
-    summary: {
-      totalMerchants: 245,
-      totalSettlement: "₹156.8 Cr",
-      transactionVolume: "₹185 Cr",
-      activeSettlements: 45
-    }
+    summary,
+    summaryCards: [
+      {
+        title: 'Total PSPs',
+        value: summary.totalPsps,
+        icon: 'solar:card-bold',
+      },
+      {
+        title: 'Total Merchants',
+        value: summary.totalMerchants,
+        icon: 'solar:buildings-3-bold',
+      },
+      {
+        title: 'Total Settlement',
+        value: summary.totalSettlement,
+        icon: 'solar:graph-up-bold',
+      },
+      {
+        title: 'Active Settlements',
+        value: summary.activeSettlements,
+        icon: 'solar:danger-circle-bold',
+      },
+    ],
   };
 };

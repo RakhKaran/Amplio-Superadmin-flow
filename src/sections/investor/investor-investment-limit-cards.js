@@ -30,7 +30,7 @@ export default function InvestmentLimitsCard({ data }) {
         border: (theme) => `1px solid ${theme.palette.divider}`,
       }}
     >
-      <Typography variant="h5" color='primary' sx={{ mb: 3 }}>
+      <Typography variant="h5" sx={{ mb: 3 }}>
         Investment Limits
       </Typography>
 

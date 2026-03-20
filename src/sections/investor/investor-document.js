@@ -91,7 +91,7 @@ export default function InvestorDocumentDetails({ investorProfile }) {
         <>
             <Card sx={{ p: 3 }}>
 
-                <Typography variant="h5" color='primary' sx={{ mb: 2 }}>
+                <Typography variant="h5" sx={{ mb: 2 }}>
                     KYB Document
                 </Typography>
 

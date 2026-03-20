@@ -127,6 +127,11 @@ export function useNavData() {
             icon: ICONS.psp,
           },
           {
+            title: t('SPV Management'),
+            path: paths.dashboard.spvManagement.root,
+            icon: ICONS.company,
+          },
+          {
             title: t('Escrow Operations'),
             path: paths.dashboard.escrowOperations.root,
             icon: <Iconify icon="mdi:bank-transfer" />,

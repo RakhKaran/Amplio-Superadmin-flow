@@ -175,7 +175,7 @@ export default function InvestorListView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <CustomBreadcrumbs
-          heading="List"
+          heading="Investor Management"
           links={[
             {
               name: 'Dashboard',
