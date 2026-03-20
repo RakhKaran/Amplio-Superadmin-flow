@@ -169,6 +169,9 @@ export const paths = {
       list: `${ROOTS.DASHBOARD}/psp/list`,
       details: (id) => `${ROOTS.DASHBOARD}/psp/${id}`,
     },
+    escrowOperations: {
+      root: `${ROOTS.DASHBOARD}/escrow-operations`,
+    },
     signatory: {
       root: `${ROOTS.DASHBOARD}/signatory`,
 

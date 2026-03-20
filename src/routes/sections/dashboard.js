@@ -71,6 +71,9 @@ const MerchantDetailsPage = lazy(() => import('src/pages/dashboard/merchant-deta
 const PSPListPage = lazy(() => import('src/pages/dashboard/psp/list'));
 const PSPDetailsPage = lazy(() => import('src/pages/dashboard/psp/details'));
 
+// ESCROW OPERATIONS
+const EscrowOperationsPage = lazy(() => import('src/pages/dashboard/escrow-operations'));
+
 // TRUSTEE PROFILE FOR KYC
 const TrusteeProfileListPage = lazy(() => import('src/pages/dashboard/trustee-profiles/list'));
 const TrusteeProfliesDetailsPage = lazy(() =>
@@ -231,6 +234,10 @@ export const dashboardRoutes = [
           { path: 'list', element: <PSPListPage /> },
           { path: ':id', element: <PSPDetailsPage /> },
         ],
+      },
+      {
+        path: 'escrow-operations',
+        element: <EscrowOperationsPage />,
       },
       {
         path: 'trusteeProfiles',
