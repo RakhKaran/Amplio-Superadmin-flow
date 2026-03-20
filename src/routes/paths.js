@@ -165,6 +165,15 @@ export const paths = {
     escrowOperations: {
       root: `${ROOTS.DASHBOARD}/escrow-operations`,
     },
+    riskEngine: {
+      root: `${ROOTS.DASHBOARD}/risk-engine`,
+    },
+    fraudIntelligence: {
+      root: `${ROOTS.DASHBOARD}/fraud-intelligence`,
+    },
+      amlMonitoring: {
+      root: `${ROOTS.DASHBOARD}/aml-monitoring`,
+    },
     signatory: {
       root: `${ROOTS.DASHBOARD}/signatory`,
       companydetails: (id) => `${ROOTS.DASHBOARD}/signatory/company/${id}`,

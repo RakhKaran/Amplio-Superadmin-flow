@@ -136,6 +136,21 @@ export function useNavData() {
             path: paths.dashboard.escrowOperations.root,
             icon: <Iconify icon="mdi:bank-transfer" />,
           },
+          {
+            title: t('Risk Engine'),
+            path: paths.dashboard.riskEngine.root,
+            icon: <Iconify icon="solar:shield-warning-bold" />,
+          },
+          {
+            title: t('Fraud Intelligence'),
+            path: paths.dashboard.fraudIntelligence.root,
+            icon: <Iconify icon="solar:danger-triangle-bold" />,
+          },
+           {
+            title: t('AML Monitoring'),
+            path: paths.dashboard.amlMonitoring.root,
+           icon: <Iconify icon="solar:shield-check-bold" />,
+          },
           // {
           //   title: t('Document Drafting'),
           //   path: paths.dashboard.documentdrafting.root,

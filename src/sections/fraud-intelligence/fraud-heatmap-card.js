@@ -14,10 +14,14 @@ import { RouterLink } from 'src/routes/components';
 import { fIndianCurrency } from 'src/utils/format-number';
 
 // ----------------------------------------------------------------------
+const statusColor = {
+  Low: 'success',
+  Medium: 'warning',
+  High: 'error',
+};
 
-export default function EscrowAccountCard({ account }) {
-  const { bankName, psp, balance, inflow, status } = account;
-  const spvDetailsPath = getSpvDetailsPath(psp);
+export default function FraudHeatmapCard({ account }) {
+  const { state, cases, status } = account;
 
   return (
     <Card
@@ -34,31 +38,12 @@ export default function EscrowAccountCard({ account }) {
         {/* Top Row */}
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Stack spacing={0.5}>
-            <Typography variant="subtitle1">{bankName}</Typography>
-
-            <Stack direction="row" spacing={0.5}>
-              <Typography
-                variant="caption"
-                sx={{ color: 'text.secondary', fontWeight: 600 }}
-              >
-                LINKED TO
-              </Typography>
-
-              <Link
-                component={RouterLink}
-                href={spvDetailsPath}
-                variant="caption"
-                underline="hover"
-                sx={{ color: 'primary.main', fontWeight: 600 }}
-              >
-                {psp}
-              </Link>
-            </Stack>
+            <Typography variant="subtitle1">{state}</Typography>
           </Stack>
 
           <Label
             variant="soft"
-            color={status === 'active' ? 'success' : 'default'}
+            color={statusColor[status]|| 'default'}
             sx={{ textTransform: 'capitalize' }}
           >
             {status}
@@ -67,30 +52,18 @@ export default function EscrowAccountCard({ account }) {
 
         {/* Bottom Row */}
         <Stack direction="row" spacing={15}>
-          <Stack spacing={0.5}>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              Balance
-            </Typography>
-            <Typography variant="h6">
-              {fIndianCurrency(balance)}
-            </Typography>
-          </Stack>
 
-          <Stack spacing={0.5}>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              Today's Inflow
-            </Typography>
-            <Typography variant="h6" sx={{ color: 'success.main' }}>
-              {fIndianCurrency(inflow)}
-            </Typography>
-          </Stack>
+          <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+            {cases}
+          </Typography>
+
         </Stack>
       </Stack>
     </Card>
   );
 }
 
-EscrowAccountCard.propTypes = {
+FraudHeatmapCard.propTypes = {
   account: PropTypes.object,
 };
 

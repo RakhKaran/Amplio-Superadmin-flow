@@ -53,11 +53,11 @@ const InvestorProfileNewPage = lazy(() => import('src/pages/dashboard/investor-p
 
 // INVESTOR MASTER
 const InvestorListPage = lazy(() => import('src/pages/dashboard/investor/list'));
-const IvestorDetailsPage = lazy(()=> import('src/pages/dashboard/investor/details'))
+const IvestorDetailsPage = lazy(() => import('src/pages/dashboard/investor/details'))
 
 // SPV MANAGEMENT
 const SpvManagementListPage = lazy(() => import('src/pages/dashboard/spv-management/list'));
-const SpvManagementDetailsPage= lazy(()=> import('src/pages/dashboard/spv-management/details'))
+const SpvManagementDetailsPage = lazy(() => import('src/pages/dashboard/spv-management/details'))
 const SpvPoolDetailsPage = lazy(() => import('src/pages/dashboard/spv-management/pool-details'))
 
 
@@ -147,6 +147,12 @@ const KanbanPage = lazy(() => import('src/pages/dashboard/kanban'));
 const PermissionDeniedPage = lazy(() => import('src/pages/dashboard/permission'));
 // BLANK PAGE
 const BlankPage = lazy(() => import('src/pages/dashboard/blank'));
+// Risk Engine
+const RiskEngineListPage = lazy(() => import('src/pages/dashboard/risk-engine/list'));
+// Fraud Intelligence 
+const FraudIntelligencePage = lazy(()=> import('src/pages/dashboard/fraud-intelligence/list'));
+// AML Monitoring
+const AmlMonitoringPage = lazy(()=> import('src/pages/dashboard/aml-monitoring/list'))
 
 // ----------------------------------------------------------------------
 
@@ -221,7 +227,7 @@ export const dashboardRoutes = [
           { element: <SpvManagementListPage />, index: true },
           { path: 'list', element: <SpvManagementListPage /> },
           { path: 'pool/:id', element: <SpvPoolDetailsPage /> },
-          {path: ':id', element: <SpvManagementDetailsPage/>}
+          { path: ':id', element: <SpvManagementDetailsPage /> }
         ],
       },
       {
@@ -252,6 +258,18 @@ export const dashboardRoutes = [
       {
         path: 'escrow-operations',
         element: <EscrowOperationsPage />,
+      },
+      {
+        path: 'risk-engine',
+        element: <RiskEngineListPage />,
+      },
+       {
+        path: 'fraud-intelligence',
+        element: <FraudIntelligencePage />,
+      },
+        {
+        path: 'aml-monitoring',
+        element: <AmlMonitoringPage />,
       },
       {
         path: 'trusteeProfiles',

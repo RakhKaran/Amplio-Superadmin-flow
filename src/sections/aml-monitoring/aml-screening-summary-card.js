@@ -15,9 +15,9 @@ import { fIndianCurrency } from 'src/utils/format-number';
 
 // ----------------------------------------------------------------------
 
-export default function EscrowAccountCard({ account }) {
-  const { bankName, psp, balance, inflow, status } = account;
-  const spvDetailsPath = getSpvDetailsPath(psp);
+export default function ScreeningSummaryView({ summary }) {
+  const {title, matches, checked, status } = summary;
+ 
 
   return (
     <Card
@@ -34,55 +34,34 @@ export default function EscrowAccountCard({ account }) {
         {/* Top Row */}
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Stack spacing={0.5}>
-            <Typography variant="subtitle1">{bankName}</Typography>
+            <Typography variant="subtitle1">{title}</Typography>
 
             <Stack direction="row" spacing={0.5}>
               <Typography
                 variant="caption"
                 sx={{ color: 'text.secondary', fontWeight: 600 }}
               >
-                LINKED TO
+               Checked : {checked}
               </Typography>
-
-              <Link
-                component={RouterLink}
-                href={spvDetailsPath}
-                variant="caption"
-                underline="hover"
-                sx={{ color: 'primary.main', fontWeight: 600 }}
-              >
-                {psp}
-              </Link>
             </Stack>
           </Stack>
 
-          <Label
-            variant="soft"
-            color={status === 'active' ? 'success' : 'default'}
-            sx={{ textTransform: 'capitalize' }}
-          >
-            {status}
-          </Label>
-        </Stack>
-
-        {/* Bottom Row */}
-        <Stack direction="row" spacing={15}>
           <Stack spacing={0.5}>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              Balance
-            </Typography>
-            <Typography variant="h6">
-              {fIndianCurrency(balance)}
-            </Typography>
-          </Stack>
-
-          <Stack spacing={0.5}>
-            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              Today's Inflow
-            </Typography>
-            <Typography variant="h6" sx={{ color: 'success.main' }}>
-              {fIndianCurrency(inflow)}
-            </Typography>
+            <Label
+              variant="soft"
+              color={status === 'Clear' ? 'success' : 'warning'}
+              sx={{ textTransform: 'capitalize' }}
+            >
+              {status}
+            </Label>
+             <Stack direction="row" spacing={0.5}>
+              <Typography
+                variant="caption"
+                sx={{ color: 'text.secondary', fontWeight: 600 }}
+              >
+               Matches : {matches}
+              </Typography>
+            </Stack>
           </Stack>
         </Stack>
       </Stack>
@@ -90,8 +69,8 @@ export default function EscrowAccountCard({ account }) {
   );
 }
 
-EscrowAccountCard.propTypes = {
-  account: PropTypes.object,
+ScreeningSummaryView.propTypes = {
+  summary: PropTypes.object,
 };
 
 // ----------------------------------------------------------------------
