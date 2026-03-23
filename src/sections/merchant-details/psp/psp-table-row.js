@@ -42,9 +42,9 @@ export default function PSPTableRow({ row, selected, onSelectRow, onViewRow, onE
 
       <TableCell>
         <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-          <Tooltip title="Edit" placement="top" arrow>
+          <Tooltip title="View" placement="top" arrow>
             <IconButton onClick={onEditRow}>
-              <Iconify icon="solar:pen-bold" width={20} />
+              <Iconify icon="solar:eye-bold" width={20} />
             </IconButton>
           </Tooltip>
           {/* <Tooltip title="View" placement="top" arrow>
