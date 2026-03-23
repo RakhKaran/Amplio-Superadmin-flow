@@ -209,6 +209,7 @@ export default function MerchantDetailsListView() {
               onFilters={handleFilters}
               onResetFilters={handleResetFilters}
               results={tableData.length}
+              statusOptions={STATUS_OPTIONS}
               sx={{ p: 2.5, pt: 0 }}
             />
           )}

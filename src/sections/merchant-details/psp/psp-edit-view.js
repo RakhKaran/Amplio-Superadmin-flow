@@ -211,7 +211,7 @@ export default function PSPIntegrationForm({
               ))}
               {/* </Box> */}
 
-              <Alert severity="warning">
+              <Alert severity="warning" sx={{mb: 2}}>
                 <strong>Review Process</strong>
                 <br />
                 Your integration request will be reviewed by our operations team within 24 hours.
@@ -219,7 +219,7 @@ export default function PSPIntegrationForm({
               </Alert>
             </Box>
           </DialogContent>
-          <Box sx={{ my: 3 }}>
+          {/* <Box sx={{ my: 3 }}>
             <Stack direction="row" spacing={2} justifyContent="flex-end">
               <Button
                 variant="soft"
@@ -239,7 +239,7 @@ export default function PSPIntegrationForm({
                 Approve
               </Button>
             </Stack>
-          </Box>
+          </Box> */}
         </FormProvider>
       </Dialog>
       <RejectReasonDialog
