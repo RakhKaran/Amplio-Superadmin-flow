@@ -43,6 +43,9 @@ export default function InvestorProfileDetails({ data, onRefresh }) {
   const [loading, setLoading] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
+  const [currentStatus, setCurrentStatus] = useState(
+    Number(investor?.kycApplications?.status ?? 0)
+  );
   const panCardDetails = useMemo(() => investor?.investorPanCards || {}, [investor]);
 
   const fields = useMemo(
@@ -133,6 +136,10 @@ export default function InvestorProfileDetails({ data, onRefresh }) {
     });
   }, [fields, investor, panCardDetails, reset]);
 
+  useEffect(() => {
+    setCurrentStatus(Number(investor?.kycApplications?.status ?? 0));
+  }, [investor?.kycApplications?.status]);
+
   const panComparisonData = useMemo(() => {
     const rows = [
       {
@@ -182,7 +189,7 @@ export default function InvestorProfileDetails({ data, onRefresh }) {
     return rows;
   }, [investorType, panCardDetails]);
 
-  const isApproved = Number(investor?.kycApplications?.status) === 2;
+  const isApproved = currentStatus === 2;
 
   const handleStatusUpdate = async (type, reason = '') => {
     try {
@@ -199,14 +206,8 @@ export default function InvestorProfileDetails({ data, onRefresh }) {
 
       await axiosInstance.patch('/kyc/handle-kyc-application', payload);
 
-      await onRefresh?.();
-      reset({
-        ...Object.fromEntries(fields.map((field) => [field.name, field.value || ''])),
-        panCardImage: panCardDetails?.panCardDocument || panCardDetails?.media || null,
-        aadhaarFrontImage: investor?.aadharFrontImage || investor?.aadhaarFrontImage || null,
-        aadhaarBackImage: investor?.aadharBackImage || investor?.aadhaarBackImage || null,
-        selfieImage: investor?.selfie || investor?.selfieImage || null,
-      });
+      setCurrentStatus(type);
+      onRefresh?.();
 
       enqueueSnackbar(`Investor KYC ${String(type) === '2' ? 'Approved' : 'Rejected'}`, {
         variant: String(type) === '2' ? 'success' : 'error',
@@ -248,10 +249,10 @@ export default function InvestorProfileDetails({ data, onRefresh }) {
           </Stack>
 
           <Label
-            color={STATUS_DISPLAY[investor?.kycApplications?.status]?.color || 'default'}
+            color={STATUS_DISPLAY[currentStatus]?.color || 'default'}
             sx={{ px: 2, py: 1, borderRadius: 1 }}
           >
-            {STATUS_DISPLAY[investor?.kycApplications?.status]?.label || 'Unknown'}
+            {STATUS_DISPLAY[currentStatus]?.label || 'Unknown'}
           </Label>
         </Stack>
 
