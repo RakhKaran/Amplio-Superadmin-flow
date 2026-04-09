@@ -3,10 +3,7 @@ import { useCallback } from 'react';
 // @mui
 import Stack from '@mui/material/Stack';
 import MenuItem from '@mui/material/MenuItem';
-import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
-import InputLabel from '@mui/material/InputLabel';
-import IconButton from '@mui/material/IconButton';
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -20,8 +17,6 @@ import CustomPopover, { usePopover } from 'src/components/custom-popover';
 export default function InvestorProfileTableToolbar({
   filters,
   onFilters,
-  //
-  roleOptions,
 }) {
   const popover = usePopover();
 
@@ -32,12 +27,9 @@ export default function InvestorProfileTableToolbar({
     [onFilters]
   );
 
-  const handleFilterRole = useCallback(
+  const handleFilterInvestorType = useCallback(
     (event) => {
-      onFilters(
-        'role',
-        typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value
-      );
+      onFilters('investorType', event.target.value);
     },
     [onFilters]
   );
@@ -56,34 +48,23 @@ export default function InvestorProfileTableToolbar({
           pr: { xs: 2.5, md: 1 },
         }}
       >
-        {/* <FormControl
+        <FormControl
           sx={{
             flexShrink: 0,
             width: { xs: 1, md: 200 },
           }}
         >
-          <InputLabel>Role</InputLabel>
-
           <Select
-            multiple
-            value={filters.role}
-            onChange={handleFilterRole}
-            input={<OutlinedInput label="Role" />}
-            renderValue={(selected) => selected.map((value) => value).join(', ')}
-            MenuProps={{
-              PaperProps: {
-                sx: { maxHeight: 240 },
-              },
-            }}
+            displayEmpty
+            value={filters.investorType}
+            onChange={handleFilterInvestorType}
+            input={<OutlinedInput />}
           >
-            {roleOptions.map((option) => (
-              <MenuItem key={option} value={option}>
-                <Checkbox disableRipple size="small" checked={filters.role.includes(option)} />
-                {option}
-              </MenuItem>
-            ))}
+            <MenuItem value="all">All Investor Types</MenuItem>
+            <MenuItem value="individual">Individual</MenuItem>
+            <MenuItem value="institutional">Institutional</MenuItem>
           </Select>
-        </FormControl> */}
+        </FormControl>
 
         <Stack direction="row" alignItems="center" spacing={2} flexGrow={1} sx={{ width: 1 }}>
           <TextField
@@ -146,5 +127,4 @@ export default function InvestorProfileTableToolbar({
 InvestorProfileTableToolbar.propTypes = {
   filters: PropTypes.object,
   onFilters: PropTypes.func,
-  roleOptions: PropTypes.array,
 };

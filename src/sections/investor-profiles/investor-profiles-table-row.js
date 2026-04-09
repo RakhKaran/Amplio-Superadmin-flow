@@ -28,7 +28,7 @@ const STATUS_DISPLAY = {
 };
 
 export default function InvestorProfilesTableRow({ row, selected, onEditRow, onViewRow, onSelectRow, onDeleteRow }) {
-  const { fullName, gender, kycMode, kycApplications, createdAt } = row;
+  const { fullName, gender, kycMode, kycApplications, companyName, investorKycType, createdAt } = row;
 
   const confirm = useBoolean();
 
@@ -42,18 +42,20 @@ export default function InvestorProfilesTableRow({ row, selected, onEditRow, onV
 
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar alt={fullName} sx={{ mr: 2 }} />
+          <Avatar alt={fullName || companyName} sx={{ mr: 2 }} />
 
           <ListItemText
-            primary={fullName}
+            primary={fullName || companyName}
             primaryTypographyProps={{ typography: 'body2' }}
             secondaryTypographyProps={{ component: 'span', color: 'text.disabled' }}
           />
         </TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{gender}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{investorKycType}</TableCell>
 
-        <TableCell sx={{ whiteSpace: 'nowrap' }}>{kycMode}</TableCell>
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{gender || 'N/A'}</TableCell>
+
+        <TableCell sx={{ whiteSpace: 'nowrap' }}>{kycMode || 'N/A'}</TableCell>
 
         <TableCell>
           <Label

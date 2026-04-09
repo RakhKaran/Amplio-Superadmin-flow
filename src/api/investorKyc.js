@@ -1,5 +1,4 @@
 import useSWR from 'swr';
-import { useEffect, useMemo } from 'react';
 import { fetcher, endpoints } from 'src/utils/axios';
 
 
@@ -44,9 +43,110 @@ export function useGetBankDetails(investorId) {
         loading: isLoading,
         error,
         validating: isValidating,
-        empty: !isLoading && (!data?.bankDetails || data.bankDetails.length === 0),
+        empty:
+          !isLoading &&
+          (!data?.bankDetails ||
+            (Array.isArray(data.bankDetails) ? data.bankDetails.length === 0 : false)),
         refreshBankDetails,
     };
+}
+
+export function useGetUBOs(investorId) {
+  const URL = investorId ? endpoints.InvestorKyc.getUboDetails(String(investorId)) : null;
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher, {
+    keepPreviousData: true,
+  });
+
+  const refreshUbos = () => {
+    mutate();
+  };
+
+  return {
+    ubos: data?.uboDetails || [],
+    loading: isLoading,
+    error,
+    validating: isValidating,
+    empty: !isLoading && (!data?.uboDetails || data.uboDetails.length === 0),
+    refreshUbos,
+  };
+}
+
+export function useGetKycAddressDetails(investorId) {
+  const URL = investorId ? endpoints.InvestorKyc.getAddressDetails(String(investorId)) : null;
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher, {
+    keepPreviousData: true,
+  });
+
+  return {
+    registeredAddress: data?.registeredAddress || null,
+    correspondenceAddress: data?.correspondenceAddress || null,
+    loading: isLoading,
+    error,
+    validating: isValidating,
+    refreshAddressDetails: mutate,
+  };
+}
+
+export function useGetCompliances(investorId) {
+  const URL = investorId
+    ? endpoints.InvestorKyc.getComplianceDeclarations(String(investorId))
+    : null;
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher, {
+    keepPreviousData: true,
+  });
+
+  return {
+    compliance:
+      data?.complianceDeclaration ||
+      data?.compliance ||
+      data?.data ||
+      null,
+    loading: isLoading,
+    error,
+    validating: isValidating,
+    refreshCompliances: mutate,
+  };
+}
+
+export function useGetInvestmentMandates(investorId) {
+  const URL = investorId
+    ? endpoints.InvestorKyc.getInvestmentMandate(String(investorId))
+    : null;
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher, {
+    keepPreviousData: true,
+  });
+
+  return {
+    investmentMandates:
+      data?.investmentMandate ||
+      data?.investmentMandates ||
+      data?.data ||
+      null,
+    loading: isLoading,
+    error,
+    validating: isValidating,
+    refreshInvestmentMandates: mutate,
+  };
+}
+
+export function useGetAgreement(investorId) {
+  const URL = investorId ? endpoints.InvestorKyc.getPlatformAgreement(String(investorId)) : null;
+
+  const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher, {
+    keepPreviousData: true,
+  });
+
+  return {
+    agreements: data?.agreements || data?.data || data || null,
+    loading: isLoading,
+    error,
+    validating: isValidating,
+    refreshAgreement: mutate,
+  };
 }
 
 // export function useGetSignatories(investorId) {

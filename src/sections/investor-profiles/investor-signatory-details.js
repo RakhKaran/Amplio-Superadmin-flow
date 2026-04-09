@@ -7,7 +7,6 @@ import * as Yup from 'yup';
 import {
     Box,
     Button,
-    CircularProgress,
     Card,
     Grid,
     MenuItem,
@@ -17,13 +16,11 @@ import {
 import { DatePicker } from '@mui/x-date-pickers';
 
 import { useSnackbar } from 'src/components/snackbar';
-import Iconify from 'src/components/iconify';
-import RHFFileUploadBox from 'src/components/custom-file-upload/file-upload';
 import FormProvider, { RHFSelect, RHFTextField } from 'src/components/hook-form';
 import axiosInstance from 'src/utils/axios';
-import { useLocation } from 'react-router';
 import { useRouter } from 'src/routes/hook';
 import RejectReasonDialog from 'src/components/reject dialog box/reject-dialog-box';
+import DocumentPreviewButton from 'src/components/custom-preview-button/preview-button';
 
 
 
@@ -34,10 +31,15 @@ const ROLES = [
     { value: 'OTHER', label: 'Other' },
 ];
 
-export default function InvestorSignatoriesDetails({ currentUser, isViewMode, isEditMode }) {
+export default function InvestorSignatoriesDetails({
+    currentUser,
+    isViewMode,
+    isEditMode,
+    onStatusChange,
+    disableCardWrapper = false,
+}) {
     const { enqueueSnackbar } = useSnackbar();
-    const [extractedPan, setExtractedPan] = useState(null);
-    const [isPanUploaded, setIsPanUploaded] = useState(false);
+    const [extractedPan] = useState(null);
     const [loading, setLoading] = useState(false);
     const [rejectOpen, setRejectOpen] = useState(false);
     const [rejectReason, setRejectReason] = useState('');
@@ -86,18 +88,19 @@ export default function InvestorSignatoriesDetails({ currentUser, isViewMode, is
         [currentUser]
     );
 
-const router = useRouter();
+    const router = useRouter();
     const methods = useForm({
         defaultValues,
         resolver: yupResolver(schema),
     });
 
-    const { handleSubmit, reset, setValue, watch } = methods;
+    const { handleSubmit, reset, watch } = methods;
     const roleWatch = watch('role');
+    const isPanUploaded = true;
 
     useEffect(() => {
         if (currentUser) reset(defaultValues);
-    }, [currentUser]);
+    }, [currentUser, defaultValues, reset]);
 
     // ---------------------- FILE HANDLERS ----------------------
     const uploadFile = async (file) => {
@@ -108,38 +111,18 @@ const router = useRouter();
         return data?.files?.[0]?.id;
     };
 
-    const handlePanUpload = async (file) => {
-        enqueueSnackbar('Uploading PAN...', { variant: 'info' });
-
-        const fd = new FormData();
-        fd.append('file', file);
-
-        const uploadRes = await axiosInstance.post('/files', fd);
-        const uploadedFile = uploadRes?.data?.files?.[0];
-
-        if (!uploadedFile) return enqueueSnackbar('Upload failed', { variant: 'error' });
-
-        setIsPanUploaded(true);
-
-        const extractRes = await axiosInstance.post('/extract/pan-info', fd);
-        const extracted = extractRes?.data?.data;
-
-        setExtractedPan(extracted);
-
-        setValue('submittedPanFullName', extracted?.extractedPanHolderName || '');
-        setValue('submittedPanNumber', extracted?.extractedPanNumber || '');
-        setValue('submittedDateOfBirth', extracted?.extractedDateOfBirth || '');
-    };
-
-    const handleStatusUpdate = async (type, reason = null) => {
+    const handleStatusUpdate = async (type, reason = '') => {
         try {
             setLoading(true);
 
             const payload = {
                 signatoryId: currentUser?.id,
                 status: type,
-                rejectReason: reason || null,
             };
+
+            if (typeof reason === 'string' && reason.trim()) {
+                payload.rejectReason = reason.trim();
+            }
 
 
             await axiosInstance.patch('/investor-profiles/authorize-signatory-verification', payload);
@@ -151,10 +134,16 @@ const router = useRouter();
                 }
             );
 
-            setTimeout(() => router.back(), 800);
+            setTimeout(() => {
+                if (onStatusChange) {
+                    onStatusChange();
+                } else {
+                    router.back();
+                }
+            }, 800);
 
         } catch (error) {
-            enqueueSnackbar(error?.response?.data?.message || 'Something went wrong', {
+            enqueueSnackbar(error?.error?.message || error?.response?.data?.message || error?.message || 'Something went wrong', {
                 variant: 'error',
             });
         } finally {
@@ -208,13 +197,15 @@ const router = useRouter();
 
 
     // ---------------------- UI ----------------------
+    const WrapperComponent = disableCardWrapper ? Box : Card;
+
     return (
-        <Card sx={{ p: 4 }}>
+        <WrapperComponent sx={{ p: disableCardWrapper ? 0 : 4, py: disableCardWrapper ? 1 : 4 }}>
             <FormProvider methods={methods} onSubmit={onSubmit}>
-                <Typography variant="h6">
+                <Typography variant="h6" sx={{ mb: 1 }}>
                     Signatory Details
                 </Typography>   
-                <Grid container spacing={3} mt={2}>
+                <Grid container spacing={3} sx={{ my: 1 }}>
                     <Grid item xs={12} sm={6}>
                         <RHFTextField name="name" label="Name*" disabled />
                     </Grid>
@@ -267,24 +258,12 @@ const router = useRouter();
                                     </Typography>
                                 </Box>
 
-                                {currentUser?.panCardFile?.fileUrl ? (
-                                    <Button
-                                        variant="outlined"
-                                        color="primary"
-
-                                        startIcon={<Iconify icon="mdi:eye" />}
-                                        sx={{
-                                            height: 36,
-                                            textTransform: 'none',
-                                            fontWeight: 600,
-                                        }}
-                                        onClick={() => window.open(currentUser.panCardFile.fileUrl, '_blank')}
-                                    >
-                                        Preview Document
-                                    </Button>
-                                ) : (
-                                    <Typography color="text.secondary">No file uploaded.</Typography>
-                                )}
+                                <DocumentPreviewButton
+                                    fileName={currentUser?.panCardFile?.fileOriginalName}
+                                    fileUrl={currentUser?.panCardFile?.fileUrl}
+                                    errorMessage='No file uploaded.'
+                                    buttonText='Preview Document'
+                                />
                             </Box>
                         </Box>
                     </Grid>
@@ -332,34 +311,23 @@ const router = useRouter();
                                     </Typography>
                                 </Box>
 
-                                {currentUser?.boardResolutionFile?.fileUrl ? (
-                                    <Button
-                                        variant="outlined"
-                                        color="primary"
-                                        startIcon={<Iconify icon="mdi:eye" />}
-                                        sx={{
-                                            height: 36,
-                                            textTransform: 'none',
-                                            fontWeight: 600,
-                                        }}
-                                        onClick={() => window.open(currentUser.boardResolutionFile.fileUrl, '_blank')}
-                                    >
-                                        Preview Document
-                                    </Button>
-                                ) : (
-                                    <Typography color="text.secondary">No file uploaded.</Typography>
-                                )}
+                                <DocumentPreviewButton
+                                    fileName={currentUser?.boardResolutionFile?.fileOriginalName}
+                                    fileUrl={currentUser?.boardResolutionFile?.fileUrl}
+                                    errorMessage='No file uploaded.'
+                                    buttonText='Preview Document'
+                                />
                             </Box>
                         </Box>
                     </Grid>
                 </Grid>
-                <Stack direction="row" spacing={2} justifyContent="flex-end">
+                <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ pt: 1, my: 1 }}>
 
                     <Button
                         variant="soft"
                         color="error"
                         onClick={() => setRejectOpen(true)}
-                        disabled={loading || currentUser?.status === 1}
+                        disabled={loading || [1, 2].includes(Number(currentUser?.status))}
                     >
                         Decline
                     </Button>
@@ -368,7 +336,7 @@ const router = useRouter();
                         variant="soft"
                         color="success"
                         onClick={() => handleStatusUpdate(1)}
-                        disabled={loading || currentUser?.status === 1}
+                        disabled={loading || [1, 2].includes(Number(currentUser?.status))}
                     >
                         Approve
                     </Button>
@@ -382,12 +350,14 @@ const router = useRouter();
                     setReason={setRejectReason}
                     onSubmit={handleRejectSubmit}
                   />
-        </Card>
+        </WrapperComponent>
     );
 }
 
 InvestorSignatoriesDetails.propTypes = {
     currentUser: PropTypes.object,
+    disableCardWrapper: PropTypes.bool,
     isViewMode: PropTypes.bool,
     isEditMode: PropTypes.bool,
+    onStatusChange: PropTypes.func,
 };

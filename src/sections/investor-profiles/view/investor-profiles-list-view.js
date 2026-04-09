@@ -63,6 +63,7 @@ const STATUS_OPTIONS = [
 
 const TABLE_HEAD = [
   { id: 'investorName', label: 'Investor Name' },
+  { id: 'investorKycType', label: 'Investor KYC Type' },
   { id: 'gender', label: 'Gender' },
   { id: 'kycMode', label: 'Kyc Mode' },
   { id: 'isActive', label: 'Status' },
@@ -73,6 +74,7 @@ const TABLE_HEAD = [
 const defaultFilters = {
   name: '',
   status: 'all',
+  investorType: 'all',
 };
 
 // ----------------------------------------------------------------------
@@ -95,6 +97,10 @@ export default function InvestorProfileListView() {
     endDate: filters.endDate,
     validSortFields: ['investorName', 'CIN', 'GSTIN'],
     searchTextValue: filters.name,
+    additionalWhereOrConditions:
+      filters.investorType !== 'all'
+        ? [{ investorKycType: { ilike: filters.investorType } }]
+        : [],
   })
 
   const filterJson = encodeURIComponent(JSON.stringify(filter));
@@ -105,6 +111,14 @@ export default function InvestorProfileListView() {
   }
 
   const { filteredInvestorProfiles, count } = useFilterInvestorProfiles(params);
+  const visibleInvestorProfiles =
+    filters.investorType === 'all'
+      ? filteredInvestorProfiles
+      : filteredInvestorProfiles.filter((row) =>
+          String(row?.investorKycType || row?.investorType || '')
+            .toLowerCase()
+            .includes(filters.investorType)
+        );
 
   const handleViewRow = useCallback(
     (id) => {
@@ -125,7 +139,7 @@ export default function InvestorProfileListView() {
 
   const denseHeight = table.dense ? 52 : 72;
   const canReset = !isEqual(defaultFilters, filters);
-  const notFound = (!filteredInvestorProfiles.length && canReset) || !filteredInvestorProfiles.length;
+  const notFound = (!visibleInvestorProfiles.length && canReset) || !visibleInvestorProfiles.length;
 
   const handleFilters = useCallback(
     (name, value) => {
@@ -158,9 +172,9 @@ export default function InvestorProfileListView() {
 
   useEffect(() => {
     if (filteredInvestorProfiles) {
-      setTableData(filteredInvestorProfiles);
+      setTableData(visibleInvestorProfiles);
     }
-  }, [filteredInvestorProfiles]);
+  }, [filteredInvestorProfiles, visibleInvestorProfiles]);
 
   return (
     <>
@@ -214,7 +228,7 @@ export default function InvestorProfileListView() {
               filters={filters}
               onFilters={handleFilters}
               onResetFilters={handleResetFilters}
-              results={filteredInvestorProfiles.length}
+              results={visibleInvestorProfiles.length}
               statusOptions={STATUS_OPTIONS}
               sx={{ p: 2.5, pt: 0 }}
             />
@@ -260,7 +274,7 @@ export default function InvestorProfileListView() {
                 />
 
                 <TableBody>
-                  {filteredInvestorProfiles.map((row) => (
+                  {visibleInvestorProfiles.map((row) => (
                     <InvestorProfilesTableRow
                       key={row.id}
                       row={row}
@@ -284,7 +298,7 @@ export default function InvestorProfileListView() {
           </TableContainer>
 
           <TablePaginationCustom
-            count={count.totalCount}
+            count={filters.investorType === 'all' ? count.totalCount : visibleInvestorProfiles.length}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}

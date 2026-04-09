@@ -27,12 +27,11 @@ export default function InvestorProfileTableFiltersResult({
     onFilters('status', 'all');
   };
 
-  const statusValue = filters.status !== 'all' ? Number(filters.status) : 'all';
-
-  const handleRemoveRole = (inputValue) => {
-    const newValue = filters.role.filter((item) => item !== inputValue);
-    onFilters('role', newValue);
+  const handleRemoveInvestorType = () => {
+    onFilters('investorType', 'all');
   };
+
+  const statusValue = filters.status !== 'all' ? Number(filters.status) : 'all';
 
   return (
     <Stack spacing={1.5} {...other}>
@@ -46,18 +45,23 @@ export default function InvestorProfileTableFiltersResult({
       <Stack flexGrow={1} spacing={1} direction="row" flexWrap="wrap" alignItems="center">
         {filters.status !== 'all' && (
           <Block label="Status:">
-
-            <Chip size="small" label={statusOptions.find((s) => s.value === statusValue)?.label} onDelete={handleRemoveStatus} />
+            <Chip
+              size="small"
+              label={statusOptions.find((s) => s.value === statusValue)?.label}
+              onDelete={handleRemoveStatus}
+            />
           </Block>
         )}
 
-        {/* {!!filters.role.length && (
-          <Block label="Role:">
-            {filters.role.map((item) => (
-              <Chip key={item} label={item} size="small" onDelete={() => handleRemoveRole(item)} />
-            ))}
+        {filters.investorType !== 'all' && (
+          <Block label="Investor Type:">
+            <Chip
+              size="small"
+              label={filters.investorType === 'individual' ? 'Individual' : 'Institutional'}
+              onDelete={handleRemoveInvestorType}
+            />
           </Block>
-        )} */}
+        )}
 
         <Button
           color="error"

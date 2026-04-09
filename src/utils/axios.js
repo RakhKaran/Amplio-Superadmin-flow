@@ -139,9 +139,15 @@ export const endpoints = {
   InvestorKyc: {
     getDocuments: (investorId) => `/investor-profiles/${investorId}/documents`,
     getBankDetails: (investorId) => `/investor-profiles/${investorId}/bank-details`,
+    getAddressDetails: (investorId) => `/investor-profiles/${investorId}/address-details`,
+    getComplianceDeclarations: (investorId) =>
+      `/investor-profiles/${investorId}/compliance-declarations`,
+    getInvestmentMandate: (investorId) => `/investor-profiles/${investorId}/investment-mandate`,
+    getPlatformAgreement: (investorId) => `/investor-profiles/${investorId}/platform-agreement`,
+    getUboDetails: (investorId) => `/investor-profiles/${investorId}/ubo-details`,
     // getFilteredBankDetails: (investorId) => `/investor-profiles/${investorId}/bank-details?filter=${filter}`,
-    getinvestorSignatories: (investorId) => `/investor-profiles/${investorId}/authorize-signatory`,
-    getinvestorSignatoriesWithFilter: (investorId, queryString) =>
+    getInvestorSignatories: (investorId) => `/investor-profiles/${investorId}/authorize-signatory`,
+    getInvestorSignatoriesWithFilter: (investorId, queryString) =>
       `/investor-profiles/${investorId}/authorize-signatory?filter=${queryString}`,
   },
 
