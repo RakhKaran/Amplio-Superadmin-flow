@@ -348,7 +348,7 @@ export default function KYCAddUBOsForm({
               pr: 2,
             }}
           >
-            <Box rowGap={3} display="grid" mt={2}>
+            <Box rowGap={3} display="grid" my={2}>
               <RHFTextField
                 name="name"
                 label="Name*"
@@ -439,7 +439,7 @@ export default function KYCAddUBOsForm({
                 )}
               />
             </Box>
-            <Box sx={{ my: 3 }}>
+            {/* <Box sx={{ my: 3 }}>
               <Stack direction="row" spacing={2} justifyContent="flex-end">
                 <Button
                   variant="soft"
@@ -459,7 +459,7 @@ export default function KYCAddUBOsForm({
                   Approve
                 </Button>
               </Stack>
-            </Box>
+            </Box> */}
           </DialogContent>
         </FormProvider>
       </Dialog>

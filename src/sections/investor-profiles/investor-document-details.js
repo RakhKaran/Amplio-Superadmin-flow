@@ -15,23 +15,20 @@ import {
   Card,
 } from '@mui/material';
 
-import Iconify from 'src/components/iconify';
 import { enqueueSnackbar } from 'notistack';
 import axiosInstance from 'src/utils/axios';
-
-
 
 import Label from 'src/components/label';
 import { TableNoData } from 'src/components/table';
 import RejectReasonDialog from 'src/components/reject dialog box/reject-dialog-box';
 import { useGetDocuments } from 'src/api/investorKyc';
+import DocumentPreviewButton from 'src/components/custom-preview-button/preview-button';
+import Iconify from 'src/components/iconify';
 
 export default function InvestorDocumentDetails({ investorProfile }) {
   const investorId = investorProfile?.data?.id;
 
   const { documents = [], refreshDocuments } = useGetDocuments(investorId);
-
-  console.log(documents)
 
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
@@ -116,40 +113,16 @@ export default function InvestorDocumentDetails({ investorProfile }) {
               ) : (
                 documents.map((doc) => (
                   <TableRow key={doc.id}>
-                    <TableCell>{doc.documents?.name || 'NA'}</TableCell>
                     <TableCell>
-                      {/* <Button
-                        variant="outlined"
-                        startIcon={<Iconify icon="mdi:eye" />}
-                        onClick={() => window.open(doc.documentsFile?.fileUrl, '_blank')}
-                      >
-                        Preview
-                      </Button> */}
-
-                      {doc.documentsFile?.fileUrl ? (
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          onClick={() => {
-                            const url = doc.documentsFile?.fileUrl;
-                            if (url) {
-                              window.open(url, '_blank');
-                            } else {
-                              enqueueSnackbar('PAN preview file not found!', { variant: 'error' });
-                            }
-                          }}
-                          sx={{
-                            height: 36,
-                            textTransform: 'none',
-                            fontWeight: 600,
-                          }}
-                          startIcon={<Iconify icon="mdi:eye" />}
-                        >
-                          {doc.documentsFile?.fileName || 'Preview Document'}
-                        </Button>
-                      ) : (
-                        <Typography color="text.secondary">No PAN file uploaded.</Typography>
-                      )}
+                      {doc.investorKycDocumentRequirements?.documentLabel || 'NA'}
+                    </TableCell>
+                    <TableCell>
+                      <DocumentPreviewButton
+                        fileName={doc.media?.fileName || doc.investorKycDocumentRequirements?.documentLabel}
+                        fileUrl={doc.media?.fileUrl}
+                        errorMessage="File not found"
+                        buttonText="Preview Document"
+                      />
                     </TableCell>
                     <TableCell>
                       <Label

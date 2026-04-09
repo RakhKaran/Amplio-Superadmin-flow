@@ -1,44 +1,36 @@
 // @mui
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
+import Card from '@mui/material/Card';
+import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Unstable_Grid2';
-import MenuItem from '@mui/material/MenuItem';
-import Stack from '@mui/material/Stack';
-import Paper from '@mui/material/Paper';
 
 // components
-import { RouterLink } from 'src/routes/components';
 import { paths } from 'src/routes/paths';
 import FormProvider, { RHFTextField, RHFSelect } from 'src/components/hook-form';
 import { useForm, useWatch } from 'react-hook-form';
 
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import RHFFileUploadBox from 'src/components/custom-file-upload/file-upload';
 import { useRouter } from 'src/routes/hook';
 import { enqueueSnackbar } from 'notistack';
 import axiosInstance from 'src/utils/axios';
-import { useEffect, useState } from 'react';
-import Iconify from 'src/components/iconify';
-import { useLocation } from 'react-router';
-import { Card } from '@mui/material';
+import { useEffect, useMemo, useState } from 'react';
+import { Stack } from '@mui/material';
 import RejectReasonDialog from 'src/components/reject dialog box/reject-dialog-box';
-
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import DocumentPreviewButton from 'src/components/custom-preview-button/preview-button';
+import PropTypes from 'prop-types';
 
 // ----------------------------------------------------------------------
 
-export default function InvestorBank({ bank }) {
-  const userId = bank?.data?.id;
-
+export default function InvestorBankDetails({ bank, onBack, listHref }) {
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
 
-  console.log('KYCBank userId', userId);
   const router = useRouter();
 
-  // ---------------- VALIDATION ----------------
   const NewSchema = Yup.object().shape({
     documentType: Yup.string().required('Document Type is required'),
     addressProof: Yup.mixed().required('Address proof is required'),
@@ -63,140 +55,32 @@ export default function InvestorBank({ bank }) {
       addressProof: null,
       accountHolderName: '',
       bankAddress: '',
+      bankShortCode: '',
     },
   });
 
   const {
     handleSubmit,
     getValues,
-    setValue,
-    watch,
     reset,
     control,
-    formState: { isSubmitting },
   } = methods;
 
-  const values = watch();
   const documentType = useWatch({ control, name: 'documentType' });
 
-
-  const handleApprove = async () => {
-    try {
-      await axiosInstance.patch('/investor-profiles/bank-account-verification', {
-        status: 1,
-        accountId: bank?.id,
-        reason: '',
-      });
-
-      enqueueSnackbar('Bank Approved Successfully!', { variant: 'success' });
-      router.back(); // or refresh page
-    } catch (err) {
-      enqueueSnackbar('Approval failed', { variant: 'error' });
-    }
-  };
-
-  const handleRejectSubmit = async () => {
-    if (!rejectReason) {
-      enqueueSnackbar('Please enter a reason', { variant: 'warning' });
-      return;
-    }
-
-    try {
-      await axiosInstance.patch('/investor-profiles/bank-account-verification', {
-        status: 2,
-        accountId: bank?.id,
-        reason: rejectReason,
-      });
-
-      enqueueSnackbar('Bank Rejected', { variant: 'success' });
-
-      setRejectOpen(false);
-      setRejectReason('');
-      router.back();
-    } catch (err) {
-      enqueueSnackbar('Rejection failed', { variant: 'error' });
-    }
-  };
-
-  const existingProof = bank?.bankAccountProof
-    ? {
-        id: bank.bankAccountProof.id,
-        name: bank.bankAccountProof.fileOriginalName,
-        url: bank.bankAccountProof.fileUrl,
-        status: bank.status === 1 ? 'approved' : 'pending',
-        isServerFile: true,
-      }
-    : null;
-
-  const onSubmit = handleSubmit(async (data) => {
-    try {
-  
-      const proofFile = data.addressProof;
-      let uploadedProofId = null;
-
-      if (proofFile) {
-        const fd = new FormData();
-        fd.append('file', proofFile);
-
-        const uploadRes = await axiosInstance.post('/files', fd, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-
-        uploadedProofId = uploadRes?.data?.files?.[0]?.id;
-
-        if (!uploadedProofId) {
-          enqueueSnackbar('Failed to upload address proof', { variant: 'error' });
-          return;
-        }
-      }
-
-      const payload = {
-        bank: {
-          bankName: data.bankName,
-          bankShortCode: data.bankShortCode,
-          ifscCode: data.ifscCode,
-          branchName: data.branchName,
-          bankAddress: data.bankAddress,
-          accountType: data.accountType === 'CURRENT' ? 1 : 0,
-          accountHolderName: data.accountHolderName,
-          accountNumber: data.accountNumber,
-          bankAccountProofType: data.documentType === 'cheque' ? 0 : 1,
-          bankAccountProofId: uploadedProofId,
-        },
-      };
-
-      console.log('📤 FINAL BANK PAYLOAD:', payload);
-
-      const res = await axiosInstance.post('/investor-profiles/kyc-bank-details', payload);
-
-      if (res?.data?.success) {
-        enqueueSnackbar('Bank details submitted successfully!', { variant: 'success' });
-        router.push(paths.KYCSignatories);
-      } else {
-        enqueueSnackbar(res?.data?.message || 'Something went wrong!', {
-          variant: 'error',
-        });
-      }
-    } catch (error) {
-      console.error(error);
-      enqueueSnackbar('Failed to submit bank details', { variant: 'error' });
-    }
-  });
-
-  const requiredFields = ['addressProof', 'bankName', 'branchName', 'accountNumber', 'ifscCode'];
-
-  const errors = methods.formState.errors;
-
-  const calculatePercent = () => {
-    let valid = 0;
-    requiredFields.forEach((field) => {
-      const value = values[field];
-      if (value && !errors[field]) valid++;
-    });
-    return Math.round((valid / requiredFields.length) * 100);
-  };
-
-  const percent = calculatePercent();
+  const existingProof = useMemo(
+    () =>
+      bank?.bankAccountProof
+        ? {
+            id: bank.bankAccountProof.id,
+            name: bank.bankAccountProof.fileOriginalName,
+            url: bank.bankAccountProof.fileUrl,
+            status: bank.status === 1 ? 'approved' : 'pending',
+            isServerFile: true,
+          }
+        : null,
+    [bank]
+  );
 
   useEffect(() => {
     if (bank) {
@@ -215,22 +99,86 @@ export default function InvestorBank({ bank }) {
     }
   }, [bank, reset]);
 
+  const handleCloseForm = () => {
+    if (onBack) {
+      onBack();
+      return;
+    }
+    router.back();
+  };
+
+  const handleApprove = async () => {
+    try {
+      await axiosInstance.patch('/investor-profiles/bank-account-verification', {
+        status: 1,
+        accountId: bank?.id,
+        reason: '',
+      });
+
+      enqueueSnackbar('Bank approved successfully!', { variant: 'success' });
+      handleCloseForm();
+    } catch (err) {
+      enqueueSnackbar('Approval failed', { variant: 'error' });
+    }
+  };
+
+  const handleRejectSubmit = async () => {
+    if (!rejectReason) {
+      enqueueSnackbar('Please enter a reason', { variant: 'warning' });
+      return;
+    }
+
+    try {
+      await axiosInstance.patch('/investor-profiles/bank-account-verification', {
+        status: 2,
+        accountId: bank?.id,
+        reason: rejectReason,
+      });
+
+      enqueueSnackbar('Bank rejected', { variant: 'success' });
+      setRejectOpen(false);
+      setRejectReason('');
+      handleCloseForm();
+    } catch (err) {
+      enqueueSnackbar('Rejection failed', { variant: 'error' });
+    }
+  };
+
+  const onSubmit = handleSubmit(async () => {});
+
   return (
-    <Container>
+    <Box>
+      <CustomBreadcrumbs
+        heading={bank?.bankName || 'Bank Details'}
+        links={[
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'Investor Profile', href: paths.dashboard.investorProfiles.list },
+          { name: 'Bank Details', href: listHref },
+          { name: bank?.bankName || 'Preview' },
+        ]}
+        action={
+          <Button variant="outlined" onClick={handleCloseForm}>
+            Back to Bank List
+          </Button>
+        }
+        sx={{ mb: { xs: 3, md: 4 } }}
+      />
+
       <FormProvider methods={methods} onSubmit={onSubmit}>
         <Card
           sx={{
+            width: '100%',
             p: { xs: 2, md: 4 },
             borderRadius: 2,
             border: (theme) => `1px solid ${theme.palette.divider}`,
             boxShadow: '0px 4px 20px rgba(0,0,0,0.08)',
           }}
         >
-          <Typography variant="h6" sx={{ fontWeight: 500, mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
             Select Document Type:
           </Typography>
 
-          <Box sx={{ width: 200, mb: 3 }}>
+          <Box sx={{ width: { xs: '100%', sm: 240 }, mb: 3 }}>
             <RHFSelect
               name="documentType"
               disabled
@@ -244,200 +192,90 @@ export default function InvestorBank({ bank }) {
           </Box>
 
           <Box sx={{ mb: 3 }}>
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 2,
-                flexWrap: 'wrap',
-                mb: 1,
-              }}
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              alignItems={{ xs: 'flex-start', sm: 'center' }}
+              gap={2}
+              sx={{ mb: 1 }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography sx={{ fontWeight: 600 }}>
-                  Uploaded {documentType === 'cheque' ? 'Cheque' : 'Bank Statement'} :
-                </Typography>
-              </Box>
-
-              {existingProof?.url ? (
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  startIcon={<Iconify icon="mdi:eye" />}
-                  sx={{
-                    height: 36,
-                    textTransform: 'none',
-                    fontWeight: 600,
-                  }}
-                  onClick={() => window.open(existingProof.url, '_blank')}
-                >
-                  Preview {documentType === 'cheque' ? 'Cheque' : 'Statement'}
-                </Button>
-              ) : (
-                <Typography color="text.secondary">No file uploaded.</Typography>
-              )}
-            </Box>
+              <Typography sx={{ fontWeight: 600 }}>
+                Uploaded {documentType === 'cheque' ? 'Cheque' : 'Bank Statement'}:
+              </Typography>
+              <DocumentPreviewButton
+                fileName={`Preview ${documentType === 'cheque' ? 'Cheque' : 'Bank Statement'}`}
+                fileUrl={existingProof?.url}
+                errorMessage="File not found"
+                buttonText="Preview Document"
+              />
+            </Stack>
           </Box>
-          {/* <RHFFileUploadBox
-            name="addressProof"
-            label={`Upload ${documentType === 'cheque' ? 'Cheque' : 'Bank Statement'}`}
-            icon="mdi:file-document-outline"
-            color="#1e88e5"
-            acceptedTypes="pdf,xls,docx,jpeg"
-            maxSizeMB={10}
-            existing={existingProof}
-            onDrop={(files) => handleDrop(files)}
-            disabled
-          /> */}
 
-          {/* ---------------- BANK FIELDS ---------------- */}
-          <Box sx={{ py: 4 }}>
+          <Box sx={{ py: 2 }}>
             <Grid container spacing={3}>
-              <Grid xs={12} md={9}>
+              <Grid xs={12} md={8}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                  <Box sx={{ position: 'relative' }}>
-                    <RHFTextField
-                      name="ifscCode"
-                      label="IFSC Code"
-                      placeholder="Enter IFSC Code"
-                      disabled
-                      InputProps={{
-                        endAdornment: (
-                          <Button
-                            variant="contained"
-                            size="small"
-                            sx={{
-                              ml: 1,
-                              bgcolor: '#00328A',
-                              color: 'white',
-                              textTransform: 'none',
-                              fontWeight: 600,
-                              borderRadius: '6px',
-                              minHeight: '32px',
-                              px: 2,
-                              '&:hover': { bgcolor: '#002670' },
-                            }}
-                            onClick={async () => {
-                              const ifsc = getValues('ifscCode');
-
-                              if (!ifsc) {
-                                enqueueSnackbar('Please enter IFSC Code first', {
-                                  variant: 'warning',
-                                });
-                                return;
-                              }
-
-                              try {
-                                const res = await axiosInstance.get(
-                                  `/bank-details/get-by-ifsc/${ifsc}`
-                                );
-
-                                const data = res?.data?.bank;
-
-                                if (!data) {
-                                  enqueueSnackbar('No bank details found', { variant: 'error' });
-                                  return;
-                                }
-
-                                // Autofill form values
-                                setValue('bankName', data.bankName || '');
-                                setValue('branchName', data.branchName || '');
-                                setValue('bankShortCode', data.bankShortCode || '');
-                                setValue('bankAddress', data.bankAddress || '');
-                                setValue('city', data.city || '');
-                                setValue('state', data.state || '');
-                                setValue('district', data.district || '');
-
-                                enqueueSnackbar('Bank details fetched successfully', {
-                                  variant: 'success',
-                                });
-                              } catch (error) {
-                                console.error(error);
-                                enqueueSnackbar(
-                                  error?.response?.data?.message || 'Invalid IFSC Code',
-                                  { variant: 'error' }
-                                );
-                              }
-                            }}
-                            disabled
-                          >
-                            Fetch
-                          </Button>
-                        ),
-                      }}
-                    />
-                  </Box>
-
-                  <Box>
-                    <RHFTextField
-                      name="bankName"
-                      label="Bank Name"
-                      placeholder="Enter Bank Name"
-                      disabled
-                    />
-                  </Box>
-                  <Box>
-                    <RHFTextField
-                      name="branchName"
-                      label="Branch Name"
-                      placeholder="Enter Branch Name"
-                      disabled
-                    />
-                  </Box>
-                  <Box>
-                    <RHFTextField
-                      name="accountHolderName"
-                      label="Account Holder Name"
-                      placeholder="Enter Account Holder Name"
-                      disabled
-                    />
-                  </Box>
-                  <Box>
-                    <RHFTextField
-                      name="accountNumber"
-                      label="Account Number"
-                      placeholder="Enter Account Number"
-                      disabled
-                    />
-                  </Box>
-                  <Box>
-                    <RHFTextField
-                      name="bankAddress"
-                      label="Bank Address"
-                      placeholder="Bank Address"
-                      disabled
-                      InputLabelProps={{
-                        shrink: Boolean(getValues('bankAddress')),
-                      }}
-                    />
-                  </Box>
+                  <RHFTextField
+                    name="ifscCode"
+                    label="IFSC Code"
+                    placeholder="Enter IFSC Code"
+                    disabled
+                  />
+                  <RHFTextField
+                    name="bankName"
+                    label="Bank Name"
+                    placeholder="Enter Bank Name"
+                    disabled
+                  />
+                  <RHFTextField
+                    name="branchName"
+                    label="Branch Name"
+                    placeholder="Enter Branch Name"
+                    disabled
+                  />
+                  <RHFTextField
+                    name="accountHolderName"
+                    label="Account Holder Name"
+                    placeholder="Enter Account Holder Name"
+                    disabled
+                  />
+                  <RHFTextField
+                    name="accountNumber"
+                    label="Account Number"
+                    placeholder="Enter Account Number"
+                    disabled
+                  />
+                  <RHFTextField
+                    name="bankAddress"
+                    label="Bank Address"
+                    placeholder="Bank Address"
+                    disabled
+                    InputLabelProps={{
+                      shrink: Boolean(getValues('bankAddress')),
+                    }}
+                  />
                 </Box>
               </Grid>
 
-              <Grid xs={12} md={3}>
+              <Grid xs={12} md={4}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                  <Box>
-                    <RHFSelect name="accountType" label="Account Type" disabled>
-                      <MenuItem value="SAVINGS">Savings</MenuItem>
-                      <MenuItem value="CURRENT">Current</MenuItem>
-                    </RHFSelect>
-                  </Box>
-                  <Box>
-                    <RHFTextField
-                      name="bankShortCode"
-                      label="Bank Short Code"
-                      placeholder="Bank Short Code"
-                      disabled
-                      InputLabelProps={{
-                        shrink: Boolean(getValues('bankShortCode')),
-                      }}
-                    />
-                  </Box>
+                  <RHFSelect name="accountType" label="Account Type" disabled>
+                    <MenuItem value="SAVINGS">Savings</MenuItem>
+                    <MenuItem value="CURRENT">Current</MenuItem>
+                  </RHFSelect>
+                  <RHFTextField
+                    name="bankShortCode"
+                    label="Bank Short Code"
+                    placeholder="Bank Short Code"
+                    disabled
+                    InputLabelProps={{
+                      shrink: Boolean(getValues('bankShortCode')),
+                    }}
+                  />
                 </Box>
               </Grid>
             </Grid>
           </Box>
-          {/* ACTION BUTTONS - Bottom Right */}
+
           <Box
             sx={{
               display: 'flex',
@@ -446,7 +284,10 @@ export default function InvestorBank({ bank }) {
               mt: 3,
             }}
           >
-            {/* REJECT BUTTON */}
+            <Button variant="outlined" onClick={handleCloseForm}>
+              Back
+            </Button>
+
             <Button
               variant="soft"
               color="error"
@@ -459,7 +300,6 @@ export default function InvestorBank({ bank }) {
               Reject
             </Button>
 
-            {/* APPROVE BUTTON */}
             <Button
               variant="soft"
               color="success"
@@ -473,7 +313,6 @@ export default function InvestorBank({ bank }) {
             </Button>
           </Box>
 
-          {/* Reject Reason Dialog */}
           <RejectReasonDialog
             open={rejectOpen}
             onClose={() => setRejectOpen(false)}
@@ -483,6 +322,12 @@ export default function InvestorBank({ bank }) {
           />
         </Card>
       </FormProvider>
-    </Container>
+    </Box>
   );
 }
+
+InvestorBankDetails.propTypes = {
+  bank: PropTypes.object,
+  onBack: PropTypes.func,
+  listHref: PropTypes.string,
+};

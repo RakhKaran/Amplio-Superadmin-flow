@@ -1,4 +1,3 @@
-import { addYears, format } from 'date-fns';
 // @mui
 import Container from '@mui/material/Container';
 // routes
@@ -11,22 +10,37 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 import InvestorProfileDetails from '../investor-profiles-details';
 import { useGetInvestorProfile } from 'src/api/investor-profiles';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Tab, Tabs } from '@mui/material';
 import InvestorDocumentDetails from '../investor-document-details';
 import InvestorBankPage from '../investor-bank-page';
-import InvestorSignatories from '../investor-signatories';
+import InvestorSignatoriesApproval from '../investor-signatories-approval';
+import InvestorUboApproval from '../investor-ubo-approval';
+import {
+  InvestorAddressReadonly,
+  InvestorAgreementReadonly,
+  InvestorComplianceReadonly,
+  InvestorMandateReadonly,
+} from '../investor-kyc-readonly-sections';
 import { useSearchParams } from 'react-router-dom';
-import InvestorBankDetails from '../investor-bank-details';
-import { useGetBankDetails } from 'src/api/investorKyc';
 
 // ----------------------------------------------------------------------
 
-const TABS = [
+const INDIVIDUAL_TABS = [
   { value: 'basic', label: 'Investor Basic Info' },
-  // { value: 'details', label: 'Investor Documents' },
   { value: 'bank', label: 'Bank Details' },
-  // { value: 'signatories', label: 'Signatories' },
+];
+
+const INSTITUTIONAL_TABS = [
+  { value: 'basic', label: 'Investor Basic Info' },
+  { value: 'documents', label: 'Documents' },
+  { value: 'address', label: 'Address' },
+  { value: 'bank', label: 'Bank Details' },
+  { value: 'ubo', label: 'UBO Approval' },
+  { value: 'signatories', label: 'Signatory Approval' },
+  { value: 'compliance', label: 'Compliance & Declarations' },
+  { value: 'mandate', label: 'Investment Mandate' },
+  { value: 'agreement', label: 'Platform Agreement' },
 ];
 
 export default function InvestorProfilesDetailsView() {
@@ -34,20 +48,30 @@ export default function InvestorProfilesDetailsView() {
   const { id } = useParams();
 
   const router = useRouter();
-  const { investorProfile } = useGetInvestorProfile(id);
-  const userId = investorProfile?.data?.id;
-  const { bankDetails, loading } = useGetBankDetails(userId);
-  console.log(investorProfile);
+  const { investorProfile, refreshInvestorProfile } = useGetInvestorProfile(id);
+  const investor = investorProfile?.data || {};
+  const investorId = investor?.id || id;
+  const investorType = String(
+    investor?.investorKycType || investor?.investorType || investor?.kycType || 'individual'
+  ).toLowerCase();
+  const tabs = investorType === 'institutional' ? INSTITUTIONAL_TABS : INDIVIDUAL_TABS;
 
   const [searchParams] = useSearchParams();
   const tab = searchParams.get('tab');
-  const [currentTab, setCurrentTab] = useState(tab || 'basic');
+  const [currentTab, setCurrentTab] = useState(tab || tabs[0].value);
+
+  useEffect(() => {
+    if (!tabs.find((item) => item.value === currentTab)) {
+      setCurrentTab(tabs[0].value);
+    }
+  }, [currentTab, tabs]);
+
   const handleChangeTab = useCallback((event, newValue) => {
     setCurrentTab(newValue);
     router.push({
       search: `?tab=${newValue}`,
     });
-  }, []);
+  }, [router]);
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
@@ -56,27 +80,39 @@ export default function InvestorProfilesDetailsView() {
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'Investor Profile', href: paths.dashboard.investorProfiles.list },
           {
-            name: investorProfile?.data?.fullName || 'Investor Profile',
+            name: investorProfile?.data?.fullName || investorProfile?.data?.companyName || 'Investor Profile',
           },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <Tabs value={currentTab} onChange={handleChangeTab} sx={{ mb: { xs: 3, md: 5 } }}>
-        {TABS.map((tab) => (
+        {tabs.map((tab) => (
           <Tab key={tab.value} value={tab.value} label={tab.label} />
         ))}
       </Tabs>
-      {currentTab === 'basic' && <InvestorProfileDetails data={investorProfile} />}
+      {currentTab === 'basic' && (
+        <InvestorProfileDetails
+          data={investorProfile}
+          onRefresh={refreshInvestorProfile}
+        />
+      )}
 
-      {/* {currentTab === 'details' && <InvestorDocumentDetails investorProfile={investorProfile} />} */}
+      {currentTab === 'documents' && <InvestorDocumentDetails investorProfile={investorProfile} />}
 
-      {currentTab === 'bank' && <InvestorBankDetails bank={bankDetails} />}
-      {/* {currentTab === 'bank' && <TrusteeBankPage investorPrifle={investorPrifle} />} */}
+      {currentTab === 'address' && <InvestorAddressReadonly investorId={investorId} />}
 
-      {/* {currentTab === 'signatories' && <InvestorSignatories investorProfile={investorProfile} />} */}
+      {currentTab === 'bank' && <InvestorBankPage investorProfile={investorProfile} />}
 
-      {/* <InvestorProfileDetails data={investorProfile} /> */}
+      {currentTab === 'ubo' && <InvestorUboApproval investorId={investorId} />}
+
+      {currentTab === 'signatories' && <InvestorSignatoriesApproval investorId={investorId} />}
+
+      {currentTab === 'compliance' && <InvestorComplianceReadonly investorId={investorId} />}
+
+      {currentTab === 'mandate' && <InvestorMandateReadonly investorId={investorId} />}
+
+      {currentTab === 'agreement' && <InvestorAgreementReadonly investorId={investorId} />}
     </Container>
   );
 }

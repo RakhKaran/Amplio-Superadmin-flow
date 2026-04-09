@@ -15,6 +15,7 @@ export default function MerchantDetailsTableFiltersResult({
   filters,
   onFilters,
   onResetFilters,
+  statusOptions,
   results,
   ...other
 }) {
@@ -25,6 +26,8 @@ export default function MerchantDetailsTableFiltersResult({
   const handleRemoveName = () => {
     onFilters('name', '');
   };
+
+  const statusValue = filters.status !== 'all' ? Number(filters.status) : 'all';
 
   return (
     <Stack spacing={1.5} {...other}>
@@ -38,7 +41,11 @@ export default function MerchantDetailsTableFiltersResult({
       <Stack flexWrap="wrap" direction="row" alignItems="center" spacing={1} sx={{ m: 0 }}>
         {filters.status !== 'all' && (
           <Block label="Status:">
-            <Chip size="small" label={filters.status} onDelete={handleRemoveStatus} />
+            <Chip
+              size="small"
+              label={statusOptions.find((s) => s.value === statusValue)?.label}
+              onDelete={handleRemoveStatus}
+            />
           </Block>
         )}
 

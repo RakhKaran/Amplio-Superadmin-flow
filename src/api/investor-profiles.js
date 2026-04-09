@@ -30,7 +30,7 @@ export function useGetInvestorProfiles() {
 export function useGetInvestorProfile(id) {
     const URL = id ? [endpoints.investorProfiles.details(id)] : null;
 
-    const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
+    const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
 
     const memoizedValue = useMemo(
         () => ({
@@ -38,8 +38,9 @@ export function useGetInvestorProfile(id) {
             investorProfileLoading: isLoading,
             investorProfileError: error,
             investorProfileValidating: isValidating,
+            refreshInvestorProfile: mutate,
         }),
-        [data, error, isLoading, isValidating]
+        [data, error, isLoading, isValidating, mutate]
     );
 
     return memoizedValue;

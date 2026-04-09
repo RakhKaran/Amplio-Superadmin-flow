@@ -1,29 +1,36 @@
-import React, { useState } from 'react';
-import { CircularProgress, Box, Button, Stack, Typography, Grid, Card } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import React, { useMemo } from 'react';
+import { CircularProgress, Box, Stack, Typography, Grid, Card } from '@mui/material';
+import { useSearchParams } from 'react-router-dom';
+import { usePathname, useRouter } from 'src/routes/hook';
 
 import InvestorBankCard from './investor-bank-cards';
 import InvestorBankDetails from './investor-bank-details';
 import { useGetBankDetails } from 'src/api/investorKyc';
 
 export default function InvestorBankPage({ investorProfile }) {
-  const navigate = useNavigate();
-
+  const router = useRouter();
+  const pathname = usePathname();
+  const [searchParams] = useSearchParams();
   const userId = investorProfile?.data?.id;
-  const stepperId = investorProfile?.kycApplications?.currentProgress?.[2];
-
-  // 🔥 Using your existing hook (no new API request)
-  // const { rawData, Loading } = useGetDetails(userId, stepperId);
-
   const { bankDetails, loading } = useGetBankDetails(userId);
+  const bankList = useMemo(() => {
+    if (Array.isArray(bankDetails)) return bankDetails;
+    if (!bankDetails) return [];
+    return [bankDetails];
+  }, [bankDetails]);
 
-  // API returns array → hook returns rawData.data
-  // const bankList = rawData?.data || [];
-
-  const [selectedBank, setSelectedBank] = useState(null);
+  const selectedBankId = searchParams.get('bankAccountId');
+  const selectedBank = useMemo(
+    () => bankList.find((item) => String(item?.id) === String(selectedBankId)) || null,
+    [bankList, selectedBankId]
+  );
 
   const handleViewRow = (bank) => {
-    setSelectedBank(bank);
+    router.push(`${pathname}?tab=bank&bankAccountId=${bank?.id}`);
+  };
+
+  const handleBackToList = () => {
+    router.push(`${pathname}?tab=bank`);
   };
 
   if (loading) {
@@ -36,34 +43,34 @@ export default function InvestorBankPage({ investorProfile }) {
 
   return (
     <Card sx={{ p: 4 }}>
-      {/* Header */}
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
-        <Typography variant="h4" sx={{ fontWeight: 700 }}>
-          Investor Bank Details
-        </Typography>
-        {/* 
-        <Button variant="contained" onClick={() => navigate(paths.dashboard.investorProfiles.new)}>
-          + Create Bank Details
-        </Button> */}
-      </Stack>
+      {!selectedBank ? (
+        <>
+          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+            <Typography variant="h4" sx={{ fontWeight: 700 }}>
+              Investor Bank Details
+            </Typography>
+          </Stack>
 
-      <Grid container spacing={3}>
-        <Grid key={bankDetails?.id} item xs={12} md={6}>
-          <InvestorBankCard bank={bankDetails} onViewRow={() => handleViewRow(bankDetails)} />
-        </Grid>
-      </Grid>
-      {selectedBank && (
-        <Box sx={{ mt: 5 }}>
-          <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
-            Bank Details Preview
-          </Typography>
-
-          <InvestorBankDetails
-            investorProfile={{
-              usersId: userId,
-            }}
-          />
-        </Box>
+          {bankList.length === 0 ? (
+            <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+              No bank details added yet.
+            </Typography>
+          ) : (
+            <Grid container spacing={3}>
+              {bankList.map((item, index) => (
+                <Grid key={item?.id || index} item xs={12} md={6}>
+                  <InvestorBankCard bank={item} onViewRow={() => handleViewRow(item)} />
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </>
+      ) : (
+        <InvestorBankDetails
+          bank={selectedBank}
+          onBack={handleBackToList}
+          listHref={`${pathname}?tab=bank`}
+        />
       )}
     </Card>
   );
