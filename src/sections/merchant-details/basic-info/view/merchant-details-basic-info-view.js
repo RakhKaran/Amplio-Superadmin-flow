@@ -102,8 +102,11 @@ const handleStatusUpdate = async (type, reason = null) => {
     const payload = {
       applicationId: data?.data?.kycApplicationsId,
       status: type,
-      rejectReason: reason || null,
     };
+
+    if (type === 3 && typeof reason === 'string' && reason.trim()) {
+      payload.reason = reason.trim();
+    }
 
     await axiosInstance.patch('/kyc/handle-kyc-application', payload);
 
