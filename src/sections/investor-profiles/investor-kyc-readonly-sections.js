@@ -85,6 +85,147 @@ function normalizeEntity(value) {
   return value;
 }
 
+function getFirstAvailableValue(source, keys, fallback = null) {
+  const matchedKey = keys.find((key) => source?.[key] !== undefined && source?.[key] !== null);
+  return matchedKey ? source[matchedKey] : fallback;
+}
+
+function normalizeBooleanish(value) {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value === 1;
+
+  if (typeof value === 'string') {
+    const normalizedValue = value.trim().toLowerCase();
+
+    if (['true', 'yes', '1', 'y'].includes(normalizedValue)) return true;
+    if (['false', 'no', '0', 'n'].includes(normalizedValue)) return false;
+  }
+
+  return null;
+}
+
+function normalizeOptionValue(value, options) {
+  if (value === undefined || value === null || value === '') return '';
+
+  const directMatch = options.find((option) => option.value === value);
+  if (directMatch) return directMatch.value;
+
+  if (typeof value === 'string') {
+    const normalizedValue = value.trim().toLowerCase();
+
+    const caseInsensitiveMatch = options.find(
+      (option) => String(option.value).trim().toLowerCase() === normalizedValue
+    );
+    if (caseInsensitiveMatch) return caseInsensitiveMatch.value;
+
+    const labelMatch = options.find(
+      (option) => String(option.label).trim().toLowerCase() === normalizedValue
+    );
+    if (labelMatch) return labelMatch.value;
+  }
+
+  return '';
+}
+
+function getAgreementEntity(value) {
+  const normalized = normalizeEntity(value);
+
+  if (!normalized) return null;
+
+  return (
+    normalizeEntity(
+      getFirstAvailableValue(normalized, [
+        'agreement',
+        'platformAgreement',
+        'agreementDetails',
+        'agreements',
+        'platformAgreements',
+      ])
+    ) || normalized
+  );
+}
+
+function getAgreementConsentLabel(data) {
+  const consentValue = getFirstAvailableValue(data, [
+    'isConsent',
+    'consent',
+    'consentGiven',
+    'hasConsent',
+    'isAccepted',
+    'accepted',
+    'signed',
+  ]);
+
+  if (typeof consentValue === 'boolean') {
+    return consentValue ? 'Yes' : 'No';
+  }
+
+  if (typeof consentValue === 'number') {
+    return consentValue ? 'Yes' : 'No';
+  }
+
+  if (typeof consentValue === 'string') {
+    const normalizedValue = consentValue.trim().toLowerCase();
+
+    if (['true', 'yes', 'accepted', 'signed', '1'].includes(normalizedValue)) {
+      return 'Yes';
+    }
+
+    if (['false', 'no', '0'].includes(normalizedValue)) {
+      return 'No';
+    }
+
+    return consentValue;
+  }
+
+  return '-';
+}
+
+function getAgreementDocumentType(data) {
+  const documentType = getFirstAvailableValue(data, [
+    'businessKycDocumentType',
+    'documentType',
+    'agreementDocumentType',
+    'platformAgreementDocumentType',
+  ]);
+
+  if (typeof documentType === 'string') return documentType;
+
+  return (
+    documentType?.name ||
+    documentType?.label ||
+    documentType?.documentName ||
+    documentType?.title ||
+    '-'
+  );
+}
+
+function getAgreementFileMeta(data) {
+  const file =
+    getFirstAvailableValue(data, [
+      'media',
+      'document',
+      'file',
+      'agreementFile',
+      'signedDocument',
+      'documentsFile',
+    ]) ||
+    data?.businessKycDocumentType?.fileTemplate ||
+    data?.documentType?.fileTemplate ||
+    null;
+
+  return {
+    fileName:
+      file?.fileOriginalName ||
+      file?.fileName ||
+      file?.name ||
+      data?.fileOriginalName ||
+      data?.fileName ||
+      'View Agreement',
+    fileUrl: file?.fileUrl || file?.url || data?.fileUrl || data?.url || null,
+  };
+}
+
 const COUNTRY_OPTIONS = [
   { value: 'India', label: 'India' },
   { value: 'England', label: 'England' },
@@ -124,15 +265,40 @@ const ADDRESS_STATUS_MAP = {
 function mapComplianceToForm(data) {
   if (!data) return {};
 
+  const taxCountry = getFirstAvailableValue(data, ['taxCountry', 'country', 'taxResidencyCountry'], '');
+  const taxNumber = getFirstAvailableValue(data, ['taxNumber', 'tinNumber', 'taxIdentificationNumber'], '');
+  const sourceOfFunds = getFirstAvailableValue(data, ['sourceOfFunds', 'funds'], '');
+  const pepValue = getFirstAvailableValue(data, ['isPEP', 'isPep', 'pepStatus', 'pep']);
+  const investmentOnBehalf = getFirstAvailableValue(data, [
+    'investmentOnBehalf',
+    'investingFor',
+    'investOnBehalf',
+  ]);
+  const crossBorderFlow = getFirstAvailableValue(data, [
+    'crossBorderFlow',
+    'crossBorder',
+    'crossBorderTransaction',
+  ]);
+  const riskDisclosureAccepted = getFirstAvailableValue(data, [
+    'riskDisclosureAccepted',
+    'riskAck1',
+    'riskAcknowledgementOne',
+  ]);
+  const suitabilityConfirmed = getFirstAvailableValue(data, [
+    'suitabilityConfirmed',
+    'riskAck2',
+    'riskAcknowledgementTwo',
+  ]);
+
   return {
-    country: data.taxCountry || '',
-    tin_number: data.taxNumber || '',
-    funds: data.sourceOfFunds || '',
-    pep_status: data.isPEP ? 'true' : 'false',
-    investing_for: data.investmentOnBehalf || '',
-    cross_border: data.crossBorderFlow || '',
-    risk_ack_1: data.riskDisclosureAccepted || false,
-    risk_ack_2: data.suitabilityConfirmed || false,
+    country: taxCountry || '',
+    tin_number: taxNumber || '',
+    funds: normalizeOptionValue(sourceOfFunds, SOURCE_FUNDS),
+    pep_status: normalizeBooleanish(pepValue) === null ? '' : normalizeBooleanish(pepValue) ? 'true' : 'false',
+    investing_for: normalizeOptionValue(investmentOnBehalf, INVEST_OPTIONS),
+    cross_border: normalizeOptionValue(crossBorderFlow, CROSS_BORDER_OPTIONS),
+    risk_ack_1: normalizeBooleanish(riskDisclosureAccepted) ?? false,
+    risk_ack_2: normalizeBooleanish(suitabilityConfirmed) ?? false,
   };
 }
 
@@ -377,7 +543,10 @@ export function InvestorComplianceReadonly({ investorId }) {
   const data = normalizeEntity(compliance);
   const theme = useTheme();
   const defaultValues = useMemo(() => mapComplianceToForm(data), [data]);
-  const methods = useForm({ defaultValues });
+  const methods = useForm({
+    defaultValues,
+    values: defaultValues,
+  });
   const { reset, watch } = methods;
 
   useEffect(() => {
@@ -772,9 +941,8 @@ InvestorMandateReadonly.propTypes = {
 
 export function InvestorAgreementReadonly({ investorId }) {
   const { agreements } = useGetAgreement(investorId);
-  const data = normalizeEntity(agreements) || agreements;
-  const agreementFileUrl =
-    data?.media?.fileUrl || data?.businessKycDocumentType?.fileTemplate?.fileUrl;
+  const data = getAgreementEntity(agreements);
+  const agreementFile = getAgreementFileMeta(data);
 
   return (
     <SectionCard
@@ -789,16 +957,16 @@ export function InvestorAgreementReadonly({ investorId }) {
         <Stack spacing={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
-              <DetailItem label="Consent Given" value={data?.isConsent ? 'Yes' : 'No'} />
+              <DetailItem label="Consent Given" value={getAgreementConsentLabel(data)} />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <DetailItem label="Document Type" value={getAgreementDocumentType(data)} />
             </Grid>
             <Grid item xs={12} md={6}>
               <DetailItem
-                label="Document Type"
-                value={data?.businessKycDocumentType?.name || data?.businessKycDocumentType?.label}
+                label="Agreement ID"
+                value={getFirstAvailableValue(data, ['id', 'agreementId', 'platformAgreementId'], '-')}
               />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <DetailItem label="Agreement ID" value={data?.id} />
             </Grid>
           </Grid>
 
@@ -806,8 +974,8 @@ export function InvestorAgreementReadonly({ investorId }) {
 
           <Stack direction="row" justifyContent="flex-start">
             <DocumentPreviewButton
-              fileName={data?.media?.fileOriginalName || data?.businessKycDocumentType?.fileTemplate?.fileOriginalName}
-              fileUrl={agreementFileUrl}
+              fileName={agreementFile.fileName}
+              fileUrl={agreementFile.fileUrl}
               errorMessage="Agreement file not found"
               buttonText="View Agreement"
             />

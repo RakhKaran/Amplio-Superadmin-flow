@@ -141,7 +141,14 @@ export function useGetAgreement(investorId) {
   });
 
   return {
-    agreements: data?.agreements || data?.data || data || null,
+    agreements:
+      data?.agreements ||
+      data?.agreement ||
+      data?.platformAgreement ||
+      data?.agreementDetails ||
+      data?.data ||
+      data ||
+      null,
     loading: isLoading,
     error,
     validating: isValidating,
