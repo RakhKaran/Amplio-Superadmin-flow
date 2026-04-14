@@ -33,7 +33,7 @@ export default function TrusteeProfilesDetailsView() {
   const settings = useSettingsContext();
   const { id } = useParams();
 
-  const { trusteeProfile } = useGetTrusteeProfile(id);
+  const { trusteeProfile, refreshProfilesDetails } = useGetTrusteeProfile(id);
   const router = useRouter();
 
   const [searchParams]= useSearchParams();
@@ -66,7 +66,12 @@ export default function TrusteeProfilesDetailsView() {
       </Tabs>
 
       {/* ------------ TAB CONTENT ------------ */}
-      {currentTab === 'basic' && <TrusteeProfileDetails data={trusteeProfile.data} />}
+      {currentTab === 'basic' && (
+        <TrusteeProfileDetails
+          data={trusteeProfile.data}
+          refreshProfilesDetails={refreshProfilesDetails}
+        />
+      )}
 
       {currentTab === 'details' && <KYCCompanyDetails trusteeProfile={trusteeProfile.data} />}
 

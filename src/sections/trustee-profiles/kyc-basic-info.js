@@ -121,15 +121,18 @@ export default function KYCBasicInfo({ trusteeProfile }) {
 
 
   // Status Update Patch cll for approved the trustee
-  const handleStatusUpdate = async (type, reason = null) => {
+  const handleStatusUpdate = async (type, reason = '') => {
     try {
       setLoading(true);
 
       const payload = {
         applicationId: trusteeProfile?.kycApplicationsId,
         status: type,
-        rejectReason: reason || null,
       };
+
+      if (typeof reason === 'string' && reason.trim()) {
+        payload.rejectReason = reason.trim();
+      }
 
       await axiosInstance.patch('/auth/handle-kyc-application', payload);
 
@@ -143,9 +146,16 @@ export default function KYCBasicInfo({ trusteeProfile }) {
       setTimeout(() => router.back(), 800);
 
     } catch (error) {
-      enqueueSnackbar(error?.response?.data?.message || 'Something went wrong', {
-        variant: 'error',
-      });
+      enqueueSnackbar(
+        error?.error?.message ||
+          error?.response?.data?.error?.message ||
+          error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+        {
+          variant: 'error',
+        }
+      );
     } finally {
       setLoading(false);
     }
@@ -893,7 +903,7 @@ export default function KYCBasicInfo({ trusteeProfile }) {
             </Button>
 
             <Button
-              variant="contained"
+              variant="soft"
               color="error"
               onClick={() => setRejectOpen(true)}
               disabled={loading || trusteeProfile?.kycApplications?.status === 2}
@@ -902,7 +912,7 @@ export default function KYCBasicInfo({ trusteeProfile }) {
             </Button>
 
             <Button
-              variant="contained"
+              variant="soft"
               color="success"
               onClick={() => handleStatusUpdate(2)}
               disabled={loading || trusteeProfile?.kycApplications?.status === 2}
