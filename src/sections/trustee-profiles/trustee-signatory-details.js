@@ -130,15 +130,18 @@ const router = useRouter();
         setValue('submittedDateOfBirth', extracted?.extractedDateOfBirth || '');
     };
 
-    const handleStatusUpdate = async (type, reason = null) => {
+    const handleStatusUpdate = async (type, reason = '') => {
         try {
             setLoading(true);
 
             const payload = {
                 signatoryId: currentUser?.id,
                 status: type,
-                rejectReason: reason || null,
             };
+
+            if (typeof reason === 'string' && reason.trim()) {
+                payload.rejectReason = reason.trim();
+            }
 
 
             await axiosInstance.patch('/trustee-profiles/authorize-signatory-verification', payload);
@@ -153,9 +156,16 @@ const router = useRouter();
             setTimeout(() => router.back(), 800);
 
         } catch (error) {
-            enqueueSnackbar(error?.response?.data?.message || 'Something went wrong', {
-                variant: 'error',
-            });
+            enqueueSnackbar(
+                error?.error?.message ||
+                    error?.response?.data?.error?.message ||
+                    error?.response?.data?.message ||
+                    error?.message ||
+                    'Something went wrong',
+                {
+                    variant: 'error',
+                }
+            );
         } finally {
             setLoading(false);
         }

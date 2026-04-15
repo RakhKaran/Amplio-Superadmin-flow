@@ -6,6 +6,7 @@ import Iconify from 'src/components/iconify';
 
 export default function MerchantDetailsBankCard({ bank, onOpenForm }) {
   if (!bank) return null;
+  const isInteractive = Number(bank?.status) === 0;
 
   const STATUS = {
     0: { label: 'Under Review', color: '#f8a15a', icon: 'mdi:clock-time-eight-outline' },
@@ -33,14 +34,14 @@ export default function MerchantDetailsBankCard({ bank, onOpenForm }) {
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
-        cursor: 'pointer',
+        cursor: isInteractive ? 'pointer' : 'default',
         transition: '0.2s',
-        '&:hover': {
+        '&:hover': isInteractive ? {
           transform: 'scale(1.01)',
           boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
-        },
+        } : undefined,
       }}
-      onClick={() => onOpenForm(bank)}
+      onClick={isInteractive ? () => onOpenForm(bank) : undefined}
     >
       {/* Header */}
       <Stack direction="row" justifyContent="space-between" alignItems="center">

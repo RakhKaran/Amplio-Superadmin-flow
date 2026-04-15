@@ -35,7 +35,7 @@ const STATUS_DISPLAY = {
   3: { label: 'Rejected', color: 'error' },
 };
 
-export default function TrusteeProfileDetails({ data }) {
+export default function TrusteeProfileDetails({ data, refreshProfilesDetails }) {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
@@ -94,15 +94,18 @@ export default function TrusteeProfileDetails({ data }) {
       });
   }, [data, reset, defaultValues]);
 
-  const handleStatusUpdate = async (type, reason = null) => {
+  const handleStatusUpdate = async (type, reason = '') => {
     try {
       setLoading(true);
 
       const payload = {
         applicationId: data?.kycApplicationsId,
         status: type,
-        rejectReason: reason || null,
       };
+
+      if (typeof reason === 'string' && reason.trim()) {
+        payload.rejectReason = reason.trim();
+      }
 
       await axiosInstance.patch('/kyc/handle-kyc-application', payload);
 
@@ -110,11 +113,19 @@ export default function TrusteeProfileDetails({ data }) {
         variant: String(type) === '2' ? 'success' : 'error',
       });
 
+      refreshProfilesDetails?.();
       setTimeout(() => router.back(), 800);
     } catch (error) {
-      enqueueSnackbar(error?.response?.data?.message || 'Something went wrong', {
+      enqueueSnackbar(
+        error?.error?.message ||
+          error?.response?.data?.error?.message ||
+          error?.response?.data?.message ||
+          error?.message ||
+          'Something went wrong',
+        {
         variant: 'error',
-      });
+        }
+      );
     } finally {
       setLoading(false);
     }
@@ -363,4 +374,5 @@ export default function TrusteeProfileDetails({ data }) {
 
 TrusteeProfileDetails.propTypes = {
   data: PropTypes.object,
+  refreshProfilesDetails: PropTypes.func,
 };

@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { Card, Box, Typography, Stack, Divider, Chip, Grid, IconButton } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import Iconify from 'src/components/iconify';
 import { useNavigate } from 'react-router';
 import { paths } from 'src/routes/paths';
@@ -7,11 +8,12 @@ import { paths } from 'src/routes/paths';
 export default function BankDetailsCard({ bank, onViewRow }) {
   const navigate = useNavigate();
   if (!bank) return null;
+  const isInteractive = Number(bank?.status) === 0;
 
   const STATUS = {
-    0: { label: 'Under Review', color: '#ED6C02', icon: 'mdi:clock-time-eight-outline' },
-    1: { label: 'Approved', color: '#2E7D32', icon: 'mdi:check-decagram' },
-    2: { label: 'Rejected', color: '#C62828', icon: 'mdi:close-circle' },
+    0: { label: 'Under Review', color: 'warning', icon: 'mdi:clock-time-eight-outline' },
+    1: { label: 'Approved', color: 'success', icon: 'mdi:check-decagram' },
+    2: { label: 'Rejected', color: 'error', icon: 'mdi:close-circle' },
   };
 
   const bankProof = {
@@ -34,17 +36,20 @@ export default function BankDetailsCard({ bank, onViewRow }) {
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
-        cursor: 'pointer',
+        cursor: isInteractive ? 'pointer' : 'default',
         transition: '0.2s',
-        '&:hover': {
+        '&:hover': isInteractive ? {
           transform: 'scale(1.01)',
           boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
-        },
+        } : undefined,
       }}
-      onClick={() =>
-        navigate(paths.dashboard.trusteeProfiles.new, {
-          state: { bankData: bank },
-        })
+      onClick={
+        isInteractive
+          ? () =>
+              navigate(paths.dashboard.trusteeProfiles.new, {
+                state: { bankData: bank },
+              })
+          : undefined
       }
     >
       {/* Header */}
@@ -59,11 +64,17 @@ export default function BankDetailsCard({ bank, onViewRow }) {
             <Stack direction="row" spacing={1} alignItems="center">
               <Typography
                 variant="h6"
-                onClick={() =>
-                  navigate(paths.dashboard.trusteeProfiles.new, {
-                    state: { bankData: bank },
-                  })
+                onClick={
+                  isInteractive
+                    ? () =>
+                        navigate(paths.dashboard.trusteeProfiles.new, {
+                          state: { bankData: bank },
+                        })
+                    : undefined
                 }
+                sx={{
+                  cursor: isInteractive ? 'pointer' : 'default',
+                }}
               >
                 {bank?.bankName}
               </Typography>
@@ -92,11 +103,22 @@ export default function BankDetailsCard({ bank, onViewRow }) {
         <Chip
           icon={<Iconify icon={STATUS[bank?.status]?.icon} />}
           label={STATUS[bank?.status]?.label || 'Unknown'}
-          sx={{
-            bgcolor: `${STATUS[bank?.status]?.color}1A`,
-            color: STATUS[bank?.status]?.color,
-            fontWeight: 600,
-            px: 1.5,
+          sx={(theme) => {
+            const paletteKey = STATUS[bank?.status]?.color || 'default';
+            const paletteColor = theme.palette[paletteKey]?.main || theme.palette.text.primary;
+
+            return {
+              bgcolor: alpha(paletteColor, 0.16),
+              color: paletteColor,
+              fontWeight: 600,
+              px: 1.5,
+              pointerEvents: 'none',
+              transition: 'none',
+              '&:hover': {
+                bgcolor: alpha(paletteColor, 0.16),
+                color: paletteColor,
+              },
+            };
           }}
         />
       </Stack>
