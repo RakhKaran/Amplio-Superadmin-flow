@@ -48,6 +48,9 @@ import { useFilterInvestorProfiles, useGetInvestorProfiles } from 'src/api/inves
 import { buildFilter } from 'src/utils/filters';
 import { fi } from 'date-fns/locale';
 
+
+
+
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [
@@ -59,7 +62,7 @@ const STATUS_OPTIONS = [
 ];
 
 const TABLE_HEAD = [
-  { id: 'companyName', label: 'Investor Name' },
+  { id: 'investorName', label: 'Investor Name' },
   { id: 'investorKycType', label: 'Investor KYC Type' },
   { id: 'gender', label: 'Gender' },
   { id: 'kycMode', label: 'Kyc Mode' },
@@ -92,18 +95,20 @@ export default function InvestorProfileListView() {
     orderBy: table.orderBy,
     startDate: filters.startDate,
     endDate: filters.endDate,
-    validSortFields: ['companyName', 'fullName', 'CIN', 'GSTIN'],
+    validSortFields: ['investorName', 'CIN', 'GSTIN'],
     searchTextValue: filters.name,
     additionalWhereOrConditions:
-      filters.investorType !== 'all' ? [{ investorKycType: { ilike: filters.investorType } }] : [],
-  });
+      filters.investorType !== 'all'
+        ? [{ investorKycType: { ilike: filters.investorType } }]
+        : [],
+  })
 
   const filterJson = encodeURIComponent(JSON.stringify(filter));
 
   const params = {
     filter: filterJson,
     status: filters.status === 'all' ? undefined : Number(filters.status),
-  };
+  }
 
   const { filteredInvestorProfiles, count } = useFilterInvestorProfiles(params);
   const visibleInvestorProfiles =
@@ -129,6 +134,9 @@ export default function InvestorProfileListView() {
     [router]
   );
 
+
+
+
   const denseHeight = table.dense ? 52 : 72;
   const canReset = !isEqual(defaultFilters, filters);
   const notFound = (!visibleInvestorProfiles.length && canReset) || !visibleInvestorProfiles.length;
@@ -140,6 +148,7 @@ export default function InvestorProfileListView() {
     },
     [table]
   );
+
 
   const handleDeleteRows = useCallback(() => {
     table.onUpdatePageDeleteRows({
@@ -159,6 +168,7 @@ export default function InvestorProfileListView() {
   const handleResetFilters = useCallback(() => {
     setFilters(defaultFilters);
   }, []);
+
 
   useEffect(() => {
     if (filteredInvestorProfiles) {
@@ -244,6 +254,7 @@ export default function InvestorProfileListView() {
               }
             />
 
+
             <Scrollbar>
               <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
                 <TableHeadCustom
@@ -274,6 +285,7 @@ export default function InvestorProfileListView() {
                     />
                   ))}
 
+
                   {/* <TableEmptyRows
                     height={denseHeight}
                     emptyRows={emptyRows(table.page, table.rowsPerPage, tableData.length)}
@@ -286,9 +298,7 @@ export default function InvestorProfileListView() {
           </TableContainer>
 
           <TablePaginationCustom
-            count={
-              filters.investorType === 'all' ? count.totalCount : visibleInvestorProfiles.length
-            }
+            count={filters.investorType === 'all' ? count.totalCount : visibleInvestorProfiles.length}
             page={table.page}
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}

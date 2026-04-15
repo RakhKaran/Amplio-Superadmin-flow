@@ -61,12 +61,11 @@ export default function MerchantProfilesDetailsView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
-        heading="Details"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'Merchant Profile', href: paths.dashboard.merchant.root },
           {
-            name: merchantProfile?.data?.companyName || 'Merchant Profile',
+            // name: merchantProfile?.data?.merchantName || 'Merchant Profile',
           },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
