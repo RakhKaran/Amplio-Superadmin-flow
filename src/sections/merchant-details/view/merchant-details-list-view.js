@@ -54,7 +54,7 @@ const STATUS_OPTIONS = [
 ];
 
 const TABLE_HEAD = [
-  { id: 'merchantName', label: 'Merchant Name' },
+  { id: 'companyName', label: 'Merchant Name' },
   { id: 'CIN', label: 'CIN' },
   { id: 'GSTIN', label: 'GSTIN' },
   { id: 'status', label: 'Status' },
@@ -85,7 +85,7 @@ export default function MerchantDetailsListView() {
     rowsPerPage: table.rowsPerPage,
     order: table.order,
     orderBy: table.orderBy,
-    validSortFields: ['merchantName', 'CIN', 'GSTIN'],
+    validSortFields: ['companyName', 'CIN', 'GSTIN'],
     searchTextValue: filters.name,
   });
 
@@ -187,7 +187,9 @@ export default function MerchantDetailsListView() {
                 label={tab.label}
                 icon={
                   <Label
-                    variant={((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'}
+                    variant={
+                      ((tab.value === 'all' || tab.value === filters.status) && 'filled') || 'soft'
+                    }
                     color={tab.color}
                   >
                     {tab.value === 'all' ? totalCount.totalCount : totalCount[tab.value]}

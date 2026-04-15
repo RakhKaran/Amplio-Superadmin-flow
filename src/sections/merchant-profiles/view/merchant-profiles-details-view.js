@@ -164,6 +164,17 @@ export default function MerchantProfilesDetailsView() {
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}
         />
+      <CustomBreadcrumbs
+        heading="Details"
+        links={[
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'Merchant Profile', href: paths.dashboard.merchant.root },
+          {
+            name: merchantProfile?.data?.companyName || 'Merchant Profile',
+          },
+        ]}
+        sx={{ mb: { xs: 3, md: 5 } }}
+      />
 
         <Tabs value={currentTab} onChange={handleChangeTab} sx={{ mb: { xs: 3, md: 5 } }}>
           {TABS.map((tabItem) => (
