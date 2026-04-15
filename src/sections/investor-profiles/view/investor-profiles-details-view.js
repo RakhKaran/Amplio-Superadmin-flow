@@ -10,8 +10,8 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 import InvestorProfileDetails from '../investor-profiles-details';
 import { useGetInvestorProfile } from 'src/api/investor-profiles';
-import { useCallback, useEffect, useState } from 'react';
-import { Tab, Tabs } from '@mui/material';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Box, Tab, Tabs } from '@mui/material';
 import InvestorDocumentDetails from '../investor-document-details';
 import InvestorBankPage from '../investor-bank-page';
 import InvestorSignatoriesApproval from '../investor-signatories-approval';
@@ -23,6 +23,16 @@ import {
   InvestorMandateReadonly,
 } from '../investor-kyc-readonly-sections';
 import { useSearchParams } from 'react-router-dom';
+import {
+  useGetAgreement,
+  useGetBankDetails,
+  useGetCompliances,
+  useGetDocuments,
+  useGetInvestmentMandates,
+  useGetKycAddressDetails,
+  useGetSignatories,
+  useGetUBOs,
+} from 'src/api/investorKyc';
 
 // ----------------------------------------------------------------------
 
@@ -43,6 +53,45 @@ const INSTITUTIONAL_TABS = [
   { value: 'agreement', label: 'Platform Agreement' },
 ];
 
+function toStatusNumber(status) {
+  if (typeof status === 'number') return status;
+  const parsed = Number(status);
+  return Number.isNaN(parsed) ? null : parsed;
+}
+
+function toArray(value) {
+  if (Array.isArray(value)) return value;
+  return value ? [value] : [];
+}
+
+function getOverallStatus(
+  statuses,
+  mapping = {
+    pendingValues: [0],
+    approvedValues: [1],
+    rejectedValues: [2],
+  }
+) {
+  const { pendingValues, approvedValues, rejectedValues } = mapping;
+  const validValues = [...pendingValues, ...approvedValues, ...rejectedValues];
+
+  const validStatuses = statuses
+    .map(toStatusNumber)
+    .filter((status) => validValues.includes(status));
+
+  if (!validStatuses.length) return null;
+  if (validStatuses.some((status) => rejectedValues.includes(status))) return 2;
+  if (validStatuses.every((status) => approvedValues.includes(status))) return 1;
+  return 0;
+}
+
+function getTabColor(status) {
+  if (status === 1) return 'success.main';
+  if (status === 2) return 'error.main';
+  if (status === 0) return 'warning.main';
+  return 'grey.400';
+}
+
 export default function InvestorProfilesDetailsView() {
   const settings = useSettingsContext();
   const { id } = useParams();
@@ -51,10 +100,48 @@ export default function InvestorProfilesDetailsView() {
   const { investorProfile, refreshInvestorProfile } = useGetInvestorProfile(id);
   const investor = investorProfile?.data || {};
   const investorId = investor?.id || id;
+  const { documents = [] } = useGetDocuments(investorId);
+  const { bankDetails } = useGetBankDetails(investorId);
+  const { ubos = [] } = useGetUBOs(investorId);
+  const { registeredAddress, correspondenceAddress } = useGetKycAddressDetails(investorId);
+  const { compliance } = useGetCompliances(investorId);
+  const { investmentMandates } = useGetInvestmentMandates(investorId);
+  const { agreements } = useGetAgreement(investorId);
+  const { signatories = [] } = useGetSignatories(investorId);
   const investorType = String(
     investor?.investorKycType || investor?.investorType || investor?.kycType || 'individual'
   ).toLowerCase();
   const tabs = investorType === 'institutional' ? INSTITUTIONAL_TABS : INDIVIDUAL_TABS;
+
+  const tabStatusMap = useMemo(
+    () => ({
+      basic: getOverallStatus([investor?.kycApplications?.status], {
+        pendingValues: [0, 1],
+        approvedValues: [2],
+        rejectedValues: [3],
+      }),
+      documents: getOverallStatus(documents.map((item) => item?.status)),
+      address: getOverallStatus([registeredAddress?.status, correspondenceAddress?.status]),
+      bank: getOverallStatus(toArray(bankDetails).map((item) => item?.status)),
+      ubo: getOverallStatus(ubos.map((item) => item?.status)),
+      signatories: getOverallStatus(signatories.map((item) => item?.status)),
+      compliance: getOverallStatus(toArray(compliance).map((item) => item?.status)),
+      mandate: getOverallStatus(toArray(investmentMandates).map((item) => item?.status)),
+      agreement: getOverallStatus(toArray(agreements).map((item) => item?.status)),
+    }),
+    [
+      agreements,
+      bankDetails,
+      compliance,
+      correspondenceAddress?.status,
+      documents,
+      investmentMandates,
+      investor?.kycApplications?.status,
+      registeredAddress?.status,
+      signatories,
+      ubos,
+    ]
+  );
 
   const [searchParams] = useSearchParams();
   const tab = searchParams.get('tab');
@@ -72,6 +159,7 @@ export default function InvestorProfilesDetailsView() {
       search: `?tab=${newValue}`,
     });
   }, [router]);
+
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
@@ -80,22 +168,35 @@ export default function InvestorProfilesDetailsView() {
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'Investor Profile', href: paths.dashboard.investorProfiles.list },
           {
-            name: investorProfile?.data?.fullName || investorProfile?.data?.companyName || 'Investor Profile',
+            name: investor?.fullName || investor?.companyName || 'Investor Profile',
           },
         ]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
 
       <Tabs value={currentTab} onChange={handleChangeTab} sx={{ mb: { xs: 3, md: 5 } }}>
-        {tabs.map((tab) => (
-          <Tab key={tab.value} value={tab.value} label={tab.label} />
+        {tabs.map((tabItem) => (
+          <Tab
+            key={tabItem.value}
+            value={tabItem.value}
+            label={
+              <Box display="flex" alignItems="center" gap={1}>
+                {tabItem.label}
+                <Box
+                  sx={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: '50%',
+                    bgcolor: getTabColor(tabStatusMap[tabItem.value]),
+                  }}
+                />
+              </Box>
+            }
+          />
         ))}
       </Tabs>
       {currentTab === 'basic' && (
-        <InvestorProfileDetails
-          data={investorProfile}
-          onRefresh={refreshInvestorProfile}
-        />
+        <InvestorProfileDetails data={investorProfile} onRefresh={refreshInvestorProfile} />
       )}
 
       {currentTab === 'documents' && <InvestorDocumentDetails investorProfile={investorProfile} />}
