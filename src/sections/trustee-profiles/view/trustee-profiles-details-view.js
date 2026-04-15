@@ -36,20 +36,21 @@ export default function TrusteeProfilesDetailsView() {
   const { trusteeProfile } = useGetTrusteeProfile(id);
   const router = useRouter();
 
-  const [searchParams]= useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const tab = searchParams.get('tab');
 
-  const [currentTab, setCurrentTab] = useState(tab || 'basic' ) ;
+  const [currentTab, setCurrentTab] = useState(tab || 'basic');
 
   const handleChangeTab = useCallback((event, newValue) => {
     setCurrentTab(newValue);
-    router.push({search : '?tab='+newValue});
+    router.push({ search: '?tab=' + newValue });
   }, []);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <CustomBreadcrumbs
+        heading="Details"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
           { name: 'Trustee Profile', href: paths.dashboard.trusteeProfiles.root },

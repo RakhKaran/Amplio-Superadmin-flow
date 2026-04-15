@@ -51,7 +51,9 @@ export default function MerchantProfileDetails({ data, refreshProfilesDetails })
     {
       name: 'dateOfIncorporation',
       label: 'Date Of Incorporation',
-      value: data?.data?.dateOfIncorporation ? format(new Date(data?.data?.dateOfIncorporation), 'dd/MM/yyyy') : '—',
+      value: data?.data?.dateOfIncorporation
+        ? format(new Date(data?.data?.dateOfIncorporation), 'dd/MM/yyyy')
+        : '—',
     },
     {
       name: 'cityOfIncorporation',
@@ -80,137 +82,136 @@ export default function MerchantProfileDetails({ data, refreshProfilesDetails })
     },
   ];
 
+  const defaultValues = Object.fromEntries(fields.map((f) => [f.name, f.value || '']));
 
-const defaultValues = Object.fromEntries(fields.map((f) => [f.name, f.value || '']));
+  const methods = useForm({ defaultValues });
 
-const methods = useForm({ defaultValues });
+  const { reset } = methods;
 
-const { reset } = methods;
+  useEffect(() => {
+    if (data)
+      reset({
+        ...defaultValues,
+        panCardImage: data?.data?.merchantPanCard?.media || null,
+      });
+  }, [data, reset, defaultValues]);
 
-useEffect(() => {
-  if (data)
-    reset({
-      ...defaultValues,
-      panCardImage: data?.data?.merchantPanCard?.media || null,
-    });
-}, [data, reset, defaultValues]);
+  const handleStatusUpdate = async (type, reason = null) => {
+    try {
+      setLoading(true);
 
-const handleStatusUpdate = async (type, reason = null) => {
-  try {
-    setLoading(true);
+      const payload = {
+        applicationId: data?.data?.kycApplicationsId,
+        status: type,
+      };
 
-    const payload = {
-      applicationId: data?.data?.kycApplicationsId,
-      status: type,
-    };
+      if (type === 3 && typeof reason === 'string' && reason.trim()) {
+        payload.reason = reason.trim();
+      }
 
-    if (type === 3 && typeof reason === 'string' && reason.trim()) {
-      payload.reason = reason.trim();
+      await axiosInstance.patch('/kyc/handle-kyc-application', payload);
+
+      enqueueSnackbar(`Merchant KYC ${String(type) === '2' ? 'Approved' : 'Rejected'}`, {
+        variant: String(type) === '2' ? 'success' : 'error',
+      });
+
+      refreshProfilesDetails();
+      setTimeout(() => router.back(), 800);
+    } catch (error) {
+      enqueueSnackbar(error?.error?.message || 'Something went wrong', {
+        variant: 'error',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const [openPreview, setOpenPreview] = useState(false);
+
+  const panFile = data?.data?.merchantPanCard?.media?.fileUrl;
+  const fileType = data?.data?.merchantPanCard?.media?.fileType;
+
+  const handleViewFile = () => {
+    if (!panFile) return;
+
+    if (fileType?.includes('pdf')) {
+      window.open(panFile, '_blank'); // open PDF in full tab
+    } else {
+      setOpenPreview(true); // open image modal
+    }
+  };
+
+  const handleRejectSubmit = () => {
+    if (!rejectReason.trim()) {
+      enqueueSnackbar('Please enter a reason', { variant: 'warning' });
+      return;
     }
 
-    await axiosInstance.patch('/kyc/handle-kyc-application', payload);
+    handleStatusUpdate(3, rejectReason);
+    setRejectOpen(false);
+    setRejectReason('');
+  };
 
-    enqueueSnackbar(`Merchant KYC ${String(type) === '2' ? 'Approved' : 'Rejected'}`, {
-      variant: String(type) === '2' ? 'success' : 'error',
-    });
+  const panComparisonData = [
+    {
+      parameter: 'PAN Number',
+      extracted: data?.data?.merchantPanCard?.extractedPanNumber || '—',
+      submitted: data?.data?.merchantPanCard?.submittedPanNumber || '—',
+    },
+    {
+      parameter: 'Merchant Name',
+      extracted: data?.data?.merchantPanCard?.extractedMerchantName || '—',
+      submitted: data?.data?.merchantPanCard?.submittedMerchantName || '—',
+    },
+    // {
+    //   parameter: "Date of Birth / Incorporation",
+    //   extracted: data?.data?.merchantPanCard?.extractedDateOfBirth ? new Date(data?.data?.merchantPanCard?.extractedDateOfBirth).toLocaleDateString() : "—",
+    //   submitted: data?.data?.merchantPanCard?.submittedDateOfBirth ? new Date(data?.data?.merchantPanCard?.submittedDateOfBirth).toLocaleDateString() : "—",
+    // },
+  ];
 
-    refreshProfilesDetails();
-    setTimeout(() => router.back(), 800);
-  } catch (error) {
-    enqueueSnackbar(error?.error?.message || 'Something went wrong', {
-      variant: 'error',
-    });
-  } finally {
-    setLoading(false);
-  }
-};
+  return (
+    <Card sx={{ p: 4 }}>
+      <FormProvider methods={methods}>
+        {/* -------- Header Section -------- */}
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          {/* Avatar + Name */}
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Avatar alt={data?.data?.companyName} />
 
-const [openPreview, setOpenPreview] = useState(false);
-
-const panFile = data?.data?.merchantPanCard?.media?.fileUrl;
-const fileType = data?.data?.merchantPanCard?.media?.fileType;
-
-const handleViewFile = () => {
-  if (!panFile) return;
-
-  if (fileType?.includes('pdf')) {
-    window.open(panFile, '_blank'); // open PDF in full tab
-  } else {
-    setOpenPreview(true); // open image modal
-  }
-};
-
-const handleRejectSubmit = () => {
-  if (!rejectReason.trim()) {
-    enqueueSnackbar('Please enter a reason', { variant: 'warning' });
-    return;
-  }
-
-  handleStatusUpdate(3, rejectReason);
-  setRejectOpen(false);
-  setRejectReason('');
-};
-
-const panComparisonData = [
-  {
-    parameter: 'PAN Number',
-    extracted: data?.data?.merchantPanCard?.extractedPanNumber || '—',
-    submitted: data?.data?.merchantPanCard?.submittedPanNumber || '—',
-  },
-  {
-    parameter: 'Merchant Name',
-    extracted: data?.data?.merchantPanCard?.extractedMerchantName || '—',
-    submitted: data?.data?.merchantPanCard?.submittedMerchantName || '—',
-  },
-  // {
-  //   parameter: "Date of Birth / Incorporation",
-  //   extracted: data?.data?.merchantPanCard?.extractedDateOfBirth ? new Date(data?.data?.merchantPanCard?.extractedDateOfBirth).toLocaleDateString() : "—",
-  //   submitted: data?.data?.merchantPanCard?.submittedDateOfBirth ? new Date(data?.data?.merchantPanCard?.submittedDateOfBirth).toLocaleDateString() : "—",
-  // },
-];
-
-return (
-  <Card sx={{ p: 4 }}>
-    <FormProvider methods={methods}>
-      {/* -------- Header Section -------- */}
-      <Stack direction="row" alignItems="center" justifyContent="space-between">
-        {/* Avatar + Name */}
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <Avatar alt={data?.data?.merchantName} />
-
-          <Stack spacing={0.8}>
-            <Typography variant="h5" fontWeight={600}>
-              {data?.data?.merchantName}
-            </Typography>
+            <Stack spacing={0.8}>
+              <Typography variant="h5" fontWeight={600}>
+                {data?.data?.companyName}
+              </Typography>
+            </Stack>
           </Stack>
+
+          {/* Status */}
+          <Label
+            color={STATUS_DISPLAY[data?.data?.kycApplications?.status]?.color || 'default'}
+            sx={{ px: 2, py: 1, borderRadius: 1 }}
+          >
+            {STATUS_DISPLAY[data?.data?.kycApplications?.status]?.label || 'Unknown'}
+          </Label>
         </Stack>
 
-        {/* Status */}
-        <Label
-          color={STATUS_DISPLAY[data?.data?.kycApplications?.status]?.color || 'default'}
-          sx={{ px: 2, py: 1, borderRadius: 1 }}
-        >
-          {STATUS_DISPLAY[data?.data?.kycApplications?.status]?.label || 'Unknown'}
-        </Label>
-      </Stack>
+        <Divider sx={{ my: 3 }} />
 
-      <Divider sx={{ my: 3 }} />
+        {/* -------- Read-Only Form Fields -------- */}
+        <Grid container spacing={2}>
+          {fields.map((field) => (
+            <Grid item xs={12} sm={6} key={field.name}>
+              <RHFTextField name={field.name} label={field.label} disabled />
+            </Grid>
+          ))}
+        </Grid>
+        <Grid container spacing={2} sx={{ mt: 2 }}>
+          <Grid item xs={12}>
+            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+              PAN Card Details
+            </Typography>
 
-      {/* -------- Read-Only Form Fields -------- */}
-      <Grid container spacing={2}>
-        {fields.map((field) => (
-          <Grid item xs={12} sm={6} key={field.name}>
-            <RHFTextField name={field.name} label={field.label} disabled />
-          </Grid>
-        ))}
-      </Grid>
-      <Grid container spacing={2} sx={{ mt: 2 }}>
-        <Grid item xs={12}>
-          <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-            PAN Card Details
-          </Typography>
-
-          {/* {data?.data?.merchantPanCard?.media?.fileUrl ? (
+            {/* {data?.data?.merchantPanCard?.media?.fileUrl ? (
               <Button
                 variant="outlined"
                 color="primary"
@@ -237,125 +238,125 @@ return (
             ) : (
               <Typography color="text.secondary">No PAN file uploaded.</Typography>
             )} */}
-          <RHFCustomFileUploadBox
-            name="panCardImage"
-            label="Pancard"
-            icon="mdi:file-document-outline"
-            accept={{
-              'application/pdf': ['.pdf'],
-              'image/png': ['.png'],
-              'image/jpeg': ['.jpg', '.jpeg'],
-            }}
-            disabled
-          />
+            <RHFCustomFileUploadBox
+              name="panCardImage"
+              label="Pancard"
+              icon="mdi:file-document-outline"
+              accept={{
+                'application/pdf': ['.pdf'],
+                'image/png': ['.png'],
+                'image/jpeg': ['.jpg', '.jpeg'],
+              }}
+              disabled
+            />
+          </Grid>
         </Grid>
-      </Grid>
 
-      <TableContainer
-        component={Paper}
-        sx={{
-          mt: 3,
-          borderRadius: 2,
-          overflow: 'hidden',
-          boxShadow: '0px 3px 8px rgba(0,0,0,0.1)',
-          border: '1px solid #BDBDBD',
-          overflowX: 'auto',
-          WebkitOverflowScrolling: 'touch',
-        }}
-      >
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ backgroundColor: '#2F2F2F', color: '#fff', fontWeight: 600 }}>
-                Parameter
-              </TableCell>
-              <TableCell sx={{ backgroundColor: 'info.darker', color: '#fff', fontWeight: 700 }}>
-                Extracted
-              </TableCell>
-              <TableCell sx={{ backgroundColor: '#00A786', color: '#fff', fontWeight: 600 }}>
-                Submitted
-              </TableCell>
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {panComparisonData.map((row, index) => (
-              <TableRow key={index}>
-                <TableCell sx={{ fontWeight: 500 }}>{row.parameter}</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>{row.extracted}</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>{row.submitted}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      {openPreview && (
-        <Box
-          onClick={() => setOpenPreview(false)}
+        <TableContainer
+          component={Paper}
           sx={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            backgroundColor: 'rgba(0,0,0,0.6)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            zIndex: 9999,
-            cursor: 'zoom-out',
+            mt: 3,
+            borderRadius: 2,
+            overflow: 'hidden',
+            boxShadow: '0px 3px 8px rgba(0,0,0,0.1)',
+            border: '1px solid #BDBDBD',
+            overflowX: 'auto',
+            WebkitOverflowScrolling: 'touch',
           }}
         >
-          <img
-            src={panFile}
-            alt="Preview"
-            style={{
-              maxWidth: '80%',
-              maxHeight: '80%',
-              borderRadius: 10,
-              boxShadow: '0px 4px 10px rgba(0,0,0,0.4)',
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ backgroundColor: '#2F2F2F', color: '#fff', fontWeight: 600 }}>
+                  Parameter
+                </TableCell>
+                <TableCell sx={{ backgroundColor: 'info.darker', color: '#fff', fontWeight: 700 }}>
+                  Extracted
+                </TableCell>
+                <TableCell sx={{ backgroundColor: '#00A786', color: '#fff', fontWeight: 600 }}>
+                  Submitted
+                </TableCell>
+              </TableRow>
+            </TableHead>
+
+            <TableBody>
+              {panComparisonData.map((row, index) => (
+                <TableRow key={index}>
+                  <TableCell sx={{ fontWeight: 500 }}>{row.parameter}</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>{row.extracted}</TableCell>
+                  <TableCell sx={{ fontWeight: 600 }}>{row.submitted}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        {openPreview && (
+          <Box
+            onClick={() => setOpenPreview(false)}
+            sx={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100vh',
+              backgroundColor: 'rgba(0,0,0,0.6)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 9999,
+              cursor: 'zoom-out',
             }}
-          />
-        </Box>
-      )}
+          >
+            <img
+              src={panFile}
+              alt="Preview"
+              style={{
+                maxWidth: '80%',
+                maxHeight: '80%',
+                borderRadius: 10,
+                boxShadow: '0px 4px 10px rgba(0,0,0,0.4)',
+              }}
+            />
+          </Box>
+        )}
 
-      <Divider sx={{ my: 3 }} />
+        <Divider sx={{ my: 3 }} />
 
-      {/* -------- Action Buttons -------- */}
-      <Stack direction="row" spacing={2} justifyContent="flex-end">
-        <Button variant="soft" onClick={() => router.back()} disabled={loading}>
-          Close
-        </Button>
+        {/* -------- Action Buttons -------- */}
+        <Stack direction="row" spacing={2} justifyContent="flex-end">
+          <Button variant="soft" onClick={() => router.back()} disabled={loading}>
+            Close
+          </Button>
 
-        <Button
-          variant="soft"
-          color="error"
-          onClick={() => setRejectOpen(true)}
-          disabled={loading || data?.data?.kycApplications?.status === 2}
-        >
-          Decline
-        </Button>
+          <Button
+            variant="soft"
+            color="error"
+            onClick={() => setRejectOpen(true)}
+            disabled={loading || data?.data?.kycApplications?.status === 2}
+          >
+            Decline
+          </Button>
 
-        <Button
-          variant="soft"
-          color="success"
-          onClick={() => handleStatusUpdate(2)}
-          disabled={loading || data?.data?.kycApplications?.status === 2}
-        >
-          Approve
-        </Button>
-      </Stack>
-    </FormProvider>
-    <RejectReasonDialog
-      title="Decline Merchant Profile"
-      open={rejectOpen}
-      onClose={() => setRejectOpen(false)}
-      reason={rejectReason}
-      setReason={setRejectReason}
-      onSubmit={handleRejectSubmit}
-    />
-  </Card>
-);
+          <Button
+            variant="soft"
+            color="success"
+            onClick={() => handleStatusUpdate(2)}
+            disabled={loading || data?.data?.kycApplications?.status === 2}
+          >
+            Approve
+          </Button>
+        </Stack>
+      </FormProvider>
+      <RejectReasonDialog
+        title="Decline Merchant Profile"
+        open={rejectOpen}
+        onClose={() => setRejectOpen(false)}
+        reason={rejectReason}
+        setReason={setRejectReason}
+        onSubmit={handleRejectSubmit}
+      />
+    </Card>
+  );
 }
 
 MerchantProfileDetails.propTypes = {
