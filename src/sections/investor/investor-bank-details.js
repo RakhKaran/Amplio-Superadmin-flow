@@ -68,15 +68,8 @@ function InvestorDetailsBankCard({ bank, onOpenForm }) {
             color: STATUS[bank?.status]?.color || '#9e9e9e',
             fontWeight: 600,
             px: 1.5,
-            pointerEvents: 'none',
-            transition: 'none',
-            cursor: 'default',
-            '& .MuiChip-label, & .MuiChip-icon': {
-              cursor: 'default',
-            },
             '&:hover': {
               bgcolor: `${STATUS[bank?.status]?.color || '#9e9e9e'}1A`,
-              color: STATUS[bank?.status]?.color || '#9e9e9e',
             },
           }}
         />

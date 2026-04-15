@@ -465,7 +465,7 @@ export default function KYCBankDetails({ trusteeProfile }) {
           >
             {/* REJECT BUTTON */}
             <Button
-              variant="soft"
+              variant="outlined"
               color="error"
               onClick={() => setRejectOpen(true)}
               disabled={bankDetails?.status === 1 || bankDetails?.status === 2}
@@ -478,7 +478,7 @@ export default function KYCBankDetails({ trusteeProfile }) {
 
             {/* APPROVE BUTTON */}
             <Button
-              variant="soft"
+              variant="contained"
               color="success"
               onClick={handleApprove}
               disabled={bankDetails?.status === 1 || bankDetails?.status === 2}

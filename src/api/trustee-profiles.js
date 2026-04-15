@@ -30,11 +30,7 @@ export function useGetTrusteeProfiles() {
 export function useGetTrusteeProfile(id) {
     const URL = id ? [endpoints.trusteeProfiles.details(id)] : null;
 
-    const { data, isLoading, error, isValidating, mutate } = useSWR(URL, fetcher);
-
-    const refreshProfilesDetails = () => {
-        mutate();
-    };
+    const { data, isLoading, error, isValidating } = useSWR(URL, fetcher);
 
     const memoizedValue = useMemo(
         () => ({
@@ -42,7 +38,6 @@ export function useGetTrusteeProfile(id) {
             trusteeProfileLoading: isLoading,
             trusteeProfileError: error,
             trusteeProfileValidating: isValidating,
-            refreshProfilesDetails,
         }),
         [data, error, isLoading, isValidating]
     );
