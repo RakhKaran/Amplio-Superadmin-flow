@@ -9,8 +9,8 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
 
 import { useGetMerchantProfile } from 'src/api/merchant-profiles';
-import { useCallback, useMemo, useState } from 'react';
-import { Box, Tab, Tabs } from '@mui/material';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Box, Tab, Tabs, Typography } from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
 import MerchantProfileDetails from '../merchant-profiles-details';
 import MerchantDocumentDetails from '../merchant-document-details';
@@ -112,6 +112,24 @@ export default function MerchantProfilesDetailsView() {
   const [searchParams] = useSearchParams();
   const tab = searchParams.get('tab');
   const [currentTab, setCurrentTab] = useState(tab || 'basic');
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return undefined;
+
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtmlOverflowY = html.style.overflowY;
+    const prevBodyOverflowY = body.style.overflowY;
+
+    html.style.overflowY = 'scroll';
+    body.style.overflowY = 'scroll';
+
+    return () => {
+      html.style.overflowY = prevHtmlOverflowY;
+      body.style.overflowY = prevBodyOverflowY;
+    };
+  }, []);
+
   const handleChangeTab = useCallback(
     (event, newValue) => {
       setCurrentTab(newValue);
@@ -121,57 +139,73 @@ export default function MerchantProfilesDetailsView() {
     },
     [router]
   );
+
+  const tabContentSx = {
+    '& .MuiContainer-root': {
+      maxWidth: 'none !important',
+      paddingLeft: '0 !important',
+      paddingRight: '0 !important',
+    },
+  };
+
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <CustomBreadcrumbs
-        links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Merchant Profile', href: paths.dashboard.merchant.root },
-          {
-            name: merchantData?.companyName || 'Merchant Profile',
-          },
-        ]}
-        sx={{ mb: { xs: 3, md: 5 } }}
-      />
-
-      <Tabs value={currentTab} onChange={handleChangeTab} sx={{ mb: { xs: 3, md: 5 } }}>
-        {TABS.map((tabItem) => (
-          <Tab
-            key={tabItem.value}
-            value={tabItem.value}
-            label={
-              <Box display="flex" alignItems="center" gap={1}>
-                {tabItem.label}
-                <Box
-                  sx={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: '50%',
-                    bgcolor: getTabColor(tabStatusMap[tabItem.value]),
-                  }}
-                />
-              </Box>
-            }
-          />
-        ))}
-      </Tabs>
-      {currentTab === 'basic' && (
-        <MerchantProfileDetails
-          data={merchantProfile}
-          refreshProfilesDetails={refreshProfilesDetails}
+      <Box>
+        <Typography variant="h4" sx={{ mb: 1 }}>
+          Details
+        </Typography>
+        <CustomBreadcrumbs
+          links={[
+            { name: 'Dashboard', href: paths.dashboard.root },
+            { name: 'Merchant Profile', href: paths.dashboard.merchant.root },
+            {
+              name: merchantData?.companyName || 'Merchant Profile',
+            },
+          ]}
+          sx={{ mb: { xs: 3, md: 5 } }}
         />
-      )}
 
-      {currentTab === 'documents' && <MerchantDocumentDetails merchantProfile={merchantProfile} />}
+        <Tabs value={currentTab} onChange={handleChangeTab} sx={{ mb: { xs: 3, md: 5 } }}>
+          {TABS.map((tabItem) => (
+            <Tab
+              key={tabItem.value}
+              value={tabItem.value}
+              label={
+                <Box display="flex" alignItems="center" gap={1}>
+                  {tabItem.label}
+                  <Box
+                    sx={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      bgcolor: getTabColor(tabStatusMap[tabItem.value]),
+                    }}
+                  />
+                </Box>
+              }
+            />
+          ))}
+        </Tabs>
+        <Box sx={tabContentSx}>
+          {currentTab === 'basic' && (
+            <MerchantProfileDetails
+              data={merchantProfile}
+              refreshProfilesDetails={refreshProfilesDetails}
+            />
+          )}
 
-      {currentTab === 'addressDetails' && (
-        <MerchantAddressVerification merchantProfile={merchantProfile} />
-      )}
+          {currentTab === 'documents' && <MerchantDocumentDetails merchantProfile={merchantProfile} />}
 
-      {currentTab === 'bank' && <MerchantBankPage merchantProfile={merchantProfile} />}
+          {currentTab === 'addressDetails' && (
+            <MerchantAddressVerification merchantProfile={merchantProfile} />
+          )}
 
-      {currentTab === 'ubo' && <UbosListView merchantProfile={merchantProfile} />}
-      {currentTab === 'psp' && <PSPListView merchantProfile={merchantProfile} />}
+          {currentTab === 'bank' && <MerchantBankPage merchantProfile={merchantProfile} />}
+
+          {currentTab === 'ubo' && <UbosListView merchantProfile={merchantProfile} />}
+          {currentTab === 'psp' && <PSPListView merchantProfile={merchantProfile} />}
+        </Box>
+      </Box>
     </Container>
   );
 }

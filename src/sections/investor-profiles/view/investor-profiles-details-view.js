@@ -11,7 +11,7 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import InvestorProfileDetails from '../investor-profiles-details';
 import { useGetInvestorProfile } from 'src/api/investor-profiles';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Box, Tab, Tabs } from '@mui/material';
+import { Box, Tab, Tabs, Typography } from '@mui/material';
 import InvestorDocumentDetails from '../investor-document-details';
 import InvestorBankPage from '../investor-bank-page';
 import InvestorSignatoriesApproval from '../investor-signatories-approval';
@@ -153,6 +153,23 @@ export default function InvestorProfilesDetailsView() {
     }
   }, [currentTab, tabs]);
 
+  useEffect(() => {
+    if (typeof document === 'undefined') return undefined;
+
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtmlOverflowY = html.style.overflowY;
+    const prevBodyOverflowY = body.style.overflowY;
+
+    html.style.overflowY = 'scroll';
+    body.style.overflowY = 'scroll';
+
+    return () => {
+      html.style.overflowY = prevHtmlOverflowY;
+      body.style.overflowY = prevBodyOverflowY;
+    };
+  }, []);
+
   const handleChangeTab = useCallback((event, newValue) => {
     setCurrentTab(newValue);
     router.push({
@@ -160,60 +177,74 @@ export default function InvestorProfilesDetailsView() {
     });
   }, [router]);
 
+  const tabContentSx = {
+    '& .MuiContainer-root': {
+      maxWidth: 'none !important',
+      paddingLeft: '0 !important',
+      paddingRight: '0 !important',
+    },
+  };
+
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <CustomBreadcrumbs
-        heading="Details"
-        links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Investor Profile', href: paths.dashboard.investorProfiles.list },
-          {
-            name: investor?.fullName || investor?.companyName || 'Investor Profile',
-          },
-        ]}
-        sx={{ mb: { xs: 3, md: 5 } }}
-      />
+      <Box>
+        <Typography variant="h4" sx={{ mb: 1 }}>
+          Details
+        </Typography>
+        <CustomBreadcrumbs
+          links={[
+            { name: 'Dashboard', href: paths.dashboard.root },
+            { name: 'Investor Profile', href: paths.dashboard.investorProfiles.list },
+            {
+              name: investor?.fullName || investor?.companyName || 'Investor Profile',
+            },
+          ]}
+          sx={{ mb: { xs: 3, md: 5 } }}
+        />
 
-      <Tabs value={currentTab} onChange={handleChangeTab} sx={{ mb: { xs: 3, md: 5 } }}>
-        {tabs.map((tabItem) => (
-          <Tab
-            key={tabItem.value}
-            value={tabItem.value}
-            label={
-              <Box display="flex" alignItems="center" gap={1}>
-                {tabItem.label}
-                <Box
-                  sx={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: '50%',
-                    bgcolor: getTabColor(tabStatusMap[tabItem.value]),
-                  }}
-                />
-              </Box>
-            }
-          />
-        ))}
-      </Tabs>
-      {currentTab === 'basic' && (
-        <InvestorProfileDetails data={investorProfile} onRefresh={refreshInvestorProfile} />
-      )}
+        <Tabs value={currentTab} onChange={handleChangeTab} sx={{ mb: { xs: 3, md: 5 } }}>
+          {tabs.map((tabItem) => (
+            <Tab
+              key={tabItem.value}
+              value={tabItem.value}
+              label={
+                <Box display="flex" alignItems="center" gap={1}>
+                  {tabItem.label}
+                  <Box
+                    sx={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      bgcolor: getTabColor(tabStatusMap[tabItem.value]),
+                    }}
+                  />
+                </Box>
+              }
+            />
+          ))}
+        </Tabs>
+        <Box sx={tabContentSx}>
+          {currentTab === 'basic' && (
+            <InvestorProfileDetails data={investorProfile} onRefresh={refreshInvestorProfile} />
+          )}
 
-      {currentTab === 'documents' && <InvestorDocumentDetails investorProfile={investorProfile} />}
+          {currentTab === 'documents' && <InvestorDocumentDetails investorProfile={investorProfile} />}
 
-      {currentTab === 'address' && <InvestorAddressReadonly investorId={investorId} />}
+          {currentTab === 'address' && <InvestorAddressReadonly investorId={investorId} />}
 
-      {currentTab === 'bank' && <InvestorBankPage investorProfile={investorProfile} />}
+          {currentTab === 'bank' && <InvestorBankPage investorProfile={investorProfile} />}
 
-      {currentTab === 'ubo' && <InvestorUboApproval investorId={investorId} />}
+          {currentTab === 'ubo' && <InvestorUboApproval investorId={investorId} />}
 
-      {currentTab === 'signatories' && <InvestorSignatoriesApproval investorId={investorId} />}
+          {currentTab === 'signatories' && <InvestorSignatoriesApproval investorId={investorId} />}
 
-      {currentTab === 'compliance' && <InvestorComplianceReadonly investorId={investorId} />}
+          {currentTab === 'compliance' && <InvestorComplianceReadonly investorId={investorId} />}
 
-      {currentTab === 'mandate' && <InvestorMandateReadonly investorId={investorId} />}
+          {currentTab === 'mandate' && <InvestorMandateReadonly investorId={investorId} />}
 
-      {currentTab === 'agreement' && <InvestorAgreementReadonly investorId={investorId} />}
+          {currentTab === 'agreement' && <InvestorAgreementReadonly investorId={investorId} />}
+        </Box>
+      </Box>
     </Container>
   );
 }

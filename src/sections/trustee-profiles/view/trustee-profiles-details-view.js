@@ -1,8 +1,9 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import Container from '@mui/material/Container';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { useParams, useRouter } from 'src/routes/hook';
 import { paths } from 'src/routes/paths';
 
@@ -93,53 +94,84 @@ export default function TrusteeProfilesDetailsView() {
   const tab = searchParams.get('tab');
   const [currentTab, setCurrentTab] = useState(tab || 'basic');
 
+  useEffect(() => {
+    if (typeof document === 'undefined') return undefined;
+
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtmlOverflowY = html.style.overflowY;
+    const prevBodyOverflowY = body.style.overflowY;
+
+    html.style.overflowY = 'scroll';
+    body.style.overflowY = 'scroll';
+
+    return () => {
+      html.style.overflowY = prevHtmlOverflowY;
+      body.style.overflowY = prevBodyOverflowY;
+    };
+  }, []);
+
   const handleChangeTab = useCallback((event, newValue) => {
     setCurrentTab(newValue);
     router.push({ search: `?tab=${newValue}` });
   }, [router]);
 
+  const tabContentSx = {
+    '& .MuiContainer-root': {
+      maxWidth: 'none !important',
+      paddingLeft: '0 !important',
+      paddingRight: '0 !important',
+    },
+  };
+
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <CustomBreadcrumbs
-        links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Trustee Profile', href: paths.dashboard.trusteeProfiles.root },
-          { name: trusteeData?.legalEntityName || 'Trustee Profile' },
-        ]}
-        sx={{ mb: { xs: 3, md: 5 } }}
-      />
+      <Box>
+        <Typography variant="h4" sx={{ mb: 1 }}>
+          Details
+        </Typography>
+        <CustomBreadcrumbs
+          links={[
+            { name: 'Dashboard', href: paths.dashboard.root },
+            { name: 'Trustee Profile', href: paths.dashboard.trusteeProfiles.root },
+            { name: trusteeData?.legalEntityName || 'Trustee Profile' },
+          ]}
+          sx={{ mb: { xs: 3, md: 5 } }}
+        />
 
-      <Tabs value={currentTab} onChange={handleChangeTab} sx={{ mb: { xs: 3, md: 5 } }}>
-        {TABS.map((tabItem) => (
-          <Tab
-            key={tabItem.value}
-            value={tabItem.value}
-            label={
-              <Box display="flex" alignItems="center" gap={1}>
-                {tabItem.label}
-                <Box
-                  sx={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: '50%',
-                    bgcolor: getTabColor(tabStatusMap[tabItem.value]),
-                  }}
-                />
-              </Box>
-            }
-          />
-        ))}
-      </Tabs>
+        <Tabs value={currentTab} onChange={handleChangeTab} sx={{ mb: { xs: 3, md: 5 } }}>
+          {TABS.map((tabItem) => (
+            <Tab
+              key={tabItem.value}
+              value={tabItem.value}
+              label={
+                <Box display="flex" alignItems="center" gap={1}>
+                  {tabItem.label}
+                  <Box
+                    sx={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      bgcolor: getTabColor(tabStatusMap[tabItem.value]),
+                    }}
+                  />
+                </Box>
+              }
+            />
+          ))}
+        </Tabs>
+        <Box sx={tabContentSx}>
+          {currentTab === 'basic' && (
+            <TrusteeProfileDetails data={trusteeData} refreshProfilesDetails={refreshProfilesDetails} />
+          )}
 
-      {currentTab === 'basic' && (
-        <TrusteeProfileDetails data={trusteeData} refreshProfilesDetails={refreshProfilesDetails} />
-      )}
+          {currentTab === 'details' && <KYCCompanyDetails trusteeProfile={trusteeData} />}
 
-      {currentTab === 'details' && <KYCCompanyDetails trusteeProfile={trusteeData} />}
+          {currentTab === 'bank' && <TrusteeBankPage trusteeProfile={trusteeData} />}
 
-      {currentTab === 'bank' && <TrusteeBankPage trusteeProfile={trusteeData} />}
-
-      {currentTab === 'signatories' && <KYCSignatories trusteeProfile={trusteeData} />}
+          {currentTab === 'signatories' && <KYCSignatories trusteeProfile={trusteeData} />}
+        </Box>
+      </Box>
     </Container>
   );
 }
