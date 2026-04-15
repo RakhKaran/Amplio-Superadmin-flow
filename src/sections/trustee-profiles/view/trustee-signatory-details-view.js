@@ -13,6 +13,7 @@ export default function SignatoiresDetailsView() {
   return (
     <Container>
       <SignatoriesDetails currentUser={state?.signatoryData}
+        listHref={state?.listHref}
         isViewMode={true}
         isEditMode={false} />
     </Container>

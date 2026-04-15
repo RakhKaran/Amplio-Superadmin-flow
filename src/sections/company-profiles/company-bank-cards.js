@@ -4,7 +4,7 @@ import Iconify from 'src/components/iconify';
 import { useNavigate } from 'react-router';
 import { paths } from 'src/routes/paths';
 
-export default function CompanyBankCard({ bank, onViewRow }) {
+export default function CompanyBankCard({ bank, onViewRow, listHref }) {
   const navigate = useNavigate();
   if (!bank) return null;
 
@@ -43,7 +43,7 @@ export default function CompanyBankCard({ bank, onViewRow }) {
       }}
       onClick={() =>
         navigate(paths.dashboard.companyProfiles.new, {
-          state: { bankData: bank },
+          state: { bankData: bank, listHref },
         })
       }
     >
@@ -61,7 +61,7 @@ export default function CompanyBankCard({ bank, onViewRow }) {
                 variant="h6"
                 onClick={() =>
                   navigate(paths.dashboard.companyProfiles.new, {
-                    state: { bankData: bank },
+                    state: { bankData: bank, listHref },
                   })
                 }
                 sx={{
@@ -198,5 +198,6 @@ export default function CompanyBankCard({ bank, onViewRow }) {
 }
 
 CompanyBankCard.propTypes = {
+  listHref: PropTypes.string,
   onViewRow: PropTypes.func,
 };

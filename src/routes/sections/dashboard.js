@@ -113,6 +113,9 @@ const SchedulerViewPage = lazy(() => import('src/pages/dashboard/scheduler/view'
 const TrusteeSignatoryDetailsPage = lazy(() =>
   import('src/pages/dashboard/signatories/trustee-signatory-details')
 );
+const InvestorSignatoryDetailsPage = lazy(() =>
+  import('src/pages/dashboard/signatories/investor-signatory-details')
+);
 const CompanySignatoryDetailsPage = lazy(() =>
   import('src/pages/dashboard/signatories/company-signatory-details')
 );
@@ -365,6 +368,8 @@ export const dashboardRoutes = [
           { element: <CompanySignatoryDetailsPage />, index: true },
 
           { path: 'company/:id', element: <CompanySignatoryDetailsPage /> },
+
+          { path: 'investor/:id', element: <InvestorSignatoryDetailsPage /> },
 
           { path: 'trustee/:id', element: <TrusteeSignatoryDetailsPage /> },
         ],

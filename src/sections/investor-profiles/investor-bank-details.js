@@ -18,6 +18,7 @@ import { enqueueSnackbar } from 'notistack';
 import axiosInstance from 'src/utils/axios';
 import { useEffect, useMemo, useState } from 'react';
 import { Stack } from '@mui/material';
+import { useLocation } from 'react-router';
 import RejectReasonDialog from 'src/components/reject dialog box/reject-dialog-box';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import DocumentPreviewButton from 'src/components/custom-preview-button/preview-button';
@@ -25,11 +26,14 @@ import PropTypes from 'prop-types';
 
 // ----------------------------------------------------------------------
 
-export default function InvestorBankDetails({ bank, onBack, listHref }) {
+export default function InvestorBankDetails({ bank: bankProp, onBack, listHref: listHrefProp }) {
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
 
   const router = useRouter();
+  const { state } = useLocation();
+  const bank = state?.bankData || bankProp || null;
+  const listHref = state?.listHref || listHrefProp || paths.dashboard.investorProfiles.list;
 
   const NewSchema = Yup.object().shape({
     documentType: Yup.string().required('Document Type is required'),
@@ -149,18 +153,13 @@ export default function InvestorBankDetails({ bank, onBack, listHref }) {
   return (
     <Box>
       <CustomBreadcrumbs
-        heading={bank?.bankName || 'Bank Details'}
+        heading="Details"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Investor Profile', href: paths.dashboard.investorProfiles.list },
+          { name: 'Investor Profile', href: listHref || paths.dashboard.investorProfiles.list },
           { name: 'Bank Details', href: listHref },
           { name: bank?.bankName || 'Preview' },
         ]}
-        action={
-          <Button variant="outlined" onClick={handleCloseForm}>
-            Back to Bank List
-          </Button>
-        }
         sx={{ mb: { xs: 3, md: 4 } }}
       />
 
@@ -174,6 +173,15 @@ export default function InvestorBankDetails({ bank, onBack, listHref }) {
             boxShadow: '0px 4px 20px rgba(0,0,0,0.08)',
           }}
         >
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
+              Investor Bank Details
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Review submitted investor bank details and verify the uploaded proof.
+            </Typography>
+          </Box>
+
           <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
             Select Document Type:
           </Typography>
@@ -284,10 +292,6 @@ export default function InvestorBankDetails({ bank, onBack, listHref }) {
               mt: 3,
             }}
           >
-            <Button variant="outlined" onClick={handleCloseForm}>
-              Back
-            </Button>
-
             <Button
               variant="soft"
               color="error"
@@ -328,6 +332,6 @@ export default function InvestorBankDetails({ bank, onBack, listHref }) {
 
 InvestorBankDetails.propTypes = {
   bank: PropTypes.object,
-  onBack: PropTypes.func,
   listHref: PropTypes.string,
+  onBack: PropTypes.func,
 };

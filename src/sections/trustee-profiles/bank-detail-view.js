@@ -11,6 +11,9 @@ export default function TrusteeBankPage({ trusteeProfile }) {
   const navigate = useNavigate();
 
   const userId = trusteeProfile?.id;
+  const listHref = userId
+    ? `${paths.dashboard.trusteeProfiles.details(userId)}?tab=bank`
+    : paths.dashboard.trusteeProfiles.list;
   const stepperId = trusteeProfile?.kycApplications?.currentProgress?.[2];
 
   // 🔥 Using your existing hook (no new API request)
@@ -57,7 +60,11 @@ export default function TrusteeBankPage({ trusteeProfile }) {
         <Grid container spacing={3}>
           {bankDetails.map((item) => (
             <Grid key={item.id} item xs={12} md={6}>
-              <BankDetailsCard bank={item} onViewRow={() => handleViewRow(item)} />
+              <BankDetailsCard
+                bank={item}
+                listHref={listHref}
+                onViewRow={() => handleViewRow(item)}
+              />
             </Grid>
           ))}
         </Grid>
@@ -72,6 +79,7 @@ export default function TrusteeBankPage({ trusteeProfile }) {
             trusteeProfile={{
               usersId: userId,
             }}
+            listHref={listHref}
           />
         </Box>
       )}

@@ -1,7 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
@@ -14,15 +17,12 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Iconify from 'src/components/iconify';
-import { enqueueSnackbar } from 'notistack';
 import Label from 'src/components/label';
 import { TableNoData } from 'src/components/table';
 import { Card, Tooltip } from '@mui/material';
-import { paths } from 'src/routes/paths';
-import { useRouter } from 'src/routes/hook';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router';
 import { useGetSignatories } from 'src/api/companyKyc';
+import CompanySignatoriesDetails from './company-signatory-details';
 
 // ----------------------------------------------------------------------
 
@@ -83,15 +83,7 @@ export default function CompanySignatories({ companyProfile }) {
   );
 
   console.log("📌 Fetched Signatories:", signatories);
-
-
-
-  const router = useRouter();
-  const navigate = useNavigate();
-
-
-
-
+  const [selectedSignatory, setSelectedSignatory] = useState(null);
 
 
   // FILTER TABLE
@@ -189,9 +181,7 @@ export default function CompanySignatories({ companyProfile }) {
                         }}
                       >
                         <Tooltip title="View" placement="top" arrow>
-                          <IconButton onClick={() => navigate(paths.dashboard.signatory.companydetails(row.id), {
-                            state: { signatoryData: row }
-                          })}>
+                          <IconButton onClick={() => setSelectedSignatory(row)}>
                             <Iconify icon="mdi:eye" width={20} />
                           </IconButton>
                         </Tooltip>
@@ -203,8 +193,30 @@ export default function CompanySignatories({ companyProfile }) {
           </Table>
         </TableContainer>
       </Card>
-      {/* REJECT DIALOG */}
-     
+
+      <Dialog
+        open={!!selectedSignatory}
+        onClose={() => setSelectedSignatory(null)}
+        fullWidth
+        maxWidth={false}
+        PaperProps={{ sx: { maxWidth: 960 } }}
+      >
+        <DialogTitle color="primary">Signatory Details</DialogTitle>
+        <DialogContent sx={{ pt: 2 }}>
+          {selectedSignatory && (
+            <CompanySignatoriesDetails
+              currentUser={selectedSignatory}
+              isViewMode
+              isEditMode={false}
+              disableCardWrapper
+              onStatusChange={() => {
+                refreshSignatories();
+                setSelectedSignatory(null);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </Container>
   );
 }

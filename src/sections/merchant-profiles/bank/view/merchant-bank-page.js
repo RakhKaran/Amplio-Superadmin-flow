@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { CircularProgress, Box, Stack, Typography, Grid, Card } from '@mui/material';
+import { paths } from 'src/routes/paths';
 import MerchantBankCard from '../merchant-bank-cards';
 import MerchantBankDetails from '../merchant-bank-details';
 import { useGetBankDetails } from 'src/api/merchant-kyc';
 
 export default function MerchantBankPage({ merchantProfile }) {
   const userId = merchantProfile?.data?.id;
+  const listHref = userId
+    ? `${paths.dashboard.merchant.details(userId)}?tab=bank`
+    : paths.dashboard.merchant.list;
 
   const { bankDetails, loading } = useGetBankDetails(userId);
 
@@ -48,7 +52,11 @@ export default function MerchantBankPage({ merchantProfile }) {
         <Grid container spacing={3}>
           {bankDetails.map((item) => (
             <Grid key={item.id} item xs={12} md={6}>
-              <MerchantBankCard bank={item} onViewRow={() => handleViewRow(item)} />
+              <MerchantBankCard
+                bank={item}
+                listHref={listHref}
+                onViewRow={() => handleViewRow(item)}
+              />
             </Grid>
           ))}
         </Grid>
@@ -63,6 +71,7 @@ export default function MerchantBankPage({ merchantProfile }) {
             merchantProfile={{
               usersId: userId,
             }}
+            listHref={listHref}
           />
         </Box>
       )}

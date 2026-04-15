@@ -1,8 +1,11 @@
 import PropTypes from 'prop-types';
 import { Card, Box, Typography, Stack, Divider, Chip, Grid, IconButton } from '@mui/material';
 import Iconify from 'src/components/iconify';
+import { useNavigate } from 'react-router';
+import { paths } from 'src/routes/paths';
 
-export default function InvestorBankCard({ bank, onViewRow }) {
+export default function InvestorBankCard({ bank, onViewRow, listHref }) {
+  const navigate = useNavigate();
   if (!bank) return null;
 
   const STATUS = {
@@ -38,7 +41,11 @@ export default function InvestorBankCard({ bank, onViewRow }) {
           boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
         },
       }}
-      onClick={() => onViewRow?.(bank)}
+      onClick={() =>
+        navigate(paths.dashboard.investorProfiles.new, {
+          state: { bankData: bank, listHref },
+        })
+      }
     >
       {/* Header */}
       <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -54,7 +61,9 @@ export default function InvestorBankCard({ bank, onViewRow }) {
                 variant="h6"
                 onClick={(event) => {
                   event.stopPropagation();
-                  onViewRow?.(bank);
+                  navigate(paths.dashboard.investorProfiles.new, {
+                    state: { bankData: bank, listHref },
+                  });
                 }}
                 sx={{
                   cursor: 'pointer',
@@ -182,5 +191,6 @@ export default function InvestorBankCard({ bank, onViewRow }) {
 
 InvestorBankCard.propTypes = {
   bank: PropTypes.object,
+  listHref: PropTypes.string,
   onViewRow: PropTypes.func,
 };

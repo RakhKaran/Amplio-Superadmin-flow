@@ -24,6 +24,8 @@ import axiosInstance from 'src/utils/axios';
 import { useLocation } from 'react-router';
 import { useRouter } from 'src/routes/hook';
 import RejectReasonDialog from './reject-signatory';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { paths } from 'src/routes/paths';
 
 
 const ROLES = [
@@ -33,7 +35,7 @@ const ROLES = [
     { value: 'OTHER', label: 'Other' },
 ];
 
-export default function SignatoriesDetails({ currentUser, isViewMode, isEditMode }) {
+export default function SignatoriesDetails({ currentUser, isViewMode, isEditMode, listHref }) {
     const { enqueueSnackbar } = useSnackbar();
     const [extractedPan, setExtractedPan] = useState(null);
     const [isPanUploaded, setIsPanUploaded] = useState(false);
@@ -218,8 +220,27 @@ const router = useRouter();
 
     // ---------------------- UI ----------------------
     return (
+        <>
+            <CustomBreadcrumbs
+                heading="Details"
+                links={[
+                    { name: 'Dashboard', href: paths.dashboard.root },
+                    { name: 'Trustee Profile', href: listHref || paths.dashboard.trusteeProfiles.list },
+                    { name: 'Signatories', href: listHref || paths.dashboard.trusteeProfiles.list },
+                    { name: currentUser?.fullName || 'Preview' },
+                ]}
+                sx={{ mb: { xs: 3, md: 4 } }}
+            />
         <Card sx={{ p: 4 }}>
             <FormProvider methods={methods} onSubmit={onSubmit}>
+                <Box sx={{ mb: 3 }}>
+                    <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
+                        Trustee Signatory Details
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        Review submitted signatory details and verify the uploaded documents.
+                    </Typography>
+                </Box>
                 <Typography variant="h6">
                     Signatory Details
                 </Typography>   
@@ -392,6 +413,7 @@ const router = useRouter();
                     onSubmit={handleRejectSubmit}
                   />
         </Card>
+        </>
     );
 }
 
@@ -399,4 +421,5 @@ SignatoriesDetails.propTypes = {
     currentUser: PropTypes.object,
     isViewMode: PropTypes.bool,
     isEditMode: PropTypes.bool,
+    listHref: PropTypes.string,
 };

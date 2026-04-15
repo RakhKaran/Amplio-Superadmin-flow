@@ -25,6 +25,8 @@ import { useLocation } from 'react-router';
 import { useRouter } from 'src/routes/hook';
 import RejectReasonDialog from 'src/components/reject dialog box/reject-dialog-box';
 import DocumentPreviewButton from 'src/components/custom-preview-button/preview-button';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { paths } from 'src/routes/paths';
 
 
 
@@ -35,7 +37,14 @@ const ROLES = [
     { value: 'OTHER', label: 'Other' },
 ];
 
-export default function CompanySignatoriesDetails({ currentUser, isViewMode, isEditMode }) {
+export default function CompanySignatoriesDetails({
+    currentUser,
+    isViewMode,
+    isEditMode,
+    listHref,
+    onStatusChange,
+    disableCardWrapper = false,
+}) {
     const { enqueueSnackbar } = useSnackbar();
     const [extractedPan, setExtractedPan] = useState(null);
     const [isPanUploaded, setIsPanUploaded] = useState(false);
@@ -152,7 +161,13 @@ export default function CompanySignatoriesDetails({ currentUser, isViewMode, isE
                 }
             );
 
-            setTimeout(() => router.back(), 800);
+            setTimeout(() => {
+                if (onStatusChange) {
+                    onStatusChange();
+                } else {
+                    router.back();
+                }
+            }, 800);
 
         } catch (error) {
             enqueueSnackbar(error?.response?.data?.message || 'Something went wrong', {
@@ -210,8 +225,31 @@ export default function CompanySignatoriesDetails({ currentUser, isViewMode, isE
 
     // ---------------------- UI ----------------------
     return (
-        <Card sx={{ p: 4 }}>
+        <>
+        {!disableCardWrapper && (
+        <CustomBreadcrumbs
+            heading="Details"
+            links={[
+                { name: 'Dashboard', href: paths.dashboard.root },
+                { name: 'Seller Profile', href: listHref || paths.dashboard.companyProfiles.list },
+                { name: 'Signatories', href: listHref || paths.dashboard.companyProfiles.list },
+                { name: currentUser?.fullName || 'Preview' },
+            ]}
+            sx={{ mb: { xs: 3, md: 4 } }}
+        />
+        )}
+        <Card sx={{ p: disableCardWrapper ? 0 : 4, py: disableCardWrapper ? 1 : 4, boxShadow: disableCardWrapper ? 'none' : undefined }}>
             <FormProvider methods={methods} onSubmit={onSubmit}>
+                {!disableCardWrapper && (
+                <Box sx={{ mb: 3 }}>
+                    <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
+                        Seller Signatory Details
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        Review submitted signatory details and verify the uploaded documents.
+                    </Typography>
+                </Box>
+                )}
                 <Typography variant="h6">
                     Signatory Details
                 </Typography>
@@ -359,11 +397,15 @@ export default function CompanySignatoriesDetails({ currentUser, isViewMode, isE
                 onSubmit={handleRejectSubmit}
             />
         </Card>
+        </>
     );
 }
 
 CompanySignatoriesDetails.propTypes = {
     currentUser: PropTypes.object,
+    disableCardWrapper: PropTypes.bool,
     isViewMode: PropTypes.bool,
     isEditMode: PropTypes.bool,
+    listHref: PropTypes.string,
+    onStatusChange: PropTypes.func,
 };

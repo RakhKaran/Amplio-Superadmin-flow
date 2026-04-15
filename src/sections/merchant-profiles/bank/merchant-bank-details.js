@@ -31,11 +31,17 @@ import DocumentPreviewButton from 'src/components/custom-preview-button/preview-
 
 // ----------------------------------------------------------------------
 
-export default function MerchantBankDetails({ merchantProfile }) {
-  const userId = merchantProfile?.data?.id;
+export default function MerchantBankDetails({ merchantProfile, listHref: listHrefProp }) {
+  const userId = merchantProfile?.usersId || merchantProfile?.data?.id;
   const stepperId = merchantProfile?.kycApplications?.currentProgress?.[2];
   const { state } = useLocation();
   const bankDetails = state?.bankData || null;
+  const listHref =
+    state?.listHref ||
+    listHrefProp ||
+    (userId
+      ? `${paths.dashboard.merchant.details(userId)}?tab=bank`
+      : paths.dashboard.merchant.list);
   console.log('📌 Received bankData:', bankDetails);
 
   const [rejectOpen, setRejectOpen] = useState(false);
@@ -233,8 +239,9 @@ export default function MerchantBankDetails({ merchantProfile }) {
         heading="Details"
         links={[
           { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Bank Details', href: paths.dashboard.merchant.list },
-          { name: bankDetails?.bankName },
+          { name: 'Merchant Profile', href: listHref },
+          { name: 'Bank Details', href: listHref },
+          { name: bankDetails?.bankName || 'Preview' },
         ]}
         sx={{
           mb: { xs: 3, md: 5 },
@@ -249,6 +256,14 @@ export default function MerchantBankDetails({ merchantProfile }) {
             boxShadow: '0px 4px 20px rgba(0,0,0,0.08)',
           }}
         >
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
+              Merchant Bank Details
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Review submitted merchant bank details and verify the uploaded proof.
+            </Typography>
+          </Box>
           <Typography variant="h6" sx={{ fontWeight: 500, mb: 2 }}>
             Select Document Type:
           </Typography>
