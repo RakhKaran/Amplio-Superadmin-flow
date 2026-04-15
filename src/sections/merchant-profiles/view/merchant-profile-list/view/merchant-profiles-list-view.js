@@ -48,9 +48,6 @@ import { useFilterMerchantProfiles, useGetMerchantProfiles } from 'src/api/merch
 import { buildFilter } from 'src/utils/filters';
 import { fi } from 'date-fns/locale';
 
-
-
-
 // ----------------------------------------------------------------------
 
 const STATUS_OPTIONS = [
@@ -62,7 +59,7 @@ const STATUS_OPTIONS = [
 ];
 
 const TABLE_HEAD = [
-  { id: 'merchantName', label: 'Merchant Name' },
+  { id: 'companyName', label: 'Merchant Name' },
   { id: 'CIN', label: 'CIN' },
   { id: 'GSTIN', label: 'GSTIN' },
   { id: 'isActive', label: 'Status' },
@@ -93,18 +90,18 @@ export default function MerchantProfileListView() {
     orderBy: table.orderBy,
     startDate: filters.startDate,
     endDate: filters.endDate,
-    validSortFields: ['merchantName', 'CIN', 'GSTIN'],
+    validSortFields: ['companyName', 'CIN', 'GSTIN'],
     searchTextValue: filters.name,
-  })
+  });
 
   const filterJson = encodeURIComponent(JSON.stringify(filter));
 
   const params = {
     filter: filterJson,
     status: filters.status === 'all' ? undefined : Number(filters.status),
-  }
+  };
 
-  const { filteredMerchantProfiles, totalCount, } = useFilterMerchantProfiles(params);
+  const { filteredMerchantProfiles, totalCount } = useFilterMerchantProfiles(params);
 
   const handleViewRow = useCallback(
     (id) => {
@@ -120,12 +117,10 @@ export default function MerchantProfileListView() {
     [router]
   );
 
-
-
-
   const denseHeight = table.dense ? 52 : 72;
   const canReset = !isEqual(defaultFilters, filters);
-  const notFound = (!filteredMerchantProfiles.length && canReset) || !filteredMerchantProfiles.length;
+  const notFound =
+    (!filteredMerchantProfiles.length && canReset) || !filteredMerchantProfiles.length;
 
   const handleFilters = useCallback(
     (name, value) => {
@@ -134,7 +129,6 @@ export default function MerchantProfileListView() {
     },
     [table]
   );
-
 
   const handleDeleteRows = useCallback(() => {
     table.onUpdatePageDeleteRows({
@@ -154,7 +148,6 @@ export default function MerchantProfileListView() {
   const handleResetFilters = useCallback(() => {
     setFilters(defaultFilters);
   }, []);
-
 
   useEffect(() => {
     if (filteredMerchantProfiles) {
@@ -239,7 +232,6 @@ export default function MerchantProfileListView() {
                 </Tooltip>
               }
             />
-
 
             <Scrollbar>
               <Table size={table.dense ? 'small' : 'medium'} sx={{ minWidth: 960 }}>
