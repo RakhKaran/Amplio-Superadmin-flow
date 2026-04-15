@@ -4,7 +4,6 @@ import Iconify from 'src/components/iconify';
 
 export default function InvestorBankCard({ bank, onViewRow }) {
   if (!bank) return null;
-  const isInteractive = Number(bank?.status) === 0;
 
   const STATUS = {
     0: { label: 'Under Review', color: '#ED6C02', icon: 'mdi:clock-time-eight-outline' },
@@ -32,14 +31,14 @@ export default function InvestorBankCard({ bank, onViewRow }) {
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
-        cursor: isInteractive ? 'pointer' : 'default',
+        cursor: 'pointer',
         transition: '0.2s',
-        '&:hover': isInteractive ? {
+        '&:hover': {
           transform: 'scale(1.01)',
           boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
-        } : undefined,
+        },
       }}
-      onClick={isInteractive ? () => onViewRow?.(bank) : undefined}
+      onClick={() => onViewRow?.(bank)}
     >
       {/* Header */}
       <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -53,16 +52,12 @@ export default function InvestorBankCard({ bank, onViewRow }) {
             <Stack direction="row" spacing={1} alignItems="center">
               <Typography
                 variant="h6"
-                onClick={
-                  isInteractive
-                    ? (event) => {
-                        event.stopPropagation();
-                        onViewRow?.(bank);
-                      }
-                    : undefined
-                }
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onViewRow?.(bank);
+                }}
                 sx={{
-                  cursor: isInteractive ? 'pointer' : 'default',
+                  cursor: 'pointer',
                 }}
               >
                 {bank?.bankName}

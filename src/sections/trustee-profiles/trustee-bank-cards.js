@@ -8,7 +8,6 @@ import { paths } from 'src/routes/paths';
 export default function BankDetailsCard({ bank, onViewRow }) {
   const navigate = useNavigate();
   if (!bank) return null;
-  const isInteractive = Number(bank?.status) === 0;
 
   const STATUS = {
     0: { label: 'Under Review', color: 'warning', icon: 'mdi:clock-time-eight-outline' },
@@ -36,20 +35,17 @@ export default function BankDetailsCard({ bank, onViewRow }) {
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
-        cursor: isInteractive ? 'pointer' : 'default',
+        cursor: 'pointer',
         transition: '0.2s',
-        '&:hover': isInteractive ? {
+        '&:hover': {
           transform: 'scale(1.01)',
           boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
-        } : undefined,
+        },
       }}
-      onClick={
-        isInteractive
-          ? () =>
-              navigate(paths.dashboard.trusteeProfiles.new, {
-                state: { bankData: bank },
-              })
-          : undefined
+      onClick={() =>
+        navigate(paths.dashboard.trusteeProfiles.new, {
+          state: { bankData: bank },
+        })
       }
     >
       {/* Header */}
@@ -64,16 +60,13 @@ export default function BankDetailsCard({ bank, onViewRow }) {
             <Stack direction="row" spacing={1} alignItems="center">
               <Typography
                 variant="h6"
-                onClick={
-                  isInteractive
-                    ? () =>
-                        navigate(paths.dashboard.trusteeProfiles.new, {
-                          state: { bankData: bank },
-                        })
-                    : undefined
+                onClick={() =>
+                  navigate(paths.dashboard.trusteeProfiles.new, {
+                    state: { bankData: bank },
+                  })
                 }
                 sx={{
-                  cursor: isInteractive ? 'pointer' : 'default',
+                  cursor: 'pointer',
                 }}
               >
                 {bank?.bankName}
