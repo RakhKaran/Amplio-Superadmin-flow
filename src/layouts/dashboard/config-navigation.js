@@ -95,7 +95,6 @@ export function useNavData() {
             title: t('Seller Profiles'),
             path: paths.dashboard.companyProfiles.root,
             icon: ICONS.company,
-            deepMatch: true,
           },
           {
             title: t('trustee profiles'),
