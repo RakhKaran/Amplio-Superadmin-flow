@@ -42,6 +42,22 @@ export default function MerchantProfileDetails({ data, refreshProfilesDetails })
   const [loading, setLoading] = useState(false);
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
+  const merchantProfile = data?.data;
+  const merchantDisplayName =
+    merchantProfile?.merchantName || merchantProfile?.companyName || 'Merchant Profile';
+  const merchantAvatarSrc =
+    merchantProfile?.merchantLogo?.fileUrl ||
+    merchantProfile?.merchantLogo?.media?.fileUrl ||
+    merchantProfile?.logo?.fileUrl ||
+    merchantProfile?.logo?.media?.fileUrl ||
+    merchantProfile?.avatar?.fileUrl ||
+    merchantProfile?.avatar?.media?.fileUrl ||
+    merchantProfile?.profileImage?.fileUrl ||
+    merchantProfile?.profileImage?.media?.fileUrl ||
+    merchantProfile?.users?.avatar?.fileUrl ||
+    merchantProfile?.users?.avatar?.media?.fileUrl ||
+    '';
+  const merchantAvatarLabel = merchantDisplayName.trim().charAt(0).toUpperCase() || 'M';
 
   const fields = [
     { name: 'email', label: 'Email', value: data?.data?.users?.email },
@@ -80,8 +96,45 @@ export default function MerchantProfileDetails({ data, refreshProfilesDetails })
     },
   ];
 
+  const displayFields = fields.map((field) => {
+    switch (field.name) {
+      case 'email':
+        return { ...field, value: merchantProfile?.users?.email };
+      case 'phone':
+        return { ...field, value: merchantProfile?.users?.phone };
+      case 'CIN':
+        return { ...field, value: merchantProfile?.CIN };
+      case 'GSTIN':
+        return { ...field, value: merchantProfile?.GSTIN };
+      case 'dateOfIncorporation':
+        return {
+          ...field,
+          value: merchantProfile?.dateOfIncorporation
+            ? format(new Date(merchantProfile.dateOfIncorporation), 'dd/MM/yyyy')
+            : 'â€”',
+        };
+      case 'cityOfIncorporation':
+        return { ...field, value: merchantProfile?.cityOfIncorporation };
+      case 'stateOfIncorporation':
+        return { ...field, value: merchantProfile?.stateOfIncorporation };
+      case 'countryOfIncorporation':
+        return { ...field, value: merchantProfile?.countryOfIncorporation };
+      case 'udyamRegistrationNumber':
+        return { ...field, value: merchantProfile?.udyamRegistrationNumber };
+      case 'createdAt':
+        return {
+          ...field,
+          value: merchantProfile?.createdAt
+            ? format(new Date(merchantProfile.createdAt), 'dd/MM/yyyy')
+            : 'â€”',
+        };
+      default:
+        return field;
+    }
+  });
 
-const defaultValues = Object.fromEntries(fields.map((f) => [f.name, f.value || '']));
+
+const defaultValues = Object.fromEntries(displayFields.map((f) => [f.name, f.value || '']));
 
 const methods = useForm({ defaultValues });
 
@@ -176,11 +229,13 @@ return (
       <Stack direction="row" alignItems="center" justifyContent="space-between">
         {/* Avatar + Name */}
         <Stack direction="row" alignItems="center" spacing={2}>
-          <Avatar alt={data?.data?.merchantName} />
+          <Avatar alt={merchantDisplayName} src={merchantAvatarSrc}>
+            {merchantAvatarLabel}
+          </Avatar>
 
           <Stack spacing={0.8}>
             <Typography variant="h5" fontWeight={600}>
-              {data?.data?.merchantName}
+              {merchantDisplayName}
             </Typography>
           </Stack>
         </Stack>
@@ -198,7 +253,7 @@ return (
 
       {/* -------- Read-Only Form Fields -------- */}
       <Grid container spacing={2}>
-        {fields.map((field) => (
+        {displayFields.map((field) => (
           <Grid item xs={12} sm={6} key={field.name}>
             <RHFTextField name={field.name} label={field.label} disabled />
           </Grid>

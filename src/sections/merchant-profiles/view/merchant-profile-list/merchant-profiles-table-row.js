@@ -28,7 +28,18 @@ const STATUS_DISPLAY = {
 };
 
 export default function MerchantProfilesTableRow({ row, selected, onEditRow, onViewRow, onSelectRow, onDeleteRow }) {
-  const { companyName, CIN, GSTIN, kycApplications, createdAt } = row;
+  const { merchantName, companyName, CIN, GSTIN, kycApplications, createdAt } = row;
+  const merchantDisplayName = merchantName || companyName || '-';
+  const merchantAvatarSrc =
+    row?.merchantLogo?.fileUrl ||
+    row?.merchantLogo?.media?.fileUrl ||
+    row?.logo?.fileUrl ||
+    row?.logo?.media?.fileUrl ||
+    row?.avatar?.fileUrl ||
+    row?.avatar?.media?.fileUrl ||
+    '';
+  const merchantAvatarLabel =
+    merchantDisplayName !== '-' ? merchantDisplayName.trim().charAt(0).toUpperCase() : 'M';
 
   const confirm = useBoolean();
 
@@ -42,10 +53,12 @@ export default function MerchantProfilesTableRow({ row, selected, onEditRow, onV
 
 
         <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-          <Avatar alt={companyName} sx={{ mr: 2 }} />
+          <Avatar alt={merchantDisplayName} src={merchantAvatarSrc} sx={{ mr: 2 }}>
+            {merchantAvatarLabel}
+          </Avatar>
 
           <ListItemText
-            primary={companyName}
+            primary={merchantDisplayName}
             primaryTypographyProps={{ typography: 'body2' }}
             secondaryTypographyProps={{ component: 'span', color: 'text.disabled' }}
           />

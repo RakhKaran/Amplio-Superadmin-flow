@@ -159,7 +159,7 @@ export default function MerchantProfilesDetailsView() {
             { name: 'Dashboard', href: paths.dashboard.root },
             { name: 'Merchant Profile', href: paths.dashboard.merchant.root },
             {
-              name: merchantData?.companyName || 'Merchant Profile',
+              name: merchantData?.merchantName || merchantData?.companyName || 'Merchant Profile',
             },
           ]}
           sx={{ mb: { xs: 3, md: 5 } }}
