@@ -151,19 +151,6 @@ export default function MerchantProfilesDetailsView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
       <Box>
-        <Typography variant="h4" sx={{ mb: 1 }}>
-          Details
-        </Typography>
-        <CustomBreadcrumbs
-          links={[
-            { name: 'Dashboard', href: paths.dashboard.root },
-            { name: 'Merchant Profile', href: paths.dashboard.merchant.root },
-            {
-              name: merchantData?.merchantName || merchantData?.companyName || 'Merchant Profile',
-            },
-          ]}
-          sx={{ mb: { xs: 3, md: 5 } }}
-        />
       <CustomBreadcrumbs
         heading="Details"
         links={[
