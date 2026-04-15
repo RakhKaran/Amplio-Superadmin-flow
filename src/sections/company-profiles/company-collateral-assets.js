@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import {
   Box,
   Button,
-  Container,
   Typography,
   Card,
   Divider,
@@ -60,7 +59,7 @@ export default function CollateralAssetsDetails({ companyProfile }) {
   };
 
   return (
-    <Container>
+    <>
 
 <Box sx={{ mt: 3 }}>
   <Typography variant="h5" mb={3} fontWeight={700}>
@@ -99,7 +98,7 @@ export default function CollateralAssetsDetails({ companyProfile }) {
         setReason={setRejectReason}
         onSubmit={handleRejectSubmit}
       />
-    </Container>
+    </>
   );
 }
 

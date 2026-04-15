@@ -57,15 +57,15 @@ export default function DpnAndRocPendingVerification({ companyProfiles, refreshP
 
     return (
         <Stack spacing={2}>
-            <Box px={3} pt={3}>
+            <Box pt={3}>
                 <Typography variant="h6">Roc Details</Typography>
             </Box>
             <RocDetailsListView companyProfile={rocDetails} />
-            <Box px={3} pt={3}>
+            <Box pt={3}>
                 <Typography variant="h6">Dpn Details</Typography>
             </Box>
             <DpnDetailsListView companyProfile={safeDpnData} />
-            <Box px={3} py={2}>
+            <Box py={2}>
                 <Stack direction="row" justifyContent="flex-end">
                     <LoadingButton
                         variant="soft"

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import {
   Box,
   Button,
-  Container,
   Typography,
   Card,
   Divider,
@@ -128,7 +127,7 @@ export default function BusinessProfileDetails({ companyProfile }) {
 
   /* ------------------------------------------------------------------ */
   return (
-    <Container>
+    <>
       <Card sx={{ p: 3 }}>
 
 
@@ -213,6 +212,6 @@ export default function BusinessProfileDetails({ companyProfile }) {
         setReason={setRejectReason}
         onSubmit={handleRejectSubmit}
       />
-    </Container>
+    </>
   );
 }

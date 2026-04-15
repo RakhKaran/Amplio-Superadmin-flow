@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -7,7 +6,6 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 
 import { useSnackbar } from 'notistack';
-import { useSettingsContext } from 'src/components/settings';
 import axiosInstance from 'src/utils/axios';
 
 import RejectReasonDialog from 'src/components/reject dialog box/reject-dialog-box';
@@ -21,7 +19,6 @@ import AuditedFinancialsGst3bListView from './audited-financial-gst3b-list-view'
 import { useGetAuditedFinancialsDetails } from 'src/api/companyKyc';
 
 export default function AllAuditedFinancialsDetailsView({ companyProfile }) {
-  const settings = useSettingsContext();
   const { enqueueSnackbar } = useSnackbar();
 
   const companyProfilesId = companyProfile?.data?.id;
@@ -82,31 +79,31 @@ export default function AllAuditedFinancialsDetailsView({ companyProfile }) {
   };
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <>
       <Stack spacing={4}>
 
-        <Box px={3} pt={3}>
+        <Box pt={3}>
           <Typography variant="h6">
             Financial Statements (Last 3 Years)
           </Typography>
         </Box>
         <AuditedFinancialsListView companyProfile={companyProfile} />
 
-        <Box px={3} pt={3}>
+        <Box pt={3}>
           <Typography variant="h6">
             Income Tax Returns (Last 3 Years)
           </Typography>
         </Box>
         <AuditedFinancialsIncomeTaxReturnListView companyProfile={companyProfile} />
 
-        <Box px={3} pt={3}>
+        <Box pt={3}>
           <Typography variant="h6">
             Audited GSTR-9 Annual Returns (Last 3 Years)
           </Typography>
         </Box>
         <AuditedFinancialsGstr9ListView companyProfile={companyProfile} />
 
-        <Box px={3} pt={3}>
+        <Box pt={3}>
           <Typography variant="h6">
             GST-3B (Past 6 Months)
           </Typography>
@@ -114,7 +111,7 @@ export default function AllAuditedFinancialsDetailsView({ companyProfile }) {
         <AuditedFinancialsGst3bListView companyProfile={companyProfile} />
 
         {/* ACTIONS */}
-        <Box px={3} py={3}>
+        <Box py={3}>
           <Divider sx={{ mb: 3 }} />
 
           <Stack direction="row" spacing={2} justifyContent="flex-end">
@@ -146,6 +143,6 @@ export default function AllAuditedFinancialsDetailsView({ companyProfile }) {
         setReason={setRejectReason}
         onSubmit={handleRejectSubmit}
       />
-    </Container>
+    </>
   );
 }

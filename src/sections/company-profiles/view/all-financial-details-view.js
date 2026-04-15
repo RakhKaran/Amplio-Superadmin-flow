@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { Box, Button, Card, Container, Divider, Stack, Typography } from '@mui/material';
+import { Box, Button, Card, Divider, Stack, Typography } from '@mui/material';
 import { useSnackbar } from 'notistack';
 
-import { useSettingsContext } from 'src/components/settings';
 import { useGetFinancialsDetails } from 'src/api/companyKyc';
 import RejectReasonDialog from 'src/components/reject dialog box/reject-dialog-box';
 import axiosInstance from 'src/utils/axios';
@@ -15,7 +14,6 @@ import ProfitabilityDetails from '../profitable-details';
 import FundPosition from '../fund-position';
 
 export default function AllFinancialDetailsView({ companyProfile }) {
-  const settings = useSettingsContext();
   const { enqueueSnackbar } = useSnackbar();
 
   const companyProfilesId = companyProfile?.data?.id;
@@ -61,7 +59,7 @@ export default function AllFinancialDetailsView({ companyProfile }) {
   };
 
   return (
-    <Container maxWidth={settings.themeStretch ? false : 'lg'}>
+    <>
       <Stack spacing={3}>
         {!hasData ? (
           <Card sx={{ p: 3 }}>
@@ -112,6 +110,6 @@ export default function AllFinancialDetailsView({ companyProfile }) {
         setReason={setRejectReason}
         onSubmit={handleRejectSubmit}
       />
-    </Container>
+    </>
   );
 }

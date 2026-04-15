@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -94,7 +93,7 @@ export default function CompanySignatories({ companyProfile }) {
   );
 
   return (
-    <Container sx={{ position: 'relative' }}>
+    <>
       <Card
         sx={{
           p: 4,
@@ -217,7 +216,7 @@ export default function CompanySignatories({ companyProfile }) {
           )}
         </DialogContent>
       </Dialog>
-    </Container>
+    </>
   );
 }
 
