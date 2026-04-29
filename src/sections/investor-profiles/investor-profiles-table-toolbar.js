@@ -71,7 +71,7 @@ export default function InvestorProfileTableToolbar({
             fullWidth
             value={filters.name}
             onChange={handleFilterName}
-            placeholder="Search..."
+            placeholder="Search Only By Investor Name..."
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
