@@ -97,8 +97,7 @@ export default function TrusteeProfilesDetailsView() {
   useEffect(() => {
     if (typeof document === 'undefined') return undefined;
 
-    const html = document.documentElement;
-    const body = document.body;
+    const { documentElement: html, body } = document;
     const prevHtmlOverflowY = html.style.overflowY;
     const prevBodyOverflowY = body.style.overflowY;
 
@@ -161,9 +160,7 @@ export default function TrusteeProfilesDetailsView() {
           ))}
         </Tabs>
         <Box sx={tabContentSx}>
-          {currentTab === 'basic' && (
-            <TrusteeProfileDetails data={trusteeData} refreshProfilesDetails={refreshProfilesDetails} />
-          )}
+          {currentTab === 'basic' && <TrusteeProfileDetails data={trusteeData} />}
 
           {currentTab === 'details' && <KYCCompanyDetails trusteeProfile={trusteeData} />}
 

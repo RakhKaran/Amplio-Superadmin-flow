@@ -35,9 +35,7 @@ export default function InvestorBankCard({ bank, onViewRow, listHref }) {
         flexDirection: 'column',
         gap: 2,
         cursor: 'pointer',
-        cursor: 'pointer',
         transition: '0.2s',
-        '&:hover': {
         '&:hover': {
           transform: 'scale(1.01)',
           boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
