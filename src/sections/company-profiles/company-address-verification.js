@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
-import { Box, Button, Card, Container, Grid, Stack, Typography, MenuItem, Checkbox, FormControlLabel } from '@mui/material';
+import { Box, Button, Card, Grid, Stack, Typography, MenuItem, Checkbox, FormControlLabel } from '@mui/material';
 import PropTypes from 'prop-types';
 import { enqueueSnackbar } from 'notistack';
 import { useForm, useWatch } from 'react-hook-form';
@@ -124,7 +124,7 @@ export default function CompanyAddressVerification({ companyProfile }) {
   };
 
   return (
-    <Container>
+    <>
       <Card sx={{ p: 3 }}>
         <Stack spacing={2.5}>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -237,7 +237,7 @@ export default function CompanyAddressVerification({ companyProfile }) {
         setReason={setRejectReason}
         onSubmit={handleRejectSubmit}
       />
-    </Container>
+    </>
   );
 }
 

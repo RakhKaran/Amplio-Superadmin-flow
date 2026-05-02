@@ -14,6 +14,7 @@ export default function InvestorSignatoiresDetailsView() {
   return (
     <Container>
       <InvestorSignatoriesDetails currentUser={state?.signatoryData}
+        listHref={state?.listHref}
         isViewMode={true}
         isEditMode={false} />
     </Container>

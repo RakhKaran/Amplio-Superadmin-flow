@@ -190,7 +190,10 @@ export default function InvestorSignatories({ investorProfile }) {
                       >
                         <Tooltip title="View" placement="top" arrow>
                           <IconButton onClick={() => navigate(paths.dashboard.signatory.investordetails(row.id), {
-                            state: { signatoryData: row }
+                            state: {
+                              signatoryData: row,
+                              listHref: `${paths.dashboard.investorProfiles.details(userId)}?tab=signatories`,
+                            }
                           })}>
                             <Iconify icon="mdi:eye" width={20} />
                           </IconButton>

@@ -18,7 +18,7 @@ import {
 import Iconify from 'src/components/iconify';
 import { enqueueSnackbar } from 'notistack';
 import axiosInstance from 'src/utils/axios';
-import { useGetDocuments, useGetSignatories } from 'src/api/trusteeKyc';
+import { useGetDocuments } from 'src/api/trusteeKyc';
 
 import RejectReasonDialog from './reject-signatory';
 import Label from 'src/components/label';
@@ -26,7 +26,6 @@ import { TableNoData } from 'src/components/table';
 
 export default function KYCCompanyDetails({ trusteeProfile }) {
   const trusteeId = trusteeProfile?.id;
-  const stepperId = trusteeProfile?.kycApplications?.currentProgress?.[3];
 
   const { documents = [], refreshDocuments } = useGetDocuments(trusteeId);
 
@@ -113,18 +112,20 @@ export default function KYCCompanyDetails({ trusteeProfile }) {
               ) : (
                 documents.map((doc) => (
                   <TableRow key={doc.id}>
-                    <TableCell>{doc.documents?.name || 'NA'}</TableCell>
                     <TableCell>
-                      {doc.documentsFile?.fileUrl ? (
+                      {doc.trusteeKycDocumentRequirements?.documentLabel || 'NA'}
+                    </TableCell>
+                    <TableCell>
+                      {doc.media?.fileUrl ? (
                         <Button
                           variant="outlined"
                           color="primary"
                           onClick={() => {
-                            const url = doc.documentsFile?.fileUrl;
+                            const url = doc.media?.fileUrl;
                             if (url) {
                               window.open(url, '_blank');
                             } else {
-                              enqueueSnackbar('PAN preview file not found!', { variant: 'error' });
+                              enqueueSnackbar('Document preview file not found!', { variant: 'error' });
                             }
                           }}
                           sx={{
@@ -137,10 +138,10 @@ export default function KYCCompanyDetails({ trusteeProfile }) {
                           }}
                           startIcon={<Iconify icon="mdi:eye" />}
                         >
-                          Preview Document
+                          {doc.media?.fileName || 'Preview Document'}
                         </Button>
                       ) : (
-                        <Typography color="text.secondary">No PAN file uploaded.</Typography>
+                        <Typography color="text.secondary">No document uploaded.</Typography>
                       )}
                     </TableCell>
                     <TableCell>

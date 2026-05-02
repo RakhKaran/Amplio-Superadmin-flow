@@ -125,8 +125,7 @@ export default function AgreementDetailsListView({ companyProfile }) {
 
     return (
         <>
-            <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-                <Card>
+            <Card>
                     <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
                         <TableSelectedAction
                             dense={table.dense}
@@ -201,7 +200,6 @@ export default function AgreementDetailsListView({ companyProfile }) {
                         onChangeDense={table.onChangeDense}
                     /> */}
                 </Card>
-            </Container>
 
             <GuarantorApprovalForm
                 open={openDialog}

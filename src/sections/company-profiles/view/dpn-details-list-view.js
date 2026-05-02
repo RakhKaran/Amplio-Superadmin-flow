@@ -126,8 +126,7 @@ export default function DpnDetailsListView({ companyProfile }) {
 
     return (
         <>
-            <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-                <Card>
+            <Card>
                     <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
                         <TableSelectedAction
                             dense={table.dense}
@@ -200,7 +199,6 @@ export default function DpnDetailsListView({ companyProfile }) {
                         onChangeDense={table.onChangeDense}
                     /> */}
                 </Card>
-            </Container>
 
             <GuarantorApprovalForm
                 open={openDialog}

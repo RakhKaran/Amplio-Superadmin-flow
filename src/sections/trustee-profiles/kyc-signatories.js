@@ -196,7 +196,10 @@ export default function KYCSignatories({ trusteeProfile }) {
                       >
                         <Tooltip title="View" placement="top" arrow>
                           <IconButton onClick={() => navigate(paths.dashboard.signatory.trusteedetails(row.id), {
-                            state: { signatoryData: row }
+                            state: {
+                              signatoryData: row,
+                              listHref: `${paths.dashboard.trusteeProfiles.details(userId)}?tab=signatories`,
+                            }
                           })}>
                             <Iconify icon="mdi:eye" width={20} />
                           </IconButton>

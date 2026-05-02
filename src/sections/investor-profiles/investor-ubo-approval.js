@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { useMemo, useState } from 'react';
 import {
   Box,
+  Card,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -221,68 +222,70 @@ export default function InvestorUboApproval({ investorId }) {
 
   return (
     <>
-      <Stack spacing={3}>
-        <Box>
-          <Typography variant="h5" sx={{ mb: 0.5 }}>
-            UBO Approval
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Review submitted beneficial owners in the same admin approval style as merchant.
-          </Typography>
-        </Box>
+      <Card sx={{ p: 4 }}>
+        <Stack spacing={3}>
+          <Box>
+            <Typography variant="h5" sx={{ mb: 0.5 }}>
+              UBO Approval
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Review submitted beneficial owners in the same admin approval style as merchant.
+            </Typography>
+          </Box>
 
-        <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-          <Scrollbar>
-            <Table sx={{ minWidth: 900 }}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Phone Number</TableCell>
-                  <TableCell>Ownership %</TableCell>
-                  <TableCell>Role</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell align="right">Action</TableCell>
-                </TableRow>
-              </TableHead>
+          <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+            <Scrollbar>
+              <Table sx={{ minWidth: 900 }}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Phone Number</TableCell>
+                    <TableCell>Ownership %</TableCell>
+                    <TableCell>Role</TableCell>
+                    <TableCell>Status</TableCell>
+                    <TableCell align="right">Action</TableCell>
+                  </TableRow>
+                </TableHead>
 
-              <TableBody>
-                {ubos.length === 0 ? (
-                  <TableNoData notFound />
-                ) : (
-                  ubos.map((ubo) => {
-                    const { color, label } = getStatusMeta(ubo.status);
+                <TableBody>
+                  {ubos.length === 0 ? (
+                    <TableNoData notFound />
+                  ) : (
+                    ubos.map((ubo) => {
+                      const { color, label } = getStatusMeta(ubo.status);
 
-                    return (
-                      <TableRow hover key={ubo.id}>
-                        <TableCell sx={{ whiteSpace: 'nowrap' }}>{ubo.fullName || '-'}</TableCell>
-                        <TableCell sx={{ whiteSpace: 'nowrap' }}>{ubo.email || '-'}</TableCell>
-                        <TableCell sx={{ whiteSpace: 'nowrap' }}>{ubo.phone || '-'}</TableCell>
-                        <TableCell sx={{ whiteSpace: 'nowrap' }}>
-                          {ubo.ownershipPercentage || '-'}
-                        </TableCell>
-                        <TableCell sx={{ whiteSpace: 'nowrap' }}>
-                          {ubo.designationValue || '-'}
-                        </TableCell>
-                        <TableCell>
-                          <Label color={color}>{label}</Label>
-                        </TableCell>
-                        <TableCell align="right">
-                          <Tooltip title="View" placement="top" arrow>
-                            <IconButton onClick={() => setSelectedUbo(ubo)}>
-                              <Iconify icon="solar:eye-bold" />
-                            </IconButton>
-                          </Tooltip>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </Scrollbar>
-        </TableContainer>
-      </Stack>
+                      return (
+                        <TableRow hover key={ubo.id}>
+                          <TableCell sx={{ whiteSpace: 'nowrap' }}>{ubo.fullName || '-'}</TableCell>
+                          <TableCell sx={{ whiteSpace: 'nowrap' }}>{ubo.email || '-'}</TableCell>
+                          <TableCell sx={{ whiteSpace: 'nowrap' }}>{ubo.phone || '-'}</TableCell>
+                          <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                            {ubo.ownershipPercentage || '-'}
+                          </TableCell>
+                          <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                            {ubo.designationValue || '-'}
+                          </TableCell>
+                          <TableCell>
+                            <Label color={color}>{label}</Label>
+                          </TableCell>
+                          <TableCell align="right">
+                            <Tooltip title="View" placement="top" arrow>
+                              <IconButton onClick={() => setSelectedUbo(ubo)}>
+                                <Iconify icon="solar:eye-bold" />
+                              </IconButton>
+                            </Tooltip>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
+                  )}
+                </TableBody>
+              </Table>
+            </Scrollbar>
+          </TableContainer>
+        </Stack>
+      </Card>
 
       <InvestorUboReviewDialog
         open={!!selectedUbo}

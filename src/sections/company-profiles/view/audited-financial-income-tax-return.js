@@ -132,8 +132,7 @@ export default function AuditedFinancialsIncomeTaxReturnListView({ companyProfil
 
     return (
         <>
-            <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-                <Card>
+            <Card>
                     <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
                         <TableSelectedAction
                             dense={table.dense}
@@ -208,7 +207,6 @@ export default function AuditedFinancialsIncomeTaxReturnListView({ companyProfil
                         onChangeDense={table.onChangeDense}
                     /> */}
                 </Card>
-            </Container>
 
             <GuarantorApprovalForm
                 open={openDialog}

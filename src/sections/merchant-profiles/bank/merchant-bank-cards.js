@@ -4,7 +4,7 @@ import Iconify from 'src/components/iconify';
 import { useNavigate } from 'react-router';
 import { paths } from 'src/routes/paths';
 
-export default function MerchantBankCard({ bank, onViewRow }) {
+export default function MerchantBankCard({ bank, onViewRow, listHref }) {
   const navigate = useNavigate();
   if (!bank) return null;
 
@@ -35,15 +35,18 @@ export default function MerchantBankCard({ bank, onViewRow }) {
         flexDirection: 'column',
         gap: 2,
         cursor: 'pointer',
+        cursor: 'pointer',
         transition: '0.2s',
+        '&:hover': {
         '&:hover': {
           transform: 'scale(1.01)',
           boxShadow: '0 6px 18px rgba(0,0,0,0.12)',
         },
+        },
       }}
       onClick={() =>
         navigate(paths.dashboard.merchant.new, {
-          state: { bankData: bank },
+          state: { bankData: bank, listHref },
         })
       }
     >
@@ -61,14 +64,17 @@ export default function MerchantBankCard({ bank, onViewRow }) {
                 variant="h6"
                 onClick={() =>
                   navigate(paths.dashboard.merchant.new, {
-                    state: { bankData: bank },
+                    state: { bankData: bank, listHref },
                   })
                 }
                 sx={{
                   cursor: 'pointer',
+                  cursor: 'pointer',
                   textDecoration: 'none',
                   '&:hover': {
+                  '&:hover': {
                     textDecoration: 'underline',
+                  },
                   },
                 }}
               >
@@ -191,5 +197,6 @@ export default function MerchantBankCard({ bank, onViewRow }) {
 }
 
 MerchantBankCard.propTypes = {
+  listHref: PropTypes.string,
   onViewRow: PropTypes.func,
 };

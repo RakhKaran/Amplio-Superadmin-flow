@@ -177,6 +177,7 @@ export const paths = {
     signatory: {
       root: `${ROOTS.DASHBOARD}/signatory`,
       companydetails: (id) => `${ROOTS.DASHBOARD}/signatory/company/${id}`,
+      investordetails: (id) => `${ROOTS.DASHBOARD}/signatory/investor/${id}`,
       trusteedetails: (id) => `${ROOTS.DASHBOARD}/signatory/trustee/${id}`,
     },
     trusteeProfiles: {

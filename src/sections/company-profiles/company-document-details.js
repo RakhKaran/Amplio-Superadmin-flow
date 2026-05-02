@@ -2,7 +2,6 @@ import { useState } from 'react';
 import {
   Box,
   Button,
-  Container,
   Typography,
   Table,
   TableBody,
@@ -85,7 +84,7 @@ export default function CompanyDocumentDetails({ companyProfile }) {
   };
 
   return (
-    <Container>
+    <>
       <Card sx={{ p: 3 }}>
 
         <Typography variant="h5" sx={{ mb: 2, fontWeight: 700 }}>
@@ -185,6 +184,6 @@ export default function CompanyDocumentDetails({ companyProfile }) {
         setReason={setRejectReason}
         onSubmit={handleRejectSubmit}
       />
-    </Container>
+    </>
   );
 }

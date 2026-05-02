@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CircularProgress, Box, Button, Stack, Typography, Grid, Card } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { paths } from 'src/routes/paths';
 
 
 
@@ -12,6 +13,9 @@ export default function CompanyBankPage({ companyProfile }) {
   const navigate = useNavigate();
 
   const userId = companyProfile?.data?.id;
+  const listHref = userId
+    ? `${paths.dashboard.companyProfiles.details(userId)}?tab=bank`
+    : paths.dashboard.companyProfiles.list;
   const stepperId = companyProfile?.kycApplications?.currentProgress?.[2];
 
   // 🔥 Using your existing hook (no new API request)
@@ -58,7 +62,11 @@ export default function CompanyBankPage({ companyProfile }) {
         <Grid container spacing={3}>
           {bankDetails.map((item) => (
             <Grid key={item.id} item xs={12} md={6}>
-              <CompanyBankCard bank={item} onViewRow={() => handleViewRow(item)} />
+              <CompanyBankCard
+                bank={item}
+                listHref={listHref}
+                onViewRow={() => handleViewRow(item)}
+              />
             </Grid>
           ))}
         </Grid>
@@ -73,6 +81,7 @@ export default function CompanyBankPage({ companyProfile }) {
             companyProfile={{
               usersId: userId,
             }}
+            listHref={listHref}
           />
         </Box>
       )}

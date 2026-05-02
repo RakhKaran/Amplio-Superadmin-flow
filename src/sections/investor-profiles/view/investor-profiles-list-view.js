@@ -92,7 +92,7 @@ export default function InvestorProfileListView() {
     orderBy: table.orderBy,
     startDate: filters.startDate,
     endDate: filters.endDate,
-    validSortFields: ['companyName', 'fullName', 'CIN', 'GSTIN'],
+    validSortFields: ['fullName', 'companyName', 'CIN', 'GSTIN'],
     searchTextValue: filters.name,
     additionalWhereOrConditions:
       filters.investorType !== 'all' ? [{ investorKycType: { ilike: filters.investorType } }] : [],

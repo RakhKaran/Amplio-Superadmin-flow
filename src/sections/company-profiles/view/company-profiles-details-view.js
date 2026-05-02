@@ -8,6 +8,7 @@ import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 //
 
+
 import CompanyProfileDetails from '../company-profiles-details';
 import {
   useGetAgreementDetails,
@@ -23,8 +24,8 @@ import {
   useGetRocDetails,
   useGetSignatories,
 } from 'src/api/companyKyc';
-import { useCallback, useMemo, useState } from 'react';
-import { Box, Tab, Tabs } from '@mui/material';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Box, Tab, Tabs, Typography } from '@mui/material';
 import CompanyDocumentDetails from '../company-document-details';
 import CompanyAddressVerification from '../company-address-verification';
 import CompanyBankPage from '../company-bank-page';
@@ -53,7 +54,7 @@ const TABS = [
   { value: 'collateralAssets', label: 'Collateral Assets' },
   { value: 'guarantorDetails', label: 'Guarantor Details' },
   { value: 'agreement', label: 'Agreement' },
-  { value: 'rocAndDpn', label: 'ROC And DPN' },
+  { value: 'rocAndDpn', label: 'ROC And DPN' }
 ];
 
 function toStatusNumber(status) {
@@ -146,9 +147,7 @@ export default function CompanyProfilesDetailsView() {
       collateralAssets: getOverallStatus(collateralAssets.map((item) => item?.status)),
       guarantorDetails: getOverallStatus(guarantorDetails.map((item) => item?.status)),
       agreement: getOverallStatus(agreementDetails.map((item) => item?.status)),
-      rocAndDpn: getOverallStatus(
-        [...safeRocDetails, ...safeDpnDetails].map((item) => item?.status)
-      ),
+      rocAndDpn: getOverallStatus([...safeRocDetails, ...safeDpnDetails].map((item) => item?.status)),
     };
   }, [
     agreementDetails,
@@ -170,95 +169,110 @@ export default function CompanyProfilesDetailsView() {
   const [searchParams] = useSearchParams();
   const tab = searchParams.get('tab');
   const [currentTab, setCurrentTab] = useState(tab || 'basic');
-  const handleChangeTab = useCallback(
-    (event, newValue) => {
-      setCurrentTab(newValue);
-      router.push({
-        search: `?tab=${newValue}`,
-      });
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return undefined;
+
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtmlOverflowY = html.style.overflowY;
+    const prevBodyOverflowY = body.style.overflowY;
+
+    html.style.overflowY = 'scroll';
+    body.style.overflowY = 'scroll';
+
+    return () => {
+      html.style.overflowY = prevHtmlOverflowY;
+      body.style.overflowY = prevBodyOverflowY;
+    };
+  }, []);
+
+  const handleChangeTab = useCallback((event, newValue) => {
+    setCurrentTab(newValue);
+    router.push({
+      search: `?tab=${newValue}`
+    });
+  }, [router]);
+
+  const tabContentSx = {
+    '& .MuiContainer-root': {
+      maxWidth: 'none !important',
+      paddingLeft: '0 !important',
+      paddingRight: '0 !important',
     },
-    [router]
-  );
+  };
+
   return (
     <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-      <CustomBreadcrumbs
-        heading="Details"
-        links={[
-          { name: 'Dashboard', href: paths.dashboard.root },
-          { name: 'Seller Profile', href: paths.dashboard.companyProfiles.root },
-          {
-            name: companyProfile?.data?.companyName || 'Seller Profile',
-          },
-        ]}
-        sx={{ mb: { xs: 3, md: 5 } }}
-      />
-      <Tabs value={currentTab} onChange={handleChangeTab} sx={{ mb: { xs: 3, md: 5 } }}>
-        {TABS.map((tab) => (
-          <Tab
-            key={tab.value}
-            value={tab.value}
-            label={
-              <Box display="flex" alignItems="center" gap={1}>
-                {tab.label}
-                <Box
-                  sx={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: '50%',
-                    bgcolor: getTabColor(tabStatusMap[tab.value]),
-                  }}
-                />
-              </Box>
-            }
-          />
-        ))}
-      </Tabs>
-      {currentTab === 'basic' && (
-        <CompanyProfileDetails
-          data={companyProfile}
-          refreshProfilesDetails={refreshProfilesDetails}
+      <Box>
+        <Typography variant="h4" sx={{ mb: 1 }}>
+          Details
+        </Typography>
+        <CustomBreadcrumbs
+          links={[
+            { name: 'Dashboard', href: paths.dashboard.root },
+            { name: 'Seller Profile', href: paths.dashboard.companyProfiles.root },
+            {
+              name: companyProfile?.data?.companyName || 'Seller Profile'
+
+            },
+          ]}
+          sx={{ mb: { xs: 3, md: 5 } }}
         />
-      )}
+        <Tabs
+          value={currentTab}
+          onChange={handleChangeTab}
+          sx={{ mb: { xs: 3, md: 5 } }}
+        >
+          {TABS.map((tab) => (
+            <Tab
+              key={tab.value}
+              value={tab.value}
+              label={
+                <Box display="flex" alignItems="center" gap={1}>
+                  {tab.label}
+                  <Box
+                    sx={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      bgcolor: getTabColor(tabStatusMap[tab.value]),
+                    }}
+                  />
+                </Box>
+              }
+            />
+          ))}
+        </Tabs>
+        <Box sx={tabContentSx}>
+          {currentTab === 'basic' && <CompanyProfileDetails data={companyProfile} refreshProfilesDetails={refreshProfilesDetails} />}
 
-      {currentTab === 'details' && <CompanyDocumentDetails companyProfile={companyProfile} />}
+          {currentTab === 'details' && <CompanyDocumentDetails companyProfile={companyProfile} />}
 
-      {currentTab === 'addressDetails' && (
-        <CompanyAddressVerification companyProfile={companyProfile} />
-      )}
+          {currentTab === 'addressDetails' && (
+            <CompanyAddressVerification companyProfile={companyProfile} />
+          )}
 
-      {currentTab === 'bank' && <CompanyBankPage companyProfile={companyProfile} />}
-      {/* {currentTab === 'bank' && <TrusteeBankPage companyPrifle={companyPrifle} />} */}
+          {currentTab === 'bank' && <CompanyBankPage companyProfile={companyProfile} />}
+          {/* {currentTab === 'bank' && <TrusteeBankPage companyPrifle={companyPrifle} />} */}
 
-      {currentTab === 'signatories' && <CompanySignatories companyProfile={companyProfile} />}
+          {currentTab === 'signatories' && <CompanySignatories companyProfile={companyProfile} />}
 
-      {currentTab === 'busienssProfile' && (
-        <BusinessProfileDetails companyProfile={companyProfile} />
-      )}
+          {currentTab === 'busienssProfile' && <BusinessProfileDetails companyProfile={companyProfile} />}
 
-      {currentTab === 'collateralAssets' && (
-        <CollateralAssetsDetails companyProfile={companyProfile} />
-      )}
+          {currentTab === 'collateralAssets' && <CollateralAssetsDetails companyProfile={companyProfile} />}
 
-      {currentTab === 'guarantorDetails' && (
-        <GuarantorDetailsListView companyProfile={companyProfile} />
-      )}
+          {currentTab === 'guarantorDetails' && <GuarantorDetailsListView companyProfile={companyProfile} />}
 
-      {currentTab === 'auditedFinancials' && (
-        <AllAuditedFinancialsDetailsView companyProfile={companyProfile} />
-      )}
+          {currentTab === 'auditedFinancials' && <AllAuditedFinancialsDetailsView companyProfile={companyProfile} />}
 
-      {currentTab === 'financialDetails' && (
-        <AllFinancialDetailsView companyProfile={companyProfile} />
-      )}
+          {currentTab === 'financialDetails' && <AllFinancialDetailsView companyProfile={companyProfile} />}
 
-      {currentTab === 'agreement' && <PendingVerificationForm companyProfiles={companyProfile} />}
+          {currentTab === 'agreement' && <PendingVerificationForm companyProfiles={companyProfile} />}
 
-      {currentTab === 'rocAndDpn' && (
-        <DpnAndRocPendingVerification
-          companyProfiles={companyProfile}
-          refreshProfilesDetails={refreshProfilesDetails}
-        />
-      )}
+          {currentTab === 'rocAndDpn' && <DpnAndRocPendingVerification companyProfiles={companyProfile} refreshProfilesDetails={refreshProfilesDetails} />}
+        </Box>
+      </Box>
     </Container>
   );
 }

@@ -26,14 +26,21 @@ import Iconify from 'src/components/iconify';
 import { useLocation } from 'react-router';
 import { Card } from '@mui/material';
 import RejectReasonDialog from './reject-signatory';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 // ----------------------------------------------------------------------
 
-export default function KYCBankDetails({ trusteeProfile }) {
+export default function KYCBankDetails({ trusteeProfile, listHref: listHrefProp }) {
   const userId = trusteeProfile?.usersId;
   const stepperId = trusteeProfile?.kycApplications?.currentProgress?.[2];
   const { state } = useLocation();
   const bankDetails = state?.bankData || null;
+  const listHref =
+    state?.listHref ||
+    listHrefProp ||
+    (userId
+      ? `${paths.dashboard.trusteeProfiles.details(userId)}?tab=bank`
+      : paths.dashboard.trusteeProfiles.list);
   console.log('📌 Received bankData:', bankDetails);
 
   const [rejectOpen, setRejectOpen] = useState(false);
@@ -234,6 +241,18 @@ export default function KYCBankDetails({ trusteeProfile }) {
 
   return (
     <Container>
+      <CustomBreadcrumbs
+        heading="Details"
+        links={[
+          { name: 'Dashboard', href: paths.dashboard.root },
+          { name: 'Trustee Profile', href: listHref },
+          { name: 'Bank Details', href: listHref },
+          { name: bankDetails?.bankName || 'Preview' },
+        ]}
+        sx={{
+          mb: { xs: 3, md: 5 },
+        }}
+      />
       <FormProvider methods={methods} onSubmit={onSubmit}>
         <Card
           sx={{
@@ -243,6 +262,15 @@ export default function KYCBankDetails({ trusteeProfile }) {
             boxShadow: '0px 4px 20px rgba(0,0,0,0.08)',
           }}
         >
+          <Box sx={{ mb: 3 }}>
+            <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
+              Trustee Bank Details
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Review submitted trustee bank details and verify the uploaded proof.
+            </Typography>
+          </Box>
+
           <Typography variant="h6" sx={{ fontWeight: 500, mb: 2 }}>
             Select Document Type:
           </Typography>

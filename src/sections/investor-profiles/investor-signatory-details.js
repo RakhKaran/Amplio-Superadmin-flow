@@ -21,6 +21,8 @@ import axiosInstance from 'src/utils/axios';
 import { useRouter } from 'src/routes/hook';
 import RejectReasonDialog from 'src/components/reject dialog box/reject-dialog-box';
 import DocumentPreviewButton from 'src/components/custom-preview-button/preview-button';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { paths } from 'src/routes/paths';
 
 
 
@@ -35,6 +37,7 @@ export default function InvestorSignatoriesDetails({
     currentUser,
     isViewMode,
     isEditMode,
+    listHref,
     onStatusChange,
     disableCardWrapper = false,
 }) {
@@ -200,11 +203,34 @@ export default function InvestorSignatoriesDetails({
     const WrapperComponent = disableCardWrapper ? Box : Card;
 
     return (
-        <WrapperComponent sx={{ p: disableCardWrapper ? 0 : 4, py: disableCardWrapper ? 1 : 4 }}>
-            <FormProvider methods={methods} onSubmit={onSubmit}>
-                <Typography variant="h6" sx={{ mb: 1 }}>
-                    Signatory Details
-                </Typography>   
+        <>
+            {!disableCardWrapper && (
+                <CustomBreadcrumbs
+                    heading="Details"
+                    links={[
+                        { name: 'Dashboard', href: paths.dashboard.root },
+                        { name: 'Investor Profile', href: listHref || paths.dashboard.investorProfiles.list },
+                        { name: 'Signatories', href: listHref || paths.dashboard.investorProfiles.list },
+                        { name: currentUser?.fullName || 'Preview' },
+                    ]}
+                    sx={{ mb: { xs: 3, md: 4 } }}
+                />
+            )}
+            <WrapperComponent sx={{ p: disableCardWrapper ? 0 : 4, py: disableCardWrapper ? 1 : 4 }}>
+                <FormProvider methods={methods} onSubmit={onSubmit}>
+                    {!disableCardWrapper && (
+                        <Box sx={{ mb: 3 }}>
+                            <Typography variant="h4" sx={{ fontWeight: 700, mb: 0.5 }}>
+                                Investor Signatory Details
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                Review submitted signatory details and verify the uploaded documents.
+                            </Typography>
+                        </Box>
+                    )}
+                    <Typography variant="h6" sx={{ mb: 1 }}>
+                        Signatory Details
+                    </Typography>   
                 <Grid container spacing={3} sx={{ my: 1 }}>
                     <Grid item xs={12} sm={6}>
                         <RHFTextField name="name" label="Name*" disabled />
@@ -350,7 +376,8 @@ export default function InvestorSignatoriesDetails({
                     setReason={setRejectReason}
                     onSubmit={handleRejectSubmit}
                   />
-        </WrapperComponent>
+            </WrapperComponent>
+        </>
     );
 }
 
@@ -359,5 +386,6 @@ InvestorSignatoriesDetails.propTypes = {
     disableCardWrapper: PropTypes.bool,
     isViewMode: PropTypes.bool,
     isEditMode: PropTypes.bool,
+    listHref: PropTypes.string,
     onStatusChange: PropTypes.func,
 };
